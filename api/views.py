@@ -1,17 +1,19 @@
-from django.shortcuts import render
+#from django.shortcuts import render
 from django.http import HttpResponse
 from django.views.decorators.http import require_http_methods
 from dirq.queue import Queue
 import os
 
-@require_http_methods(["GET","POST"])
+
+@require_http_methods(["GET", "POST"])
 def index(request):
 
     qpath = '/tmp/flask/'
     #taken from ssm2
-    QSCHEMA = {'body': 'string', 'signer':'string', 'empaid':'string?'}
-    #REJECT_SCHEMA = {'body': 'string', 'signer':'string?', 'empaid':'string?', 'error':'string'}
-   
+    QSCHEMA = {'body': 'string',
+               'signer': 'string',
+               'empaid': 'string?'}
+
     body = request.body
     #print body
 
