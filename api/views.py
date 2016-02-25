@@ -9,7 +9,7 @@ import os
 def index(request):
 
     if request.method == 'GET':
-        return HttpResponse("Hello, world. You're at the index.")
+        return HttpResponse("Hello, world. You're at the index.", status=200)
 
     elif request.method == 'POST': # tecnically we dont need to check
                                    # as the only methods we allow
@@ -37,4 +37,4 @@ def index(request):
                         'empaid': 'Greg-Test-empaid'})
 
         response = "Message saved to in queue as %sincoming/%s" % (qpath, name)
-        return HttpResponse(response)
+        return HttpResponse(response, status=202)
