@@ -18,6 +18,11 @@ def index(request):
                                    # as the only methods we allow
                                    # are get and post;
                                    # but better explicit then implicit
+        try:
+            empaid = request.META['HTTP_EMPA_ID']
+        except KeyError:
+            empaid = 'noid'
+
         qpath = '/tmp/flask/'
         # taken from ssm2
         QSCHEMA = {'body': 'string',
@@ -25,7 +30,7 @@ def index(request):
                    'empaid': 'string?'}
 
         body = request.body
-        logger.debug(body)
+        #logger.debug(body)
 
         for header in request.META:
             logger.debug("%s: %s", header, request.META[header])
@@ -37,7 +42,7 @@ def index(request):
 
         name = inq.add({'body': body,
                         'signer': 'Greg-Test-signer',
-                        'empaid': 'Greg-Test-empaid'})
+                        'empaid': empaid})
 
         response = "Message saved to in queue as %sincoming/%s" % (qpath, name)
         logger.info(response)
