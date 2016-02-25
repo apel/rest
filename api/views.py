@@ -2,11 +2,15 @@
 from django.http import HttpResponse
 from django.views.decorators.http import require_http_methods
 from dirq.queue import Queue
+import logging
 import os
 
+LOG_BREAK = "=================================================="
 
 @require_http_methods(["GET", "POST"])
 def index(request):
+    logger = logging.getLogger(__name__)
+    
 
     if request.method == 'GET':
         return HttpResponse("Hello, world. You're at the index.", status=200)
@@ -22,10 +26,15 @@ def index(request):
                    'empaid': 'string?'}
 
         body = request.body
-        # print body
+        logger.debug("Message Body")
+        logger.debug(LOG_BREAK)
+        logger.debug(body)
 
-        # for header in request.META:
-            # print "%s: %s" % (header, request.META[header])
+        logger.debug("Headers")
+        logger.debug(LOG_BREAK)
+        for header in request.META:
+            logger.debug("%s: %s" % (header, request.META[header]))
+        logger.debug(LOG_BREAK)
 
         inqpath = os.path.join(qpath, 'incoming')
         # rejectqpath = os.path.join(qpath, 'reject')
@@ -37,4 +46,8 @@ def index(request):
                         'empaid': 'Greg-Test-empaid'})
 
         response = "Message saved to in queue as %sincoming/%s" % (qpath, name)
+        logger.debug("Response")
+        logger.debug(LOG_BREAK)
+        logger.debug(response)
+        logger.debug(LOG_BREAK)
         return HttpResponse(response, status=202)
