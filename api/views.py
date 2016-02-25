@@ -8,7 +8,7 @@ import os
 @require_http_methods(["GET", "POST"])
 def index(request):
     logger = logging.getLogger(__name__)
-    
+
     if request.method == 'GET':
         response = "Hello, world. You're at the index."
         logger.info(response)
@@ -28,7 +28,7 @@ def index(request):
         logger.debug(body)
 
         for header in request.META:
-            logger.debug("%s: %s" % (header, request.META[header]))
+            logger.debug("%s: %s", header, request.META[header])
 
         inqpath = os.path.join(qpath, 'incoming')
         # rejectqpath = os.path.join(qpath, 'reject')
