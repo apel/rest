@@ -23,6 +23,8 @@ def index(request):
         except KeyError:
             empaid = 'noid'
 
+        logger.info("Received message. ID = %s", empaid)
+
         qpath = '/tmp/flask/'
         # taken from ssm2
         QSCHEMA = {'body': 'string',
