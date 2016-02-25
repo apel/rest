@@ -114,6 +114,7 @@ LOGGING = {
         'api': {
             'handlers': ['console'],
             'level': 'INFO',
+            # 'level': 'DEBUG',
         },
     }
 }
