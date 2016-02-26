@@ -47,6 +47,6 @@ def index(request):
                         'signer': 'Greg-Test-signer',
                         'empaid': empaid})
 
-        response = "Message saved to in queue as %sincoming/%s" % (qpath, name)
+        response = "Message saved to in queue as %s/%s" % (inqpath, name)
         logger.info(response)
         return HttpResponse(response, status=202)
