@@ -1,9 +1,10 @@
-#from django.shortcuts import render
+# from django.shortcuts import render
 from django.http import HttpResponse
 from django.views.decorators.http import require_http_methods
 from dirq.queue import Queue
 import logging
 import os
+
 
 @require_http_methods(["GET", "POST"])
 def index(request):
@@ -14,10 +15,10 @@ def index(request):
         logger.info(response)
         return HttpResponse(response, status=200)
 
-    elif request.method == 'POST': # tecnically we dont need to check
-                                   # as the only methods we allow
-                                   # are get and post;
-                                   # but better explicit then implicit
+    elif request.method == 'POST':  # tecnically we dont need to check
+                                    # as the only methods we allow
+                                    # are get and post;
+                                    # but better explicit then implicit
         try:
             empaid = request.META['HTTP_EMPA_ID']
         except KeyError:
@@ -32,7 +33,7 @@ def index(request):
                    'empaid': 'string?'}
 
         body = request.body
-        #logger.debug(body)
+        # logger.debug(body)
 
         for header in request.META:
             logger.debug("%s: %s", header, request.META[header])
