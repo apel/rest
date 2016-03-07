@@ -2,23 +2,26 @@
 from django.http import HttpResponse
 from django.views.decorators.http import require_http_methods
 from dirq.queue import Queue
+from rest_framework.views import APIView
+from rest_framework.response import Response
 import logging
 import os
 
+class IndexView(APIView):
+    """An example URL."""
 
-@require_http_methods(["GET", "POST"])
-def index(request):
-    logger = logging.getLogger(__name__)
+    def get(self,request,format=None):
+        """An example get method"""
+        logger = logging.getLogger(__name__)
 
-    if request.method == 'GET':
         response = "Hello, world. You're at the index."
         logger.info(response)
-        return HttpResponse(response, status=200)
+        return Response(response, status=200)
 
-    elif request.method == 'POST':  # tecnically we dont need to check
-                                    # as the only methods we allow
-                                    # are get and post;
-                                    # but better explicit then implicit
+    def post(self,request,format=None):
+        """An example post method."""
+        logger = logging.getLogger(__name__)
+
         try:
             empaid = request.META['HTTP_EMPA_ID']
         except KeyError:
@@ -49,4 +52,4 @@ def index(request):
 
         response = "Message saved to in queue as %s/%s" % (inqpath, name)
         logger.info(response)
-        return HttpResponse(response, status=202)
+        return Response(response, status=202)
