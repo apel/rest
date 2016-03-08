@@ -9,20 +9,16 @@ Experimental REST API for APEL
     ```
     
 2. upgrade pip and setuptools
-    
     ```
     pip install pip --upgrade
     pip install setuptools --upgrade
     ```
-    
 3. install requirements.txt
 
 4. Create a new, self signed, certificate
-
     ```
     openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/httpd/ssl/apache.key -out /etc/httpd/ssl/apache.crt
     ```
-
 5. Open up the SSL config file: `vim /etc/httpd/conf.d/ssl.conf`
 
 6. Find the section that begins with `<VirtualHost _default_:443>` and edit the following lines
@@ -44,6 +40,20 @@ Experimental REST API for APEL
     RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI}
     ```
 
+9. At the bottom of `httpd.conf`, add:
+    ```
+    <Directory /var/www/html/apel_rest>
+    <Files wsgi.py>
+    Allow from all
+    </Files>
+    </Directory>
+
+    WSGISocketPrefix /var/run/wsgi
+    WSGIDaemonProcess apel_rest python-path=/var/www/html:/usr/lib/python2.6/site-packages
+    WSGIProcessGroup apel_rest
+    WSGIScriptAlias / /var/www/html/apel_rest/wsgi.py
+    ```
+    
 4. install apache 
 
 4. run `python manage.py runserver 0.0.0.0:8080`
