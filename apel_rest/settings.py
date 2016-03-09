@@ -113,6 +113,7 @@ LOGGING = {
         'apache': {
             'class': 'logging.StreamHandler',
             'formatter': 'blank'
+        },
     },
     'loggers': {
         'django': {

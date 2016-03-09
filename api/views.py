@@ -50,6 +50,5 @@ class IndexView(APIView):
                         'signer': 'Greg-Test-signer',
                         'empaid': empaid})
 
-        response = "Message saved to in queue as %s/%s" % (inqpath, name)
-        logger.info(response)
-        return Response(response, status=202)
+        logger.info("Message saved to in queue as %s/%s" % (inqpath, name))
+        return Response("The data received is well-formed and stored ready for later processing.", status=202)
