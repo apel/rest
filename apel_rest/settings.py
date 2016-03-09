@@ -20,11 +20,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 SECRET_KEY = '6^&2c@p@nld52qs4nfp1%99plh&*69&@@9%no3sgq6v+ci&g73'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-TEMPLATE_DEBUG = True
+TEMPLATE_DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -89,16 +89,12 @@ LOGGING = {
     'disable_existing_loggers': False,
     'formatters': {
         'verbose': {
-            'format': "boo [%(asctime)s] %(levelname)s [%(name)s:%(lineno)s]: %(message)s",
+            'format': "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s]: %(message)s",
             'datefmt': "%d/%b/%Y %H:%M:%S"
         },
         'simple': {
             'format': '%(levelname)s: %(message)s'
         },
-        'blank': {
-            'format': '%(message)s'
-        },
-
     },
     'handlers': {
         'file': {
@@ -110,21 +106,17 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'simple'
         },
-        'apache': {
-            'class': 'logging.StreamHandler',
-            'formatter': 'blank'
-        },
     },
     'loggers': {
         'django': {
-            'handlers': ['apache'],
+            'handlers': ['file'],
             'propagate': True,
-            'level': 'DEBUG',
+            'level': 'INFO',
         },
         'api': {
-            'handlers': ['apache'],
-            #'level': 'INFO',
-            'level': 'DEBUG',
+            'handlers': ['file'],
+            'level': 'INFO',
+            #'level': 'DEBUG',
         },
     }
 }
