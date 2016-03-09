@@ -89,12 +89,16 @@ LOGGING = {
     'disable_existing_loggers': False,
     'formatters': {
         'verbose': {
-            'format': "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s]: %(message)s",
+            'format': "boo [%(asctime)s] %(levelname)s [%(name)s:%(lineno)s]: %(message)s",
             'datefmt': "%d/%b/%Y %H:%M:%S"
         },
         'simple': {
             'format': '%(levelname)s: %(message)s'
         },
+        'blank': {
+            'format': '%(message)s'
+        },
+
     },
     'handlers': {
         'file': {
@@ -106,17 +110,20 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'simple'
         },
+        'apache': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'blank'
     },
     'loggers': {
         'django': {
-            'handlers': ['console'],
+            'handlers': ['apache'],
             'propagate': True,
             'level': 'DEBUG',
         },
         'api': {
-            'handlers': ['console'],
-            'level': 'INFO',
-            #'level': 'DEBUG',
+            'handlers': ['apache'],
+            #'level': 'INFO',
+            'level': 'DEBUG',
         },
     }
 }
