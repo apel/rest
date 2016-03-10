@@ -44,9 +44,14 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.auth.middleware.RemoteUserMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.RemoteUserBackend',
+]
 
 ROOT_URLCONF = 'apel_rest.urls'
 
@@ -115,8 +120,18 @@ LOGGING = {
         },
         'api': {
             'handlers': ['file'],
-            'level': 'INFO',
-            #'level': 'DEBUG',
+            #'level': 'INFO',
+            'level': 'DEBUG',
         },
     }
+}
+
+#XML stuff
+REST_FRAMEWORK = {
+    'DEFAULT_PARSER_CLASSES': (
+        'rest_framework_xml.parsers.XMLParser',
+    ),
+#    'DEFAULT_RENDERER_CLASSES': (
+#        'rest_framework_xml.renderers.XMLRenderer',
+#    ),
 }
