@@ -29,6 +29,8 @@ class IndexView(APIView):
 
         logger.info("Received message. ID = %s", empaid)
 
+        signer = request.META['SSL_CLIENT_S_DN']
+
         qpath = '/tmp/flask/'
         # taken from ssm2
         QSCHEMA = {'body': 'string',
@@ -36,7 +38,7 @@ class IndexView(APIView):
                    'empaid': 'string?'}
 
         body = request.body
-        # logger.debug(body)
+        logger.debug(body)
 
         for header in request.META:
             logger.debug("%s: %s", header, request.META[header])
@@ -47,7 +49,7 @@ class IndexView(APIView):
         # rejectq = Queue(rejectqpath, schema=REJECT_SCHEMA)
 
         name = inq.add({'body': body,
-                        'signer': 'Greg-Test-signer',
+                        'signer': signer,
                         'empaid': empaid})
 
         logger.info("Message saved to in queue as %s/%s" % (inqpath, name))
