@@ -49,9 +49,9 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.RemoteUserBackend',
-]
+# AUTHENTICATION_BACKENDS = (
+#     'django.contrib.auth.backends.RemoteUserBackend',
+# )
 
 ROOT_URLCONF = 'apel_rest.urls'
 
@@ -61,12 +61,12 @@ WSGI_APPLICATION = 'apel_rest.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#     }
+# }
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
@@ -126,12 +126,12 @@ LOGGING = {
     }
 }
 
-#XML stuff
+# XML stuff
 REST_FRAMEWORK = {
     'DEFAULT_PARSER_CLASSES': (
         'rest_framework_xml.parsers.XMLParser',
     ),
-#    'DEFAULT_RENDERER_CLASSES': (
-#        'rest_framework_xml.renderers.XMLRenderer',
-#    ),
+    # 'DEFAULT_RENDERER_CLASSES': (
+    #     'rest_framework_xml.renderers.XMLRenderer',
+    # ),
 }
