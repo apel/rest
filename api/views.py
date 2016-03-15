@@ -4,7 +4,6 @@
 from dirq.queue import Queue
 from rest_framework.views import APIView
 from rest_framework.response import Response
-import urlparse
 import logging
 import os
 
@@ -31,10 +30,19 @@ class IndexView(APIView):
 
         logger.info("Received message. ID = %s", empaid)
 
+        # this will fail is the request isn't coming through apache
         signer = request.META['SSL_CLIENT_S_DN']
 
-        body = request.body
-        logger.debug(urlparse.unquote(body))
+        if "_content" in request.POST.dict():
+            # then POST likely to come via the rest api framework
+            # hence use the content of request.POST as message
+            body = request.POST.get('_content')
+        else:
+            # POST likely to comes through a browser client or curl
+            # hence use request.body as message
+            body = request.body
+
+        logger.debug("Message body received: %s", body)
 
         for header in request.META:
             logger.debug("%s: %s", header, request.META[header])
