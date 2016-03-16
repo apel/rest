@@ -1,5 +1,6 @@
 django==1.6.3
 djangorestframework==3.0.5
 dirq
+djangorestframework-xml
 # Dependencies for CI testing
 coveralls
