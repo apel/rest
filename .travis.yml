@@ -21,6 +21,6 @@ before_script:
   - export PYTHONPATH=$PYTHONPATH:`pwd -P`
 
 # Command to run tests
-script: coverage run manage.py test
+script: coverage run python manage.py test
 
 after_success: coveralls
