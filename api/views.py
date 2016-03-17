@@ -62,7 +62,16 @@ class IndexView(APIView):
                         'signer': signer,
                         'empaid': empaid})
 
+        new_body_path = "%s/%s/body" % (inqpath, name)
+        new_body_file = open(new_body_path)
+        new_body_contents = new_body_file.read()
+        new_body_file.close() 
+
         logger.info("Message saved to in queue as %s/%s", inqpath, name)
 
         response = "Data received is well-formed and stored for processing."
-        return Response(response, status=202)
+
+        custom_headers = {}
+        custom_headers["FILE_CONTENTS"] = new_body_contents
+        
+        return Response(response, status=202, headers=custom_headers)
