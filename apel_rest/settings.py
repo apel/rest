@@ -104,7 +104,7 @@ LOGGING = {
     'handlers': {
         'file': {
             'class': 'logging.FileHandler',
-            'filename': '.apel_rest.log',
+            'filename': './html/apel_rest.log',
             'formatter': 'verbose'
         },
         'console': {
