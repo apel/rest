@@ -13,12 +13,17 @@ class IndexTest(unittest.TestCase):
 
     def test_index_post(self):
         test_client = Client()
+        message = "<note><to>Tove</to><from>Jani</from></note>"
         response = test_client.post("/index/",
-                                    "<note><to>Tove</to><from>Jani</from></note>", 
+                                    message, 
                                     content_type="text/xml",
                                     HTTP_EMPA_ID="Test Process",
                                     SSL_CLIENT_S_DN="Test Process")
 
+        # check the expected response code has been received
         self.assertEqual(response.status_code, 202)
+
+        # check the message saved equals the message sent
+        self.assertEqual(message, response["FILE_CONTENTS"])
 
         # need to clean up data written to dirq
