@@ -1,8 +1,14 @@
 from django.test import Client
+from django.test import TestCase
 import unittest
+import shutil
+import glob
+import os
+
+QPATH_TEST = '/tmp/django-test/'
 
 
-class IndexTest(unittest.TestCase):
+class IndexTest(TestCase):
     def test_index_get(self):
         test_client = Client()
         response = test_client.get('/index/')
@@ -13,22 +19,33 @@ class IndexTest(unittest.TestCase):
         self.assertEqual(response.content, expected_content)
 
     def test_index_post(self):
-        test_client = Client()
-        # message = "<note><to>Tove</to><from>Jani</from></note>"
-        response = test_client.post("/index/",
-                                    MESSAGE,
-                                    content_type="text/xml",
-                                    HTTP_EMPA_ID="Test Process",
-                                    SSL_CLIENT_S_DN="Test Process")
+        with self.settings(QPATH=QPATH_TEST):
+            test_client = Client()
+            response = test_client.post("/index/",
+                                        MESSAGE,
+                                        content_type="text/xml",
+                                        HTTP_EMPA_ID="Test Process",
+                                        SSL_CLIENT_S_DN="Test Process")
 
-        # check the expected response code has been received
-        self.assertEqual(response.status_code, 202)
+            # check the expected response code has been received
+            self.assertEqual(response.status_code, 202)
 
-        # check the message saved equals the message sent
-        # headers cant have new line characters, so we need to replace them
-        self.assertEqual(MESSAGE.replace("\n", " "), response["FILE_CONTENTS"])
+            # check one and only one message body saved
+            self.assertEqual(self.saved_message_count(), 1)
 
-        # need to clean up data written to dirq
+    def tearDown(self):
+        INCOMING_PATH = '%sincoming' % QPATH_TEST
+        self.delete_messages(INCOMING_PATH)
+
+    def delete_messages(self, message_path):
+        if os.path.exists(message_path):
+            shutil.rmtree(message_path)
+
+    def saved_messages(self):
+        return glob.glob('%s*/*/*/body' % QPATH_TEST)
+
+    def saved_message_count(self):
+        return len(self.saved_messages())
 
 MESSAGE = """APEL-individual-job-message: v0.2
 Site: RAL-LCG2

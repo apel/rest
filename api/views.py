@@ -6,6 +6,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 import logging
 import os
+from django.conf import settings
 
 
 class IndexView(APIView):
@@ -47,13 +48,12 @@ class IndexView(APIView):
         for header in request.META:
             logger.debug("%s: %s", header, request.META[header])
 
-        qpath = '/tmp/flask/'
         # taken from ssm2
         QSCHEMA = {'body': 'string',
                    'signer': 'string',
                    'empaid': 'string?'}
 
-        inqpath = os.path.join(qpath, 'incoming')
+        inqpath = os.path.join(settings.QPATH, 'incoming')
         # rejectqpath = os.path.join(qpath, 'reject')
         inq = Queue(inqpath, schema=QSCHEMA)
         # rejectq = Queue(rejectqpath, schema=REJECT_SCHEMA)
@@ -62,17 +62,6 @@ class IndexView(APIView):
                         'signer': signer,
                         'empaid': empaid})
 
-        new_body_path = "%s/%s/body" % (inqpath, name)
-        new_body_file = open(new_body_path)
-        new_body_contents = new_body_file.read()
-        new_body_file.close()
-
         logger.info("Message saved to in queue as %s/%s", inqpath, name)
-
         response = "Data received is well-formed and stored for processing."
-
-        custom_headers = {}
-        # can't have new line characters in header
-        custom_headers["FILE_CONTENTS"] = new_body_contents.replace("\n", " ")
-
-        return Response(response, status=202, headers=custom_headers)
+        return Response(response, status=202)

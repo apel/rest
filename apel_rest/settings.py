@@ -61,12 +61,12 @@ WSGI_APPLICATION = 'apel_rest.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#     }
-# }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
@@ -114,14 +114,14 @@ LOGGING = {
     },
     'loggers': {
         'django': {
-            'handlers': ['file'],
+            'handlers': ['console'],
             'propagate': True,
             'level': 'INFO',
         },
         'api': {
-            'handlers': ['file'],
-            #'level': 'INFO',
-            'level': 'DEBUG',
+            'handlers': ['console'],
+            'level': 'INFO',
+            #'level': 'DEBUG',
         },
     }
 }
@@ -135,3 +135,7 @@ REST_FRAMEWORK = {
     #     'rest_framework_xml.renderers.XMLRenderer',
     # ),
 }
+
+# QPATH defines where the rest api will store
+# incoming messages for later processing
+QPATH = '/tmp/django'
