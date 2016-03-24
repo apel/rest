@@ -1,12 +1,10 @@
-# from django.shortcuts import render
-# from django.http import HttpResponse
-# from django.views.decorators.http import require_http_methods
-from dirq.queue import Queue
-from rest_framework.views import APIView
-from rest_framework.response import Response
 import logging
 import os
+
+from dirq.queue import Queue
 from django.conf import settings
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 
 class IndexView(APIView):

@@ -1,9 +1,9 @@
-from django.test import Client
-from django.test import TestCase
-import unittest
-import shutil
 import glob
 import os
+import shutil
+import unittest
+
+from django.test import Client, TestCase
 
 QPATH_TEST = '/tmp/django-test/'
 
