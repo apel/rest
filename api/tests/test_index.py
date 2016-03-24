@@ -11,7 +11,6 @@ QPATH_TEST = '/tmp/django-test/'
 
 class IndexTest(TestCase):
     def setUp(self):
-        logger = logging.getLogger(__name__)
         logging.disable(logging.INFO)
 
     def test_index_get(self):
