@@ -102,11 +102,11 @@ LOGGING = {
         },
     },
     'handlers': {
-        'file': {
-            'class': 'logging.FileHandler',
-            'filename': '/var/www/html/apel_rest.log',
-            'formatter': 'verbose'
-        },
+        # 'file': {
+        #     'class': 'logging.FileHandler',
+        #     'filename': './apel_rest.log',
+        #     'formatter': 'verbose'
+        # },
         'console': {
             'class': 'logging.StreamHandler',
             'formatter': 'simple'
