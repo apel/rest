@@ -1,7 +1,10 @@
 # REST
+
+[![Build Status](https://travis-ci.org/apel/rest.svg?branch=dev)](https://travis-ci.org/apel/rest)
+
 Experimental REST API for APEL
 
-# Setup
+## Setup
 
 1. Install python, pip, apache, apache modules and IGTF trust bundle
     ```
