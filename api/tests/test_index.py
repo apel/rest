@@ -1,4 +1,5 @@
 import glob
+import logging
 import os
 import shutil
 import unittest
@@ -9,6 +10,10 @@ QPATH_TEST = '/tmp/django-test/'
 
 
 class IndexTest(TestCase):
+    def setUp(self):
+        logger = logging.getLogger(__name__)
+        logging.disable(logging.INFO)
+
     def test_index_get(self):
         test_client = Client()
         response = test_client.get('/index/')
@@ -36,6 +41,7 @@ class IndexTest(TestCase):
     def tearDown(self):
         INCOMING_PATH = '%sincoming' % QPATH_TEST
         self.delete_messages(INCOMING_PATH)
+        logging.disable(logging.NOTSET)
 
     def delete_messages(self, message_path):
         if os.path.exists(message_path):
