@@ -2,11 +2,11 @@ import glob
 import logging
 import os
 import shutil
-import unittest
 
 from django.test import Client, TestCase
 
 QPATH_TEST = '/tmp/django-test/'
+INCOMING_PATH = '%sincoming/' % QPATH_TEST
 
 
 class IndexTest(TestCase):
@@ -34,23 +34,35 @@ class IndexTest(TestCase):
             # check the expected response code has been received
             self.assertEqual(response.status_code, 202)
 
+            # get save messages under QPATH_TEST
+            messages = self.saved_messages('%s*/*/*/body' % QPATH_TEST)
+
             # check one and only one message body saved
-            self.assertEqual(self.saved_message_count(), 1)
+            self.assertEqual(len(messages), 1)
+
+            # get message content
+            # can unpack sequence because we have asserted length 1
+            [message] = messages
+            message_file = open(message)
+            message_content = message_file.read()
+            message_file.close()
+
+            # check saved message content
+            self.assertEqual(MESSAGE, message_content)
 
     def tearDown(self):
-        INCOMING_PATH = '%sincoming' % QPATH_TEST
-        self.delete_messages(INCOMING_PATH)
+        self.delete_messages(QPATH_TEST)
         logging.disable(logging.NOTSET)
 
     def delete_messages(self, message_path):
         if os.path.exists(message_path):
             shutil.rmtree(message_path)
 
-    def saved_messages(self):
-        return glob.glob('%s*/*/*/body' % QPATH_TEST)
+    def saved_messages(self, message_path):
+        return glob.glob(message_path)
 
-    def saved_message_count(self):
-        return len(self.saved_messages())
+#    def saved_message_count(self, message_path):
+#        return len(self.saved_messages(message_path))
 
 MESSAGE = """APEL-individual-job-message: v0.2
 Site: RAL-LCG2
