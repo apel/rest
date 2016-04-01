@@ -68,7 +68,7 @@ class IndexTest(TestCase):
                            '-u',
                            'root',
                            '-e',
-                           'use apelserver_test; source schemas/server.sql;'])
+                           'use apelserver_test; source /usr/share/apel/server.sql;'])
 
             # call doesnt pass up the exception, so have to do it like this
             if status is not 0:
