@@ -53,62 +53,6 @@ class IndexTest(TestCase):
             # check saved message content
             self.assertEqual(MESSAGE, message_content)
 
-            # attempt to load messages
-            database = MySQLdb.connect('localhost', 'root', '')
-            cursor = database.cursor()
-
-            # create test database
-            cursor.execute('create database apelserver_test')
-
-            # upload schemea
-            # can't do this with a cursor object
-            # as server.sql contains multiple commands
-
-            status = call(['/usr/bin/mysql',
-                           '-u',
-                           'root',
-                           '-e',
-                           'use apelserver_test; source /usr/share/apel/server.sql;'])
-
-            # call doesnt pass up the exception, so have to do it like this
-            if status is not 0:
-                # if something went wrong,
-                # try and drop database
-                # so test can be re run
-                cursor.execute('drop database apelserver_test')
-                raise MySQLdb.Error
-
-            try:
-                # load messages into database
-                loader = Loader(QPATH_TEST,
-                                True,  # backend
-                                'mysql',  # save messages
-                                'localhost',  # hostname
-                                3306,  # port
-                                'apelserver_test',  # name
-                                'root',  # username
-                                '',  # password
-                                '/var/run/apel/loader.pid')  # pidfile
-
-                loader.startup()
-                loader.load_all_msgs()
-                loader.shutdown()
-
-                cursor.execute('use apelserver_test')
-                cursor.execute('select count(*) from JobRecords')
-                row_count = cursor.fetchone()
-            # don't want to catch exceptions
-            # just want to ensure db dropped
-            finally:
-                cursor.execute('drop database apelserver_test')
-
-            # check database had exactly 2 rows
-            self.assertEqual((2L,), row_count)
-
-            # check exactly 1 accepted messages
-            messages = self.saved_messages('%saccept/*/*/body' % QPATH_TEST)
-            self.assertEqual(len(messages), 1)
-
     def tearDown(self):
         self.delete_messages(QPATH_TEST)
         logging.disable(logging.NOTSET)
