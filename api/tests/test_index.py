@@ -1,13 +1,13 @@
 import glob
 import logging
-import MySQLdb
+# import MySQLdb
 import os
 from subprocess import call
 import shutil
 
 from django.test import Client, TestCase
 
-from apel.db.loader import Loader, LoaderException
+# from apel.db.loader import Loader, LoaderException
 
 QPATH_TEST = '/tmp/django-test/'
 
