@@ -10,10 +10,6 @@ RUN wget https://github.com/gregcorbett/apel/archive/apel-setup-script.zip
 
 RUN unzip apel-setup-script.zip
 
-RUN cd apel-apel-setup-script
-
-RUN ls
-
-RUN python setup.py install
+RUN cd apel-apel-setup-script && python setup.py install
 
 
