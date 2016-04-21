@@ -12,6 +12,8 @@ RUN unzip apel-setup-script.zip
 
 RUN cd apel-apel-setup-script
 
+RUN ls
+
 RUN python setup.py install
 
 
