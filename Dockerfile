@@ -4,7 +4,7 @@ MAINTAINER APEL Administrator <apel-admins@stfc.ac.uk>
 
 RUN rpm -ivh http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
 
-RUN yum -y install wget unzip python-pip python-devel gcc 
+RUN yum -y install wget unzip python-pip python-devel gcc python-ldap 
 
 RUN pip install pip --upgrade
 
