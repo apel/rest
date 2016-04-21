@@ -1,5 +1,5 @@
-FROM centos6
+FROM centos:6
 
-MAINTAINER APLE Administrator <apel-admins@stfc.ac.uk>
+MAINTAINER APEL Administrator <apel-admins@stfc.ac.uk>
 
 RUN ls
