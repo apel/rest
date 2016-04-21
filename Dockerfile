@@ -2,9 +2,11 @@ FROM centos:6
 
 MAINTAINER APEL Administrator <apel-admins@stfc.ac.uk>
 
-RUN cd
+RUN yum -y install wget unzip python-pip python-devel 
 
-RUN yum -y install wget unzip python.x86_64 
+RUN pip install pip --upgrade
+
+RUN pip install setuptools --upgrade
 
 RUN wget https://github.com/gregcorbett/apel/archive/apel-setup-script.zip 
 
