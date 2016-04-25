@@ -8,11 +8,17 @@ RUN rpm -ivh http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noar
 RUN touch /etc/yum.repos.d/EGI-trustanchors.repo 
 RUN echo -e "# EGI Software Repository - REPO META (releaseId,repositoryId,repofileId) - (10824,-,2000)\n[EGI-trustanchors]\nname=EGI-trustanchors\nbaseurl=http://repository.egi.eu/sw/production/cas/1/current/\nenabled=1\ngpgcheck=1\ngpgkey=http://repository.egi.eu/sw/production/cas/1/GPG-KEY-EUGridPMA-RPM-3" >> /etc/yum.repos.d/EGI-trustanchors.repo
 
-RUN yum -y install wget unzip python-pip python-devel gcc python-ldap mysql-server mysql-devel httpd httpd-devel mod_wsgi ca-policy-egi-core mod_ssl
+RUN yum -y install wget unzip
 
-# RUN pip install pip --upgrade
+RUN yum -y install python-pip python-devel python-ldap
 
-# RUN pip install setuptools --upgrade
+RUN yum -y install gcc
+
+RUN yum -y install mysql-server mysql-devel
+
+RUN yum -y install httpd httpd-devel
+
+RUN yum -y install mod_wsgi mod_ssl ca-policy-egi-core
 
 RUN wget https://github.com/gregcorbett/apel/archive/apel-setup-script.zip 
 
