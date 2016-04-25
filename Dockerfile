@@ -40,8 +40,6 @@ RUN mkdir -p /etc/httpd/ssl
 
 RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/httpd/ssl/apache.key -out /etc/httpd/ssl/apache.crt -subj "/C=GB/ST=London/L=London/O=Example/OU=Example/CN=example.com"
 
-# RUN cp /var/www/html/conf/httpd.conf /etc/httpd/conf/httpd.conf
-
 RUN cp /var/www/html/conf/apel_rest_api.conf /etc/httpd/conf.d/apel_rest_api.conf
 
 RUN cp /var/www/html/conf/ssl.conf /etc/httpd/conf.d/ssl.conf
