@@ -10,9 +10,9 @@ RUN echo -e "# EGI Software Repository - REPO META (releaseId,repositoryId,repof
 
 RUN yum -y install wget unzip python-pip python-devel gcc python-ldap mysql-server mysql-devel httpd httpd-devel mod_wsgi ca-policy-egi-core mod_ssl
 
-RUN pip install pip --upgrade
+# RUN pip install pip --upgrade
 
-RUN pip install setuptools --upgrade
+# RUN pip install setuptools --upgrade
 
 RUN wget https://github.com/gregcorbett/apel/archive/apel-setup-script.zip 
 
