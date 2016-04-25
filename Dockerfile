@@ -30,6 +30,8 @@ RUN unzip dockerfile.zip
 
 RUN rm dockerfile.zip
 
+RUN cd rest-dockerfile && pip install -r requirements.txt
+
 RUN cp -r rest-dockerfile/* /var/www/html/
 
 RUN rm -rf rest-dockerfile
