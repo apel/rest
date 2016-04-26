@@ -29,8 +29,10 @@ Experimental REST API for APEL
 
 7. Copy `conf/ssl.connf` to `/etc/httpd/conf.d/ssl.conf`
 
-8. Run `python manage.py collectstatic`
+8. Copy `conf/apel_rest_api.conf to `/etc/httpd/conf.d/apel_rest_api.conf`
 
-9. Start Apache with `service httpd start`
+9. Run `python manage.py collectstatic`
 
-10. Navigate a web browser to "https://\<hostname\>/index/"
+10. Start Apache with `service httpd start`
+
+11. Navigate a web browser to "https://\<hostname\>/index/"
