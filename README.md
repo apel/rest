@@ -4,7 +4,17 @@
 
 Experimental REST API for APEL
 
-## Setup
+## Using the docker image
+
+1. install docker and httpd (httpd is needed on the host machine for `/usr/sbin/apachectl`, do NOT start httpd)
+
+2. pull in the latest image: `docker pull gregcorbett/rest`
+
+3. Run the docker with `docker run -d -p 80:80 -p 443:443 gregcorbett/rest /usr/sbin/apachectl -D FOREGROUND`
+
+4. Navigate a web browser to "https://\<hostname\>/index/"
+
+## Setup from source
 
 1. Install python, pip, apache, apache modules and IGTF trust bundle
     ```
