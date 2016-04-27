@@ -1,7 +1,7 @@
 # REST
 
 [![Build Status](https://travis-ci.org/apel/rest.svg?branch=dev)](https://travis-ci.org/apel/rest)
-[![Coverage Status](https://coveralls.io/repos/apel/rest/badge.svg?branch=dev)](https://coveralls.io/github/apel/rest?branch=dev)
+[![Coverage Status](https://coveralls.io/repos/github/apel/rest/badge.svg?branch=dev)](https://coveralls.io/github/apel/rest?branch=dev)
 
 Experimental REST API for APEL
 
