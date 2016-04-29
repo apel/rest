@@ -91,6 +91,7 @@ CREATE TABLE CloudSummaries (
 
   SiteID INT NOT NULL, -- Foreign key
 
+  Day INT NOT NULL,
   Month INT NOT NULL,
   Year INT NOT NULL,
 
@@ -117,7 +118,7 @@ CREATE TABLE CloudSummaries (
   
   PublisherDNID VARCHAR(255),
 
-  PRIMARY KEY (SiteID, Month, Year, GlobalUserNameID, VOID, VOGroupID, VORoleID, Status, CloudType, ImageId)
+  PRIMARY KEY (SiteID, Day, Month, Year, GlobalUserNameID, VOID, VOGroupID, VORoleID, Status, CloudType, ImageId)
 
 );
 
@@ -133,10 +134,10 @@ CREATE PROCEDURE ReplaceCloudSummaryRecord(
   disk BIGINT, numberOfVMs BIGINT,
   publisherDN VARCHAR(255))
 BEGIN
-    REPLACE INTO CloudSummaries(SiteID, Month, Year, GlobalUserNameID, VOID, VOGroupID, VORoleID, Status, CloudType, ImageId, EarliestStartTime, LatestStartTime, 
+    REPLACE INTO CloudSummaries(SiteID, Day, Month, Year, GlobalUserNameID, VOID, VOGroupID, VORoleID, Status, CloudType, ImageId, EarliestStartTime, LatestStartTime, 
         WallDuration, CpuDuration, NetworkInbound, NetworkOutbound, Memory, Disk, NumberOfVMs,  PublisherDNID)
       VALUES (
-        SiteLookup(site), month, year, DNLookup(globalUserName), VOLookup(vo),
+        SiteLookup(site), day, month, year, DNLookup(globalUserName), VOLookup(vo),
         VOGroupLookup(voGroup), VORoleLookup(voRole), status, cloudType, imageId, earliestStartTime, latestStartTime, 
         wallDuration, cpuDuration, networkInbound, networkOutbound, memory,
         disk, numberOfVMs, DNLookup(publisherDN)
@@ -149,11 +150,11 @@ DROP PROCEDURE IF EXISTS SummariseVMs;
 DELIMITER //
 CREATE PROCEDURE SummariseVMs()
 BEGIN
-    REPLACE INTO CloudSummaries(SiteID, Month, Year, GlobalUserNameID, VOID,
+    REPLACE INTO CloudSummaries(SiteID, Day, Month, Year, GlobalUserNameID, VOID,
         VOGroupID, VORoleID, Status, CloudType, ImageId, EarliestStartTime, LatestStartTime, WallDuration, CpuDuration, NetworkInbound,
         NetworkOutbound, Memory, Disk, NumberOfVMs, PublisherDNID)
     SELECT SiteID,
-    MONTH(StartTime) AS Month, YEAR(StartTime) AS Year,
+    DAY(StartTime) AS Day, MONTH(StartTime) AS Month, YEAR(StartTime) AS Year,
     GlobalUserNameID, VOID, VOGroupID, VORoleID, Status, CloudType, ImageId,
     MIN(StartTime),
     MAX(StartTime),
@@ -166,7 +167,7 @@ BEGIN
     COUNT(*),
     'summariser'
     FROM CloudRecords
-    GROUP BY SiteID, Month, Year, GlobalUserNameID, VOID, VOGroupID, VORoleID, Status, CloudType, ImageId
+    GROUP BY SiteID, Day, Month, Year, GlobalUserNameID, VOID, VOGroupID, VORoleID, Status, CloudType, ImageId
     ORDER BY NULL;
 END //
 DELIMITER ;
@@ -348,7 +349,7 @@ CREATE VIEW VAnonCloudRecords AS
 -- -----------------------------------------------------------------------------
 -- View on CloudSummaries
 CREATE VIEW VCloudSummaries AS
-    SELECT UpdateTime, site.name SiteName, Month, Year,
+    SELECT UpdateTime, site.name SiteName, Day, Month, Year,
            userdn.name GlobalUserName, vo.name VO, 
            vogroup.name VOGroup, vorole.name VORole,
            Status, CloudType, ImageId, EarliestStartTime, LatestStartTime,
