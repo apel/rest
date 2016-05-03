@@ -30,17 +30,17 @@ RUN rm -f apel-setup-script.zip
 
 RUN rm -rf apel-apel-setup-script
 
-RUN wget https://github.com/apel/rest/archive/dockerfile.zip
+RUN wget https://github.com/apel/rest/archive/dev.zip
 
-RUN unzip dockerfile.zip 
+RUN unzip dev.zip 
 
-RUN rm dockerfile.zip
+RUN rm dev.zip
 
-RUN cd rest-dockerfile && pip install -r requirements.txt
+RUN cd rest-dev && pip install -r requirements.txt
 
-RUN cp -r rest-dockerfile/* /var/www/html/
+RUN cp -r rest-dev/* /var/www/html/
 
-RUN rm -rf rest-dockerfile
+RUN rm -rf rest-dev
 
 RUN mkdir -p /etc/httpd/ssl
 
