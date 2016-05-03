@@ -40,7 +40,7 @@ RUN cd rest-load_post_requests && pip install -r requirements.txt
 
 RUN service mysqld start
 
-RUN cd rest-load_post_requests && mysql -u root -h localhost apel_rest < schemas/cloud.sql
+RUN cd rest-load_post_requests && mysql -u root -h 0.0.0.0 apel_rest < schemas/cloud.sql
 
 RUN cp -r rest-load_post_requests/* /var/www/html/
 
