@@ -25,36 +25,7 @@ class IndexTest(TestCase):
         expected_content = '"Hello, world. You\'re at the index."'
         self.assertEqual(response.content, expected_content)
 
-    def test_index_post(self):
-        with self.settings(QPATH=QPATH_TEST):
-            test_client = Client()
-            response = test_client.post("/index/",
-                                        MESSAGE,
-                                        content_type="text/xml",
-                                        HTTP_EMPA_ID="Test Process",
-                                        SSL_CLIENT_S_DN="Test Process")
-
-            # check the expected response code has been received
-            self.assertEqual(response.status_code, 202)
-
-            # get save messages under QPATH_TEST
-            messages = self.saved_messages('%s*/*/*/body' % QPATH_TEST)
-
-            # check one and only one message body saved
-            self.assertEqual(len(messages), 1)
-
-            # get message content
-            # can unpack sequence because we have asserted length 1
-            [message] = messages
-            message_file = open(message)
-            message_content = message_file.read()
-            message_file.close()
-
-            # check saved message content
-            self.assertEqual(MESSAGE, message_content)
-
     def tearDown(self):
-        self.delete_messages(QPATH_TEST)
         logging.disable(logging.NOTSET)
 
     def delete_messages(self, message_path):
