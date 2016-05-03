@@ -52,5 +52,9 @@ RUN cp /var/www/html/conf/ssl.conf /etc/httpd/conf.d/ssl.conf
 
 RUN service httpd start
 
+RUN service mysqld start
+
+RUN mysql -u root apel_rest < schemas/cloud.sql
+
 EXPOSE 80
 EXPOSE 443
