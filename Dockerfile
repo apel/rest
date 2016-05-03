@@ -14,7 +14,7 @@ RUN yum -y install python-pip python-devel python-ldap
 
 RUN yum -y install gcc
 
-RUN yum -y install mysql-server mysql-devel
+RUN yum -y install mysql-server mysql-devel mysql
 
 RUN yum -y install httpd httpd-devel
 
