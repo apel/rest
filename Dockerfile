@@ -40,7 +40,7 @@ RUN cd rest-dev && pip install -r requirements.txt
 
 RUN service mysqld start
 
-RUN cd rest-dev && mysql -u root apel_rest < schemas/cloud.sql
+RUN mysql -u root apel_rest < rest-dev/schemas/cloud.sql
 
 RUN cp -r rest-dev/* /var/www/html/
 
