@@ -1,11 +1,12 @@
 import logging
 import os
 
-from dirq.queue import Queue
+from dirq.queue import Queue, QueueError
 from django.conf import settings
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from apel.db.loader import Loader, LoaderException
 
 class IndexView(APIView):
     """An example URL."""
@@ -29,8 +30,10 @@ class IndexView(APIView):
 
         logger.info("Received message. ID = %s", empaid)
 
-        # this will fail is the request isn't coming through apache
-        signer = request.META['SSL_CLIENT_S_DN']
+        try:
+            signer = request.META['SSL_CLIENT_S_DN']
+        except KeyError:
+            signer = "None"
 
         if "_content" in request.POST.dict():
             # then POST likely to come via the rest api framework
@@ -56,10 +59,37 @@ class IndexView(APIView):
         inq = Queue(inqpath, schema=QSCHEMA)
         # rejectq = Queue(rejectqpath, schema=REJECT_SCHEMA)
 
-        name = inq.add({'body': body,
-                        'signer': signer,
-                        'empaid': empaid})
+        try:
+            name = inq.add({'body': body,
+                            'signer': signer,
+                            'empaid': empaid})
+        except QueueError as err:
+            logger.error("Could not save %s/%s: %s", inqpath, name, err)
+
+            response = "Data could not be saved to disk, please try again."
+            return Response(response, status=500)
 
         logger.info("Message saved to in queue as %s/%s", inqpath, name)
-        response = "Data received is well-formed and stored for processing."
-        return Response(response, status=202)
+
+        try: # and load messages into database
+            loader = Loader(settings.QPATH,
+                            True,  # backend
+                            'mysql',  # save messages
+                            'localhost',  # hostname
+                            3306,  # port
+                            'apel_rest',  # name
+                            'root',  # username
+                            '',  # password
+                            '/var/run/apel/loader.pid')  # pidfile
+
+            loader.startup()
+            loader.load_all_msgs()
+            loader.shutdown()
+        except LoaderException as err:
+            logger.error("Loader exception occured: %s", err)
+
+            response = "Data could not be stored, please try again"
+            return Response(response, status=500)
+
+        response = "Data successfully loaded."
+        return Response(response, status=200)
