@@ -30,21 +30,21 @@ RUN rm -f apel-setup-script.zip
 
 RUN rm -rf apel-apel-setup-script
 
-RUN wget https://github.com/apel/rest/archive/dev.zip
+RUN wget https://github.com/apel/rest/archive/load_post_requests.zip
 
-RUN unzip dev.zip 
+RUN unzip load_post_requests.zip 
 
-RUN rm dev.zip
+RUN rm load_post_requests.zip
 
-RUN cd rest-dev && pip install -r requirements.txt
+RUN cd rest-load_post_requests && pip install -r requirements.txt
 
 RUN service mysqld start
 
-RUN mysql -u root apel_rest < /rest-dev/schemas/cloud.sql
+RUN cd rest-load_post_requests && mysql -u root apel_rest < schemas/cloud.sql
 
-RUN cp -r rest-dev/* /var/www/html/
+RUN cp -r rest-load_post_requests/* /var/www/html/
 
-RUN rm -rf rest-dev
+RUN rm -rf rest-load_post_requests
 
 RUN mkdir -p /etc/httpd/ssl
 
