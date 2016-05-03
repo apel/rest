@@ -38,6 +38,10 @@ RUN rm dev.zip
 
 RUN cd rest-dev && pip install -r requirements.txt
 
+RUN RUN service mysqld start
+
+RUN cd rest-dev && mysql -u root apel_rest < schemas/cloud.sql
+
 RUN cp -r rest-dev/* /var/www/html/
 
 RUN rm -rf rest-dev
@@ -51,10 +55,6 @@ RUN cp /var/www/html/conf/apel_rest_api.conf /etc/httpd/conf.d/apel_rest_api.con
 RUN cp /var/www/html/conf/ssl.conf /etc/httpd/conf.d/ssl.conf
 
 RUN service httpd start
-
-RUN service mysqld start
-
-RUN mysql -u root apel_rest < schemas/cloud.sql
 
 EXPOSE 80
 EXPOSE 443
