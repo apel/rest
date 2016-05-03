@@ -38,7 +38,7 @@ RUN rm dev.zip
 
 RUN cd rest-dev && pip install -r requirements.txt
 
-RUN RUN service mysqld start
+RUN service mysqld start
 
 RUN cd rest-dev && mysql -u root apel_rest < schemas/cloud.sql
 
