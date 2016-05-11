@@ -50,9 +50,14 @@ class IndexView(APIView):
             cursor.execute('select VOGroupID, SiteID, DATE_FORMAT(UpdateTime, \'%d/%M/%Y %H:%i:%s\') AS TimeStamp, WallDuration from cloudrecords')
 
         columns = cursor.description
-        result = [{columns[index][0]:column for index, column in enumerate(value)} for value in cursor.fetchall()]
+        results = []
+        for value in cursor.fetchall():
+            result = {}
+            for index, column in enumerate(value):
+                result.update({columns[index][0]:column})
+            results.append(result)
 
-        return Response(result, status=200)
+        return Response(results, status=200)
 
     def post(self, request, format=None):
         """An example post method."""
