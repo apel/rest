@@ -10,5 +10,5 @@ urlpatterns = patterns('',
     # url(r'^blog/', include('blog.urls')),
 
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^index/$', IndexView.as_view()),
+    url(r'^cloud/summaryrecord/$', IndexView.as_view()),
 )
