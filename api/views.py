@@ -16,6 +16,26 @@ class IndexView(APIView):
         logger = logging.getLogger(__name__)
 
         response = "Hello, world. You're at the index."
+
+        # parse query parameters
+        group_name = request.GET.get('group', '')
+        if group_name is "":
+            group_name = None
+        service_name = request.GET.get('service', '')
+
+        if service_name is "":
+            service_name = None
+
+        start_date = request.GET.get('from', '')
+        if start_date is "":
+            start_date = None
+
+        end_date = request.GET.get('to', '')
+        if end_date is "":
+            end_date = "TODAY"
+
+        logger.info("%s %s %s %s", group_name, service_name, start_date, end_date)
+
         logger.info(response)
         return Response(response, status=200)
 
