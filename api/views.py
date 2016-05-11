@@ -47,12 +47,12 @@ class IndexView(APIView):
         elif service_name is not None:
             cursor.execute('select * from cloudrecords where SiteName = %s', [service_name])
         else:
-            cursor.execute('select VOGroupID, SiteID, DATE_FORMAT(UpdateTime, \'%d/%m/%Y %H:%M:%S\') AS TimeStamp, WallDuration from cloudrecords')
+            cursor.execute('select VOGroupID, SiteID, DATE_FORMAT(UpdateTime, \'%d/%M/%Y %H:%i:%s\') AS TimeStamp, WallDuration from cloudrecords')
 
         columns = cursor.description
         result = [{columns[index][0]:column for index, column in enumerate(value)} for value in cursor.fetchall()]
 
-        return Response(json.dumps(result), status=200)
+        return Response(result, status=200)
 
     def post(self, request, format=None):
         """An example post method."""
