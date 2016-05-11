@@ -90,26 +90,3 @@ class IndexView(APIView):
             return Response(response, status=500)
 
         logger.info("Message saved to in queue as %s/%s", inqpath, name)
-
-        try: # and load messages into database
-            loader = Loader(settings.QPATH,
-                            True,  # backend
-                            'mysql',  # save messages
-                            'localhost',  # hostname
-                            3306,  # port
-                            'apel_rest',  # name
-                            'root',  # username
-                            '',  # password
-                            '/var/run/apel/loader.pid')  # pidfile
-
-            loader.startup()
-            loader.load_all_msgs()
-            loader.shutdown()
-        except LoaderException as err:
-            logger.error("Loader exception occured: %s", err)
-
-            response = "Data could not be stored, please try again"
-            return Response(response, status=500)
-
-        response = "Data successfully loaded."
-        return Response(response, status=200)
