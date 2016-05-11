@@ -1,4 +1,6 @@
+import json
 import logging
+import MySQLdb
 import os
 
 from dirq.queue import Queue, QueueError
@@ -36,8 +38,21 @@ class IndexView(APIView):
 
         logger.info("%s %s %s %s", group_name, service_name, start_date, end_date)
 
-        logger.info(response)
-        return Response(response, status=200)
+        # get the data requested
+        database = MySQLdb.connect('localhost', 'root', '', 'apel_rest')
+        cursor = database.cursor()
+
+        if group_name is not None:
+            cursor.execute('select * from cloudrecords where VOGroup = %s', [group_name])
+        elif service_name is not None:
+            cursor.execute('select * from cloudrecords where SiteName = %s', [service_name])
+        else:
+            cursor.execute('select VOGroupID, SiteID, DATE_FORMAT(UpdateTime, \'%d/%m/%Y %H:%M:%S\') AS TimeStamp, WallDuration from cloudrecords')
+
+        columns = cursor.description
+        result = [{columns[index][0]:column for index, column in enumerate(value)} for value in cursor.fetchall()]
+
+        return Response(json.dumps(result), status=200)
 
     def post(self, request, format=None):
         """An example post method."""
