@@ -1,4 +1,3 @@
-import json
 import logging
 import MySQLdb
 import os
@@ -17,8 +16,6 @@ class IndexView(APIView):
         """An example get method."""
         logger = logging.getLogger(__name__)
 
-        response = "Hello, world. You're at the index."
-
         # parse query parameters
         group_name = request.GET.get('group', '')
         if group_name is "":
@@ -36,25 +33,40 @@ class IndexView(APIView):
         if end_date is "":
             end_date = "TODAY"
 
-        logger.info("%s %s %s %s", group_name, service_name, start_date, end_date)
+        logger.info("%s %s %s %s",
+                    group_name,
+                    service_name,
+                    start_date,
+                    end_date)
 
         # get the data requested
         database = MySQLdb.connect('localhost', 'root', '', 'apel_rest')
         cursor = database.cursor()
 
         if group_name is not None:
-            cursor.execute('select * from cloudrecords where VOGroup = %s', [group_name])
+            cursor.execute('select * from cloudrecords where VOGroupID = %s',
+                           [group_name])
+
         elif service_name is not None:
-            cursor.execute('select * from cloudrecords where SiteName = %s', [service_name])
+            cursor.execute('select * from cloudrecords where SiteID = %s',
+                           [service_name])
+
         else:
-            cursor.execute('select VOGroupID, SiteID, DATE_FORMAT(UpdateTime, \'%d/%M/%Y %H:%i:%s\') AS TimeStamp, WallDuration from cloudrecords')
+            cursor.execute('select * from cloudrecords')
+
+        return_fields = ["VOGroupID",
+                         "SiteID",
+                         "UpdateTime",
+                         "WallDuration"]
 
         columns = cursor.description
         results = []
         for value in cursor.fetchall():
             result = {}
             for index, column in enumerate(value):
-                result.update({columns[index][0]:column})
+                header = columns[index][0]
+                if header in return_fields:
+                    result.update({header: column})
             results.append(result)
 
         return Response(results, status=200)
