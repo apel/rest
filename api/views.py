@@ -1,3 +1,4 @@
+import datetime
 import logging
 import MySQLdb
 import os
@@ -27,11 +28,12 @@ class IndexView(APIView):
 
         start_date = request.GET.get('from', '')
         if start_date is "":
-            start_date = None
+            # querying without a from is not supported
+            return Response(status=501)
 
         end_date = request.GET.get('to', '')
         if end_date is "":
-            end_date = "TODAY"
+            end_date = datetime.datetime.now()
 
         logger.info("%s %s %s %s",
                     group_name,
