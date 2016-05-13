@@ -129,12 +129,8 @@ LOGGING = {
 # XML stuff
 REST_FRAMEWORK = {
     'DEFAULT_PARSER_CLASSES': (
-        'rest_framework_xml.parsers.XMLParser',
+        'apel_rest.PlainTextParser.PlainTextParser',
     ),
-    'DEFAULT_RENDERER_CLASSES': (
-        'rest_framework.renderers.JSONRenderer',
-        'rest_framework.renderers.BrowsableAPIRenderer',
-    )
     # 'DEFAULT_RENDERER_CLASSES': (
     #     'rest_framework_xml.renderers.XMLRenderer',
     # ),
@@ -143,3 +139,8 @@ REST_FRAMEWORK = {
 # QPATH defines where the rest api will store
 # incoming messages for later processing
 QPATH = '/tmp/django'
+
+
+# this should hide the GET?format button
+# this doesnt do anything, probably because of using older Django
+URL_FORMAT_OVERRIDE = None
