@@ -11,8 +11,29 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 
-class IndexView(APIView):
-    """An example URL."""
+class CloudSummaryRecordView(APIView):
+    """
+    Submit Cloud Accounting Records or Retrieve Cloud Accounting Summaries.
+    GET Useage:
+
+    .../computing/summaryrecord?Group=<group_name>&from=<date_from>&to=<date_to>
+
+    Will return the summary for group_name at all services,
+    between date_from and date_to as daily summaries
+
+    .../computing/summaryrecord?service=<service_name>&from=<date_from>&to=<date_to>
+
+    Will return the summary for service_name at all groups,
+    between date_from and date_to as daily summaries
+
+    .../computing/summaryrecord?&from=<date_from>
+    Will give summary for whole infrastructure from <data> to now
+
+    POST Usage:
+    .../computing/summaryrecord
+
+    Will save Cloud Accounting Records for later loading.
+    """
 
     def get(self, request, format=None):
         """An example get method."""
@@ -76,7 +97,7 @@ class IndexView(APIView):
             results.append(result)
 
         page = request.GET.get('page')
-        paginator = Paginator(results, 1)
+        paginator = Paginator(results, 100)  # 100 results per page
 
         try:
             result = paginator.page(page)
@@ -84,11 +105,13 @@ class IndexView(APIView):
             # If page is not an integer, deliver first page.
             result = paginator.page(1)
         except EmptyPage:
-            # If page is out of range (e.g. 9999), deliver last page of results.
+            # If page is out of range (e.g. 9999),
+            # deliver last page of results.
             result = paginator.page(paginator.num_pages)
 
         # context allows for clickable REST Framework links
-        serializer = PaginationSerializer(instance=result, context={'request': request})
+        serializer = PaginationSerializer(instance=result,
+                                          context={'request': request})
         result = serializer.data
 
         return Response(result, status=200)
@@ -130,9 +153,7 @@ class IndexView(APIView):
                    'empaid': 'string?'}
 
         inqpath = os.path.join(settings.QPATH, 'incoming')
-        # rejectqpath = os.path.join(qpath, 'reject')
         inq = Queue(inqpath, schema=QSCHEMA)
-        # rejectq = Queue(rejectqpath, schema=REJECT_SCHEMA)
 
         try:
             name = inq.add({'body': body,
