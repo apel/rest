@@ -131,6 +131,8 @@ REST_FRAMEWORK = {
     'DEFAULT_PARSER_CLASSES': (
         'apel_rest.PlainTextParser.PlainTextParser',
     ),
+    # this would add HTML buttons for pagination, but only in 3.3
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     # 'DEFAULT_RENDERER_CLASSES': (
     #     'rest_framework_xml.renderers.XMLRenderer',
     # ),
