@@ -16,21 +16,28 @@ class IndexTest(TestCase):
     def setUp(self):
         logging.disable(logging.INFO)
 
-    def test_index_get(self):
+    def test_cloud_summary_get_fail(self):
         test_client = Client()
-        response = test_client.get('/cloud/summaryrecord')
+        response = test_client.get('/api/v1/cloud/summaryrecord')
+
+        # without a from parameter, the request will fail
+        self.assertEqual(response.status_code, 501)
+
+    def test_cloud_summary_get(self):
+        test_client = Client()
+        response = test_client.get('/api/v1/cloud/summaryrecord?from=2000/01/01')
 
         self.assertEqual(response.status_code, 200)
 
         expected_content = '"{}"'
         self.assertEqual(response.content, expected_content)
 
-    def test_index_post(self):
+    def test_cloud_summary_post(self):
         with self.settings(QPATH=QPATH_TEST):
             test_client = Client()
-            response = test_client.post("/cloud/summaryrecord",
+            response = test_client.post("/api/v1/cloud/summaryrecord",
                                         MESSAGE,
-                                        content_type="text/xml",
+                                        content_type="text/plain",
                                         HTTP_EMPA_ID="Test Process",
                                         SSL_CLIENT_S_DN="Test Process")
 

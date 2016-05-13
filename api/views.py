@@ -95,6 +95,7 @@ class IndexView(APIView):
             # then POST likely to come via the rest api framework
             # hence use the content of request.POST as message
             body = request.POST.get('_content')
+
         else:
             # POST likely to comes through a browser client or curl
             # hence use request.body as message
@@ -126,3 +127,6 @@ class IndexView(APIView):
             return Response(response, status=500)
 
         logger.info("Message saved to in queue as %s/%s", inqpath, name)
+
+        response = "Data successfully loaded."
+        return Response(response, status=202)
