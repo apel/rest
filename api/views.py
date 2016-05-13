@@ -8,7 +8,6 @@ from django.conf import settings
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apel.db.loader import Loader, LoaderException
 
 class IndexView(APIView):
     """An example URL."""
@@ -46,20 +45,22 @@ class IndexView(APIView):
         cursor = database.cursor()
 
         if group_name is not None:
-            cursor.execute('select * from cloudrecords where VOGroupID = %s',
-                           [group_name])
+            cursor.execute('select * from cloudrecords where VOGroupID = %s and StartTime > %s and EndTime < %s',
+                           [group_name, start_date, end_date])
 
         elif service_name is not None:
-            cursor.execute('select * from cloudrecords where SiteID = %s',
+            cursor.execute('select * from cloudrecords where SiteID = %s and StartTime > %s and EndTime < %s',
                            [service_name])
 
         else:
             cursor.execute('select * from cloudrecords')
 
-        return_fields = ["VOGroupID",
-                         "SiteID",
-                         "UpdateTime",
-                         "WallDuration"]
+        return_headers = ["VOGroupID",
+                          "SiteID",
+                          "UpdateTime",
+                          "WallDuration",
+                          "StartTime",
+                          "EndTime"]
 
         columns = cursor.description
         results = []
@@ -67,7 +68,7 @@ class IndexView(APIView):
             result = {}
             for index, column in enumerate(value):
                 header = columns[index][0]
-                if header in return_fields:
+                if header in return_headers:
                     result.update({header: column})
             results.append(result)
 
