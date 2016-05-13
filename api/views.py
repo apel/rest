@@ -45,22 +45,23 @@ class IndexView(APIView):
         cursor = database.cursor()
 
         if group_name is not None:
-            cursor.execute('select * from cloudrecords where VOGroupID = %s and StartTime > %s and EndTime < %s',
+            cursor.execute('select * from CloudSummaries where VOGroupID = %s and EarliestStartTime > %s and LatestStartTime < %s',
                            [group_name, start_date, end_date])
 
         elif service_name is not None:
-            cursor.execute('select * from cloudrecords where SiteID = %s and StartTime > %s and EndTime < %s',
-                           [service_name])
+            cursor.execute('select * from CloudSummaries where SiteID = %s and EarliestStartTime > %s and LatestStartTime < %s',
+                           [service_name, start_date, end_date])
 
         else:
-            cursor.execute('select * from cloudrecords')
+            cursor.execute('select * from CloudSummaries where EarliestStartTime > %s',
+                           [start_date])
 
         return_headers = ["VOGroupID",
                           "SiteID",
                           "UpdateTime",
                           "WallDuration",
-                          "StartTime",
-                          "EndTime"]
+                          "EarliestStartTime",
+                          "LatestStartTime"]
 
         columns = cursor.description
         results = []
