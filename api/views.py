@@ -4,7 +4,9 @@ import MySQLdb
 import os
 
 from dirq.queue import Queue, QueueError
+from rest_framework.pagination import PaginationSerializer
 from django.conf import settings
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -73,7 +75,23 @@ class IndexView(APIView):
                     result.update({header: column})
             results.append(result)
 
-        return Response(results, status=200)
+        page = request.GET.get('page')
+        paginator = Paginator(results, 1)
+
+        try:
+            result = paginator.page(page)
+        except PageNotAnInteger:
+            # If page is not an integer, deliver first page.
+            result = paginator.page(1)
+        except EmptyPage:
+            # If page is out of range (e.g. 9999), deliver last page of results.
+            result = paginator.page(paginator.num_pages)
+
+        # context allows for clickable REST Framework links
+        serializer = PaginationSerializer(instance=result, context={'request': request})
+        result = serializer.data
+
+        return Response(result, status=200)
 
     def post(self, request, format=None):
         """An example post method."""
