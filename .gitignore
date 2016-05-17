@@ -1,3 +1,3 @@
 *.pyc
 *.log
-api/tests/test_index.py
+static/
