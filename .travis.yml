@@ -24,7 +24,7 @@ cache: pip
 before_script:
   # create an empty mysql database
   - mysql -u root -e "create database apel_rest"
-  - mysql -u root < schemas/cloud.sql
+  - mysql -u root apel_rest < schemas/cloud.sql
   - export PYTHONPATH=$PYTHONPATH:`pwd -P`
 
 # Command to run tests
