@@ -29,7 +29,7 @@ class IndexTest(TestCase):
 
         self.assertEqual(response.status_code, 200)
 
-        expected_content = '"{}"'
+        expected_content = '{"count":0,"next":null,"previous":null,"results":[]}'
         self.assertEqual(response.content, expected_content)
 
     def test_cloud_summary_post(self):
