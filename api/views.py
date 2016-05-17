@@ -36,7 +36,22 @@ class CloudSummaryRecordView(APIView):
     """
 
     def get(self, request, format=None):
-        """An example get method."""
+        """
+        Submit Cloud Accounting Records.
+
+        .../computing/summaryrecord?Group=<group_name>&from=<date_from>&to=<date_to>
+
+        Will return the summary for group_name at all services,
+        between date_from and date_to as daily summaries
+
+        .../computing/summaryrecord?service=<service_name>&from=<date_from>&to=<date_to>
+
+        Will return the summary for service_name at all groups,
+        between date_from and date_to as daily summaries
+
+        .../computing/summaryrecord?&from=<date_from>
+        Will give summary for whole infrastructure from <data> to now
+        """
         logger = logging.getLogger(__name__)
 
         # parse query parameters
@@ -117,7 +132,13 @@ class CloudSummaryRecordView(APIView):
         return Response(result, status=200)
 
     def post(self, request, format=None):
-        """An example post method."""
+        """
+        Retrieve Cloud Accounting Summaries.
+
+        .../computing/summaryrecord
+
+        Will save Cloud Accounting Records for later loading.
+        """
         logger = logging.getLogger(__name__)
 
         try:
