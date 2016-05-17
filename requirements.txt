@@ -3,4 +3,5 @@ djangorestframework==3.0.5
 dirq
 djangorestframework-xml
 # Dependencies for CI testing
+MySQLdb
 coveralls
