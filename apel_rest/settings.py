@@ -129,8 +129,10 @@ LOGGING = {
 # XML stuff
 REST_FRAMEWORK = {
     'DEFAULT_PARSER_CLASSES': (
-        'rest_framework_xml.parsers.XMLParser',
+        'apel_rest.PlainTextParser.PlainTextParser',
     ),
+    # this would add HTML buttons for pagination, but only in 3.3
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     # 'DEFAULT_RENDERER_CLASSES': (
     #     'rest_framework_xml.renderers.XMLRenderer',
     # ),
@@ -139,3 +141,8 @@ REST_FRAMEWORK = {
 # QPATH defines where the rest api will store
 # incoming messages for later processing
 QPATH = '/tmp/django'
+
+
+# this should hide the GET?format button
+# this doesnt do anything, probably because of using older Django
+URL_FORMAT_OVERRIDE = None
