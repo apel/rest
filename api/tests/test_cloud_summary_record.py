@@ -71,38 +71,50 @@ class IndexTest(TestCase):
     def saved_messages(self, message_path):
         return glob.glob(message_path)
 
-MESSAGE = """APEL-individual-job-message: v0.2
-Site: RAL-LCG2
-SubmitHost: ce01.ncg.ingrid.pt:2119/jobmanager-lcgsge-atlasgrid
-LocalJobId: 31564872
-LocalUserId: atlasprd019
-GlobalUserName: /C=whatever/D=someDN
-FQAN: /voname/Role=NULL/Capability=NULL
-WallDuration: 234256
-CpuDuration: 2345
-Processors: 2
-NodeCount: 2
-StartTime: 1234567890
-EndTime: 1234567899
-MemoryReal: 1000
-MemoryVirtual: 2000
-ServiceLevelType: Si2k
-ServiceLevel: 1000
+MESSAGE = """APEL-cloud-message: v0.2
+VMUUID: TestVM1 2013-02-25 17:37:27+00:00
+SiteName: CESGA
+MachineName: one-2421
+LocalUserId: 19
+LocalGroupId: 101
+GlobalUserName: NULL
+FQAN: NULL
+Status: completed
+StartTime: 1361813847
+EndTime: 1361813870
+SuspendDuration: NULL
+WallDuration: NULL
+CpuDuration: NULL
+CpuCount: 1
+NetworkType: NULL
+NetworkInbound: 0
+NetworkOutbound: 0
+Memory: 1000
+Disk: NULL
+StorageRecordId: NULL
+ImageId: NULL
+CloudType: OpenNebula
 %%
-Site: RAL-LCG2
-SubmitHost: ce01.ncg.ingrid.pt:2119/jobmanager-lcgsge-atlasgrid
-LocalJobId: 31564873
-LocalUserId: atlasprd018
-GlobalUserName: /C=whatever/D=someDN
-FQAN: /voname/Role=NULL/Capability=NULL
-WallDuration: 234257
-CpuDuration: 2347
-Processors: 3
-NodeCount: 3
-StartTime: 1234567891
-EndTime: 1234567898
-MemoryReal: 1000
-MemoryVirtual: 2000
-ServiceLevelType: Si2k
-ServiceLevel: 1000
+VMUUID: TestVM1 2015-06-25 17:37:27+00:00
+SiteName: CESGA
+MachineName: one-2422
+LocalUserId: 13
+LocalGroupId: 131
+GlobalUserName: NULL
+FQAN: NULL
+Status: completed
+StartTime: 1361413847
+EndTime: 1361811870
+SuspendDuration: NULL
+WallDuration: NULL
+CpuDuration: NULL
+CpuCount: 1
+NetworkType: NULL
+NetworkInbound: 0
+NetworkOutbound: 0
+Memory: 1000
+Disk: NULL
+StorageRecordId: NULL
+ImageId: NULL
+CloudType: OpenNebula
 %%"""
