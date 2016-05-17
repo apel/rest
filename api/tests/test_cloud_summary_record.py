@@ -1,22 +1,31 @@
+"""
+This module tests GET and POST requests.
+to the Cloud Sumamry Record endpoint.
+"""
+
 import glob
 import logging
-# import MySQLdb
 import os
-from subprocess import call
 import shutil
 
 from django.test import Client, TestCase
 
-# from apel.db.loader import Loader, LoaderException
-
 QPATH_TEST = '/tmp/django-test/'
 
 
-class IndexTest(TestCase):
+class CloudSummaryRecordTest(TestCase):
+    """
+    Tests GET and POST requests to the Cloud Sumamry Record endpoint.
+    """
     def setUp(self):
+        """Disables logging.INFO from appearing in test output."""
         logging.disable(logging.INFO)
 
     def test_cloud_summary_get_fail(self):
+        """
+        Test if a GET call on Clud Summaries returns 501
+        if querying with no FROM parameter
+        """
         test_client = Client()
         response = test_client.get('/api/v1/cloud/summaryrecord')
 
@@ -24,6 +33,7 @@ class IndexTest(TestCase):
         self.assertEqual(response.status_code, 501)
 
     def test_cloud_summary_get(self):
+        """Test a GET call returning empty data."""
         test_client = Client()
         response = test_client.get('/api/v1/cloud/summaryrecord?from=2000/01/01')
 
@@ -33,6 +43,10 @@ class IndexTest(TestCase):
         self.assertEqual(response.content, expected_content)
 
     def test_cloud_summary_post(self):
+        """
+        Test a POST call for content equality and a 202 return code,
+        with a test cloud message.
+        """
         with self.settings(QPATH=QPATH_TEST):
             test_client = Client()
             response = test_client.post("/api/v1/cloud/summaryrecord",
@@ -61,14 +75,20 @@ class IndexTest(TestCase):
             self.assertEqual(MESSAGE, message_content)
 
     def tearDown(self):
+        """Delete any messages under QPATH and re-enable logging.INFO"""
         self.delete_messages(QPATH_TEST)
         logging.disable(logging.NOTSET)
 
     def delete_messages(self, message_path):
+        """Delete any messages under message_path."""
         if os.path.exists(message_path):
             shutil.rmtree(message_path)
 
     def saved_messages(self, message_path):
+        """
+        Return a list of file locations,
+        corresponding to messages under message_path.
+        """
         return glob.glob(message_path)
 
 MESSAGE = """APEL-cloud-message: v0.2
