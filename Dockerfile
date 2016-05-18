@@ -15,8 +15,8 @@ RUN yum -y install python-pip python-devel python-ldap
 RUN pip install pip --upgrade
 RUN pip install setuptools --upgrade
 
-# install mysql (not sure if need this)
-# RUN yum -y install mysql-server mysql-devel gcc
+# install mysql
+RUN yum -y install mysql-server mysql-devel gcc
 
 # install apache
 RUN yum -y install httpd httpd-devel mod_wsgi mod_ssl
