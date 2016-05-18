@@ -57,6 +57,9 @@ RUN cp /var/www/html/conf/apel_rest_api.conf /etc/httpd/conf.d/apel_rest_api.con
 # copy SSL conf files to apache conf
 RUN cp /var/www/html/conf/ssl.conf /etc/httpd/conf.d/ssl.conf
 
+#this needed for testing as well
+RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/httpd/ssl/apache.key -out /etc/httpd/ssl/apache.crt -subj "/C=GB/ST=London/L=London/O=Example/OU=Example/CN=vm18.nubes.stfc.ac.uk"
+
 # this is needed at the moment to keep docker file running
 RUN service httpd start
 
