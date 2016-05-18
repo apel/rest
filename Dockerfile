@@ -57,6 +57,9 @@ RUN cp /var/www/html/conf/apel_rest_api.conf /etc/httpd/conf.d/apel_rest_api.con
 # copy SSL conf files to apache conf
 RUN cp /var/www/html/conf/ssl.conf /etc/httpd/conf.d/ssl.conf
 
+# this is needed at the moment to keep docker file running
+RUN service http start
+
 # expose apache and SSL ports
 EXPOSE 80
 EXPOSE 443
