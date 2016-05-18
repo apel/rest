@@ -5,7 +5,7 @@ MAINTAINER APEL Administrator <apel-admins@stfc.ac.uk>
 RUN rpm -ivh http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
 
 # Need to add trust anchor repo
-RUN touch /etc/yum.repos.d/EGI-trustanchors.repo 
+RUN touch /etc/yum.repos.d/EGI-trustanchors.repo
 RUN echo -e "# EGI Software Repository - REPO META (releaseId,repositoryId,repofileId) - (10824,-,2000)\n[EGI-trustanchors]\nname=EGI-trustanchors\nbaseurl=http://repository.egi.eu/sw/production/cas/1/current/\nenabled=1\ngpgcheck=1\ngpgkey=http://repository.egi.eu/sw/production/cas/1/GPG-KEY-EUGridPMA-RPM-3" >> /etc/yum.repos.d/EGI-trustanchors.repo
 
 RUN yum -y install wget unzip
@@ -20,7 +20,7 @@ RUN yum -y install httpd httpd-devel
 
 RUN yum -y install mod_wsgi mod_ssl ca-policy-egi-core
 
-RUN wget https://github.com/gregcorbett/apel/archive/apel-setup-script.zip 
+RUN wget https://github.com/gregcorbett/apel/archive/apel-setup-script.zip
 
 RUN unzip apel-setup-script.zip
 
@@ -30,17 +30,17 @@ RUN rm -f apel-setup-script.zip
 
 RUN rm -rf apel-apel-setup-script
 
-RUN wget https://github.com/apel/rest/archive/dev.zip
+RUN wget https://github.com/apel/rest/archive/start_docker_script.zip
 
-RUN unzip dev.zip 
+RUN unzip start_docker_script.zip
 
-RUN rm dev.zip
+RUN rm start_docker_script.zip
 
-RUN cd rest-dev && pip install -r requirements.txt
+RUN cd rest-start_docker_script && pip install -r requirements.txt
 
-RUN cp -r rest-dev/* /var/www/html/
+RUN cp -r rest-start_docker_script/* /var/www/html/
 
-RUN rm -rf rest-dev
+RUN rm -rf rest-start_docker_script
 
 RUN mkdir -p /etc/httpd/ssl
 
