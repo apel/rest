@@ -8,6 +8,10 @@ RUN yum -y install wget unzip
 # install python tools
 RUN yum -y install python-pip python-devel python-ldap
 
+# install python installers
+RUN pip install pip --upgrade
+RUN pip install setuptools --upgrade
+
 # install mysql (not sure if need this)
 # RUN yum -y install mysql-server mysql-devel gcc
 
