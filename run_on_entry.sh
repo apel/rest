@@ -16,8 +16,4 @@ openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/httpd/ssl/apach
 # start apache
 service httpd start
 # start mysql
-service mysqld start
-
-# added this to keep container running
-# as described here: http://kimh.github.io/blog/en/docker/gotchas-in-writing-dockerfile-en/
-tail -f /dev/null
+#service mysqld start
