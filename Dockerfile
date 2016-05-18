@@ -2,55 +2,54 @@ FROM centos:6
 
 MAINTAINER APEL Administrator <apel-admins@stfc.ac.uk>
 
-RUN rpm -ivh http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
-
-# Need to add trust anchor repo
-RUN touch /etc/yum.repos.d/EGI-trustanchors.repo
-RUN echo -e "# EGI Software Repository - REPO META (releaseId,repositoryId,repofileId) - (10824,-,2000)\n[EGI-trustanchors]\nname=EGI-trustanchors\nbaseurl=http://repository.egi.eu/sw/production/cas/1/current/\nenabled=1\ngpgcheck=1\ngpgkey=http://repository.egi.eu/sw/production/cas/1/GPG-KEY-EUGridPMA-RPM-3" >> /etc/yum.repos.d/EGI-trustanchors.repo
-
+# install tools needed to get files from GitHub
 RUN yum -y install wget unzip
 
+# install python tools
 RUN yum -y install python-pip python-devel python-ldap
 
-RUN yum -y install gcc
+# install mysql (not sure if need this)
+# RUN yum -y install mysql-server mysql-devel gcc
 
-RUN yum -y install mysql-server mysql-devel
+# install apache
+RUN yum -y install httpd httpd-devel mod_wsgi mod_ssl
 
-RUN yum -y install httpd httpd-devel
-
-RUN yum -y install mod_wsgi mod_ssl ca-policy-egi-core
-
+# get APEL codebase
 RUN wget https://github.com/gregcorbett/apel/archive/apel-setup-script.zip
 
+# unzip APEL codebase
 RUN unzip apel-setup-script.zip
 
+# install APEL
 RUN cd apel-apel-setup-script && python setup.py install
 
+# delete APEL codebase zip
 RUN rm -f apel-setup-script.zip
 
+# delete APEL codebase directory
 RUN rm -rf apel-apel-setup-script
 
+# get APEL REST interface
 RUN wget https://github.com/apel/rest/archive/start_docker_script.zip
 
+# unzip APEL REST interface
 RUN unzip start_docker_script.zip
 
+# remove APEL REST zip
 RUN rm start_docker_script.zip
 
+# install APEL REST requirements
 RUN cd rest-start_docker_script && pip install -r requirements.txt
 
+# copy APEL REST files to apache root
 RUN cp -r rest-start_docker_script/* /var/www/html/
 
-RUN rm -rf rest-start_docker_script
-
-RUN mkdir -p /etc/httpd/ssl
-
-RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/httpd/ssl/apache.key -out /etc/httpd/ssl/apache.crt -subj "/C=GB/ST=London/L=London/O=Example/OU=Example/CN=vm290.nubes.stfc.ac.uk"
-
+# copy APEL REST conf files to apache conf
 RUN cp /var/www/html/conf/apel_rest_api.conf /etc/httpd/conf.d/apel_rest_api.conf
 
+# copy SSL conf files to apache conf
 RUN cp /var/www/html/conf/ssl.conf /etc/httpd/conf.d/ssl.conf
 
-RUN service httpd start
-
+# expose apache and SSL ports
 EXPOSE 80
 EXPOSE 443
