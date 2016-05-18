@@ -12,8 +12,8 @@ RUN rpm -ivh http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noar
 RUN yum -y install python-pip python-devel python-ldap
 
 # install python installers
-#RUN pip install pip --upgrade
-#RUN pip install setuptools --upgrade
+RUN pip install pip --upgrade
+RUN pip install setuptools --upgrade
 
 # install mysql
 RUN yum -y install mysql-server mysql-devel gcc
@@ -56,12 +56,6 @@ RUN cp /var/www/html/conf/apel_rest_api.conf /etc/httpd/conf.d/apel_rest_api.con
 
 # copy SSL conf files to apache conf
 RUN cp /var/www/html/conf/ssl.conf /etc/httpd/conf.d/ssl.conf
-
-#this needed for testing as well
-RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/httpd/ssl/apache.key -out /etc/httpd/ssl/apache.crt -subj "/C=GB/ST=London/L=London/O=Example/OU=Example/CN=vm18.nubes.stfc.ac.uk"
-
-# this is needed at the moment to keep docker file running
-RUN service httpd start
 
 # expose apache and SSL ports
 EXPOSE 80
