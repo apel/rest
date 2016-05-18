@@ -12,8 +12,8 @@ RUN rpm -ivh http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noar
 RUN yum -y install python-pip python-devel python-ldap
 
 # install python installers
-RUN pip install pip --upgrade
-RUN pip install setuptools --upgrade
+#RUN pip install pip --upgrade
+#RUN pip install setuptools --upgrade
 
 # install mysql
 RUN yum -y install mysql-server mysql-devel gcc
