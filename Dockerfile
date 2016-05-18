@@ -58,7 +58,7 @@ RUN cp /var/www/html/conf/apel_rest_api.conf /etc/httpd/conf.d/apel_rest_api.con
 RUN cp /var/www/html/conf/ssl.conf /etc/httpd/conf.d/ssl.conf
 
 #start the webserver
-RUN service start httpd
+RUN service httpd start
 
 # expose apache and SSL ports
 EXPOSE 80
