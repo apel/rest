@@ -12,8 +12,11 @@ RUN rpm -ivh http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noar
 RUN yum -y install python-pip python-devel python-ldap
 
 # install mysql
-RUN yum -y install mysql-server
+RUN rpm --rebuilddb # as per https://github.com/docker/docker/issues/10180
+RUN yum -y install mysql
+RUN rpm --rebuilddb
 RUN yum -y install mysql-devel
+RUN rpm --rebuilddb
 RUN yum -y install gcc
 
 # install apache
@@ -59,4 +62,4 @@ RUN cp /var/www/html/conf/ssl.conf /etc/httpd/conf.d/ssl.conf
 EXPOSE 80
 EXPOSE 443
 
-ENTRYPOINT /rest-start_docker_script/run_on_entry.sh
+ENTRYPOINT /rest-start_docker_script/run_on_entry.sh && bash
