@@ -1,7 +1,4 @@
 #!/bin/bash
-
-# This may or may not work as script, but these are the commands to run
-
 echo "This script will deploy the containers for INDIGO-DataCloud Accounting."
 
 docker pull gregcorbett/rest
@@ -24,3 +21,7 @@ echo "Creating (self-signed) cert of $HOST_NAME"
 
 echo "Configuring APEL Server"
 docker run -d --link apel-mysql:mysql -p 80:80 -p 443:443 -e "HOST_NAME=$HOST_NAME" -e "MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD" gregcorbett/rest
+
+# this allows the APEL REST interface to configure
+sleep 60
+echo "Done!"
