@@ -51,4 +51,4 @@ RUN cp /var/www/html/conf/ssl.conf /etc/httpd/conf.d/ssl.conf
 EXPOSE 80
 EXPOSE 443
 
-ENTRYPOINT /rest-start_docker_script/run_on_entry.sh && bash
+ENTRYPOINT /rest-start_docker_script/run_on_entry.sh
