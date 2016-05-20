@@ -11,7 +11,7 @@ yum -y install ca-policy-egi-core
 mkdir -p /etc/httpd/ssl
 
 # create self signed certificates
-openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/httpd/ssl/apache.key -out /etc/httpd/ssl/apache.crt -subj "/C=GB/ST=Example/L=Example/O=Example/OU=Example/CN=$(hostname).$(domainname)"
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/httpd/ssl/apache.key -out /etc/httpd/ssl/apache.crt -subj "/C=GB/ST=Example/L=Example/O=Example/OU=Example/CN=$HOSTNAME"
 
 # start apache
 service httpd start
