@@ -11,12 +11,14 @@ yum -y install ca-policy-egi-core
 mkdir -p /etc/httpd/ssl
 
 # create self signed certificates
-openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/httpd/ssl/apache.key -out /etc/httpd/ssl/apache.crt -subj "/C=GB/ST=Example/L=Example/O=Example/OU=Example/CN=$HOSTNAME"
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/httpd/ssl/apache.key -out /etc/httpd/ssl/apache.crt -subj "/C=GB/ST=Example/L=Example/O=Example/OU=Example/CN=$HOST_NAME"
 
 # start apache
 service httpd start
+
+# not sure if we need to start it, as we only want the cli
 # start mysql
-service mysqld start
+# service mysqld start
 
 #keep docker running
 while true
