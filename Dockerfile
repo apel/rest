@@ -2,25 +2,14 @@ FROM centos:6
 
 MAINTAINER APEL Administrator <apel-admins@stfc.ac.uk>
 
-# install tools needed to get files from GitHub
-RUN yum -y install wget unzip
-
 # add EPEL repo so we can get pip
 RUN rpm -ivh http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
 
+# install tools needed to get files from GitHub
 # install python tools
-RUN yum -y install python-pip python-devel python-ldap
-
 # install mysql
-RUN rpm --rebuilddb # as per https://github.com/docker/docker/issues/10180
-RUN yum -y install mysql
-RUN rpm --rebuilddb
-RUN yum -y install mysql-devel
-RUN rpm --rebuilddb
-RUN yum -y install gcc
-
 # install apache
-RUN yum -y install httpd httpd-devel mod_wsgi mod_ssl
+RUN yum -y install wget unzip python-pip python-devel python-ldap mysql mysql-devel gcc httpd httpd-devel mod_wsgi mod_ssl
 
 # get APEL codebase
 RUN wget https://github.com/gregcorbett/apel/archive/apel-setup-script.zip
