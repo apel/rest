@@ -1,13 +1,13 @@
 -- ------------------------------------------------------------------------------
 -- CloudRecords
 
-CREATE TABLE CloudRecords (
-  UpdateTime TIMESTAMP,
+CREATE TABLE CloudRecords ( 
+  UpdateTime TIMESTAMP, 
 
-  VMUUID VARCHAR(255) NOT NULL,
+  VMUUID VARCHAR(255) NOT NULL, 
   SiteID INT NOT NULL,                -- Foreign key
 
-  MachineName VARCHAR(255),
+  MachineName VARCHAR(255), 
 
   LocalUserId VARCHAR(255),
   LocalGroupId VARCHAR(255),
@@ -20,19 +20,19 @@ CREATE TABLE CloudRecords (
 
   Status VARCHAR(255),
 
-  StartTime DATETIME NOT NULL,
-  EndTime DATETIME,
-  SuspendDuration INT NOT NULL,
+  StartTime DATETIME NOT NULL, 
+  EndTime DATETIME, 
+  SuspendDuration INT NOT NULL, 
 
-  WallDuration INT NOT NULL,
-  CpuDuration INT,
-  CpuCount INT,
+  WallDuration INT NOT NULL, 
+  CpuDuration INT, 
+  CpuCount INT, 
 
   NetworkType VARCHAR(255),
-  NetworkInbound INT,
-  NetworkOutbound INT,
-  Memory INT,
-  Disk INT,
+  NetworkInbound INT, 
+  NetworkOutbound INT, 
+  Memory INT, 
+  Disk INT, 
 
   StorageRecordId VARCHAR(255),
   ImageId VARCHAR(255),
@@ -53,17 +53,17 @@ CREATE TABLE CloudRecords (
 DROP PROCEDURE IF EXISTS ReplaceCloudRecord;
 DELIMITER //
 CREATE PROCEDURE ReplaceCloudRecord(
-  VMUUID VARCHAR(255), site VARCHAR(255),
-  machineName VARCHAR(255),
+  VMUUID VARCHAR(255), site VARCHAR(255), 
+  machineName VARCHAR(255), 
   localUserId VARCHAR(255),
-  localGroupId VARCHAR(255), globalUserName VARCHAR(255),
-  fqan VARCHAR(255), vo VARCHAR(255),
+  localGroupId VARCHAR(255), globalUserName VARCHAR(255), 
+  fqan VARCHAR(255), vo VARCHAR(255), 
   voGroup VARCHAR(255), voRole VARCHAR(255), status VARCHAR(255),
-  startTime DATETIME, endTime DATETIME,
+  startTime DATETIME, endTime DATETIME, 
   suspendDuration INT,
-  wallDuration INT, cpuDuration INT,
-  cpuCount INT, networkType VARCHAR(255),  networkInbound INT,
-  networkOutbound INT, memory INT,
+  wallDuration INT, cpuDuration INT, 
+  cpuCount INT, networkType VARCHAR(255),  networkInbound INT, 
+  networkOutbound INT, memory INT, 
   disk INT, storageRecordId VARCHAR(255),
   imageId VARCHAR(255), cloudType VARCHAR(255),
   publisherDN VARCHAR(255))
@@ -72,9 +72,9 @@ BEGIN
         GlobalUserNameID, FQAN, VOID, VOGroupID, VORoleID, Status, StartTime, EndTime, SuspendDuration,
         WallDuration, CpuDuration, CpuCount, NetworkType, NetworkInbound, NetworkOutbound, Memory, Disk, StorageRecordId, ImageId, CloudType, PublisherDNID)
       VALUES (
-        VMUUID, SiteLookup(site), machineName, localUserId, localGroupId, DNLookup(globalUserName),
+        VMUUID, SiteLookup(site), machineName, localUserId, localGroupId, DNLookup(globalUserName), 
         fqan, VOLookup(vo),
-        VOGroupLookup(voGroup), VORoleLookup(voRole), status, startTime, endTime, IFNULL(suspendDuration, 0),
+        VOGroupLookup(voGroup), VORoleLookup(voRole), status, startTime, endTime, IFNULL(suspendDuration, 0), 
 	IF((wallDuration IS NULL) AND (status = "completed"), endTime - startTime, wallDuration), cpuDuration, cpuCount, networkType, networkInbound, networkOutbound, memory,
         disk, storageRecordId, imageId, cloudType, DNLookup(publisherDN)
         );
@@ -112,9 +112,9 @@ CREATE TABLE CloudSummaries (
   NetworkOutbound BIGINT,
   Memory BIGINT,
   Disk BIGINT,
-
+ 
   NumberOfVMs INT,
-
+  
   PublisherDNID VARCHAR(255),
 
   PRIMARY KEY (SiteID, Month, Year, GlobalUserNameID, VOID, VOGroupID, VORoleID, Status, CloudType, ImageId)
@@ -124,20 +124,20 @@ CREATE TABLE CloudSummaries (
 DROP PROCEDURE IF EXISTS ReplaceCloudSummaryRecord;
 DELIMITER //
 CREATE PROCEDURE ReplaceCloudSummaryRecord(
-  site VARCHAR(255), month INT, year INT, globalUserName VARCHAR(255),
+  site VARCHAR(255), month INT, year INT, globalUserName VARCHAR(255), 
   vo VARCHAR(255), voGroup VARCHAR(255), voRole VARCHAR(255), status VARCHAR(255),
-  cloudType VARCHAR(255), imageId VARCHAR(255),
-  earliestStartTime DATETIME, latestStartTime DATETIME,
-  wallDuration BIGINT, cpuDuration BIGINT,
-  networkInbound BIGINT, networkOutbound BIGINT, memory BIGINT,
+  cloudType VARCHAR(255), imageId VARCHAR(255), 
+  earliestStartTime DATETIME, latestStartTime DATETIME, 
+  wallDuration BIGINT, cpuDuration BIGINT, 
+  networkInbound BIGINT, networkOutbound BIGINT, memory BIGINT, 
   disk BIGINT, numberOfVMs BIGINT,
   publisherDN VARCHAR(255))
 BEGIN
-    REPLACE INTO CloudSummaries(SiteID, Month, Year, GlobalUserNameID, VOID, VOGroupID, VORoleID, Status, CloudType, ImageId, EarliestStartTime, LatestStartTime,
+    REPLACE INTO CloudSummaries(SiteID, Month, Year, GlobalUserNameID, VOID, VOGroupID, VORoleID, Status, CloudType, ImageId, EarliestStartTime, LatestStartTime, 
         WallDuration, CpuDuration, NetworkInbound, NetworkOutbound, Memory, Disk, NumberOfVMs,  PublisherDNID)
       VALUES (
         SiteLookup(site), month, year, DNLookup(globalUserName), VOLookup(vo),
-        VOGroupLookup(voGroup), VORoleLookup(voRole), status, cloudType, imageId, earliestStartTime, latestStartTime,
+        VOGroupLookup(voGroup), VORoleLookup(voRole), status, cloudType, imageId, earliestStartTime, latestStartTime, 
         wallDuration, cpuDuration, networkInbound, networkOutbound, memory,
         disk, numberOfVMs, DNLookup(publisherDN)
         );
@@ -155,34 +155,34 @@ SELECT *, TIMESTAMPADD(SECOND, (IFNULL(SuspendDuration, 0) + WallDuration), Star
 
 CREATE TEMPORARY TABLE TGreatestMeasurementTimePerMonth
 (INDEX index_greatestmeasurementtime USING BTREE (MaxMT))
-select
-	Year(MeasurementTime) as Year,
-	Month(MeasurementTime) as Month,
-	VMUUID,
-	max(MeasurementTime) as MaxMT
-	from TCloudRecordsWithMeasurementTime
-	group by
-		Year(MeasurementTime),
-		Month(MeasurementTime),
+select 
+	Year(MeasurementTime) as Year, 
+	Month(MeasurementTime) as Month, 
+	VMUUID, 
+	max(MeasurementTime) as MaxMT 
+	from TCloudRecordsWithMeasurementTime 
+	group by 
+		Year(MeasurementTime), 
+		Month(MeasurementTime), 
 		VMUUID
 ;
 DROP TABLE IF EXISTS LastCloudRecordPerMonth;
 CREATE TABLE LastCloudRecordPerMonth
 (INDEX index_vmuuidyearmonth USING BTREE (VMUUID, Year, Month))
-SELECT
-	a.*,
-	Year(a.MeasurementTime) as Year,
-	Month(a.MeasurementTime) as Month
-	from TCloudRecordsWithMeasurementTime as a
-	left join
-	TGreatestMeasurementTimePerMonth as b
+SELECT 
+	a.*, 
+	Year(a.MeasurementTime) as Year, 
+	Month(a.MeasurementTime) as Month 
+	from TCloudRecordsWithMeasurementTime as a 
+	left join 
+	TGreatestMeasurementTimePerMonth as b 
 	on (
-		Year(a.MeasurementTime) = b.Year and
+		Year(a.MeasurementTime) = b.Year and 
 		Month(a.MeasurementTime) = b.Month and
 	        a.VMUUID = b.VMUUID
-	)
+	)       
 	where a.MeasurementTime = b.MaxMT
-
+	
 	ORDER BY a.VMUUID, Year(a.MeasurementTime), Month(a.MeasurementTime)
 ;
 
@@ -253,12 +253,12 @@ CREATE TABLE LastUpdated (
 
 DROP PROCEDURE IF EXISTS UpdateTimestamp;
 DELIMITER //
-CREATE PROCEDURE UpdateTimestamp(type VARCHAR(255))
+CREATE PROCEDURE UpdateTimestamp(type VARCHAR(255)) 
   BEGIN
    REPLACE INTO LastUpdated (Type) VALUES (type);
   END //
 
-DELIMITER ;
+DELIMITER ;    
 
 
 -- -----------------------------------------------------------------------------
@@ -318,7 +318,7 @@ DROP TABLE IF EXISTS VOs;
 CREATE TABLE VOs (
   id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(255) NOT NULL,
-
+    
   INDEX(name)
 ) ;
 
@@ -344,7 +344,7 @@ DROP TABLE IF EXISTS VORoles;
 CREATE TABLE VORoles (
   id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(255) NOT NULL,
-
+    
   INDEX(name)
 ) ;
 
@@ -370,7 +370,7 @@ DROP TABLE IF EXISTS VOGroups;
 CREATE TABLE VOGroups (
   id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(255) NOT NULL,
-
+  
   INDEX(name)
 ) ;
 
@@ -392,8 +392,8 @@ DELIMITER ;
 -- -----------------------------------------------------------------------------
 -- View on CloudRecords
 CREATE VIEW VCloudRecords AS
-    SELECT UpdateTime, VMUUID, site.name SiteName, MachineName,
-           LocalUserId, LocalGroupId, userdn.name GlobalUserName, FQAN, vo.name VO,
+    SELECT UpdateTime, VMUUID, site.name SiteName, MachineName, 
+           LocalUserId, LocalGroupId, userdn.name GlobalUserName, FQAN, vo.name VO, 
            vogroup.name VOGroup, vorole.name VORole,
            Status, StartTime, EndTime,
            SuspendDuration, WallDuration, CpuDuration, CpuCount, NetworkType,
@@ -416,15 +416,15 @@ CREATE VIEW VAnonCloudRecords AS
         SiteID = site.id
         AND GlobalUserNameID = userdn.id
         AND VOID = vo.id;
-
+        
 -- -----------------------------------------------------------------------------
 -- View on CloudSummaries
 CREATE VIEW VCloudSummaries AS
     SELECT UpdateTime, site.name SiteName, Month, Year,
-           userdn.name GlobalUserName, vo.name VO,
+           userdn.name GlobalUserName, vo.name VO, 
            vogroup.name VOGroup, vorole.name VORole,
            Status, CloudType, ImageId, EarliestStartTime, LatestStartTime,
-           WallDuration, CpuDuration, NetworkInbound, NetworkOutbound, Memory, Disk,
+           WallDuration, CpuDuration, NetworkInbound, NetworkOutbound, Memory, Disk, 
            NumberOfVMs
     FROM CloudSummaries, Sites site, DNs userdn, VOs vo, VOGroups vogroup, VORoles vorole WHERE
         SiteID = site.id
@@ -432,3 +432,5 @@ CREATE VIEW VCloudSummaries AS
         AND VOID = vo.id
         AND VOGroupID = vogroup.id
         AND VORoleID = vorole.id;
+
+
