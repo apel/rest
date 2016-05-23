@@ -150,11 +150,11 @@ DROP PROCEDURE IF EXISTS SummariseVMs;
 DELIMITER //
 CREATE PROCEDURE SummariseVMs()
 BEGIN
-CREATE TABLE TCloudRecordsWithMeasurementTime
+CREATE TEMPORARY TABLE TCloudRecordsWithMeasurementTime
 (INDEX index_measurementtime USING BTREE (MeasurementTime))
 SELECT *, TIMESTAMPADD(SECOND, (IFNULL(SuspendDuration, 0) + WallDuration), StartTime) as MeasurementTime FROM CloudRecords;
 
-CREATE TABLE TGreatestMeasurementTimePerDay
+CREATE TEMPORARY TABLE TGreatestMeasurementTimePerDay
 (INDEX index_greatestmeasurementtime USING BTREE (MaxMT))
 select 
 	Year(MeasurementTime) as Year, 
@@ -193,7 +193,7 @@ SELECT
 
 -- Based on discussion here: http://stackoverflow.com/questions/13196190/mysql-subtracting-value-from-previous-row-group-by
 
-CREATE TABLE TVMUsagePerDay
+CREATE TEMPORARY TABLE TVMUsagePerDay
 (INDEX index_VMUsagePerDay USING BTREE (VMUUID, Day, Month, Year))
 SELECT
 	ThisRecord.VMUUID as VMUUID,
