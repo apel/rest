@@ -27,19 +27,19 @@ RUN rm -f apel-setup-script.zip
 RUN rm -rf apel-apel-setup-script
 
 # get APEL REST interface
-RUN wget https://github.com/apel/rest/archive/start_docker_script.zip
+RUN wget https://github.com/apel/rest/archive/dev.zip
 
 # unzip APEL REST interface
-RUN unzip start_docker_script.zip
+RUN unzip dev.zip
 
 # remove APEL REST zip
-RUN rm start_docker_script.zip
+RUN rm dev.zip
 
 # install APEL REST requirements
-RUN cd rest-start_docker_script && pip install -r requirements.txt
+RUN cd rest-dev && pip install -r requirements.txt
 
 # copy APEL REST files to apache root
-RUN cp -r rest-start_docker_script/* /var/www/html/
+RUN cp -r rest-dev/* /var/www/html/
 
 # copy APEL REST conf files to apache conf
 RUN cp /var/www/html/conf/apel_rest_api.conf /etc/httpd/conf.d/apel_rest_api.conf
@@ -51,4 +51,4 @@ RUN cp /var/www/html/conf/ssl.conf /etc/httpd/conf.d/ssl.conf
 EXPOSE 80
 EXPOSE 443
 
-ENTRYPOINT /rest-start_docker_script/docker/run_on_entry.sh
+ENTRYPOINT /rest-dev/docker/run_on_entry.sh
