@@ -99,7 +99,10 @@ class CloudSummaryRecordView(APIView):
                           "UpdateTime",
                           "WallDuration",
                           "EarliestStartTime",
-                          "LatestStartTime"]
+                          "LatestStartTime",
+                          "Day",
+                          "Month",
+                          "Year"]
 
         columns = cursor.description
         results = []

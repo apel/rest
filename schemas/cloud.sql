@@ -91,6 +91,7 @@ CREATE TABLE CloudSummaries (
 
   SiteID INT NOT NULL, -- Foreign key
 
+  Day INT NOT NULL,
   Month INT NOT NULL,
   Year INT NOT NULL,
 
@@ -117,14 +118,14 @@ CREATE TABLE CloudSummaries (
   
   PublisherDNID VARCHAR(255),
 
-  PRIMARY KEY (SiteID, Month, Year, GlobalUserNameID, VOID, VOGroupID, VORoleID, Status, CloudType, ImageId)
+  PRIMARY KEY (SiteID, Day, Month, Year, GlobalUserNameID, VOID, VOGroupID, VORoleID, Status, CloudType, ImageId)
 
 );
 
 DROP PROCEDURE IF EXISTS ReplaceCloudSummaryRecord;
 DELIMITER //
 CREATE PROCEDURE ReplaceCloudSummaryRecord(
-  site VARCHAR(255), month INT, year INT, globalUserName VARCHAR(255), 
+  site VARCHAR(255), day INT, month INT, year INT, globalUserName VARCHAR(255), 
   vo VARCHAR(255), voGroup VARCHAR(255), voRole VARCHAR(255), status VARCHAR(255),
   cloudType VARCHAR(255), imageId VARCHAR(255), 
   earliestStartTime DATETIME, latestStartTime DATETIME, 
@@ -133,10 +134,10 @@ CREATE PROCEDURE ReplaceCloudSummaryRecord(
   disk BIGINT, numberOfVMs BIGINT,
   publisherDN VARCHAR(255))
 BEGIN
-    REPLACE INTO CloudSummaries(SiteID, Month, Year, GlobalUserNameID, VOID, VOGroupID, VORoleID, Status, CloudType, ImageId, EarliestStartTime, LatestStartTime, 
+    REPLACE INTO CloudSummaries(SiteID, Day, Month, Year, GlobalUserNameID, VOID, VOGroupID, VORoleID, Status, CloudType, ImageId, EarliestStartTime, LatestStartTime, 
         WallDuration, CpuDuration, NetworkInbound, NetworkOutbound, Memory, Disk, NumberOfVMs,  PublisherDNID)
       VALUES (
-        SiteLookup(site), month, year, DNLookup(globalUserName), VOLookup(vo),
+        SiteLookup(site), day, month, year, DNLookup(globalUserName), VOLookup(vo),
         VOGroupLookup(voGroup), VORoleLookup(voRole), status, cloudType, imageId, earliestStartTime, latestStartTime, 
         wallDuration, cpuDuration, networkInbound, networkOutbound, memory,
         disk, numberOfVMs, DNLookup(publisherDN)
@@ -149,50 +150,55 @@ DROP PROCEDURE IF EXISTS SummariseVMs;
 DELIMITER //
 CREATE PROCEDURE SummariseVMs()
 BEGIN
-CREATE TEMPORARY TABLE TCloudRecordsWithMeasurementTime
+CREATE TABLE TCloudRecordsWithMeasurementTime
 (INDEX index_measurementtime USING BTREE (MeasurementTime))
 SELECT *, TIMESTAMPADD(SECOND, (IFNULL(SuspendDuration, 0) + WallDuration), StartTime) as MeasurementTime FROM CloudRecords;
 
-CREATE TEMPORARY TABLE TGreatestMeasurementTimePerMonth
+CREATE TABLE TGreatestMeasurementTimePerDay
 (INDEX index_greatestmeasurementtime USING BTREE (MaxMT))
 select 
 	Year(MeasurementTime) as Year, 
 	Month(MeasurementTime) as Month, 
+        Day(MeasurementTime) as Day,
 	VMUUID, 
 	max(MeasurementTime) as MaxMT 
 	from TCloudRecordsWithMeasurementTime 
 	group by 
 		Year(MeasurementTime), 
 		Month(MeasurementTime), 
+                Day(MeasurementTime),
 		VMUUID
 ;
-DROP TABLE IF EXISTS LastCloudRecordPerMonth;
-CREATE TABLE LastCloudRecordPerMonth
-(INDEX index_vmuuidyearmonth USING BTREE (VMUUID, Year, Month))
+DROP TABLE IF EXISTS LastCloudRecordPerDay;
+CREATE TABLE LastCloudRecordPerDay
+(INDEX index_vmuuidyearmonthday USING BTREE (VMUUID, Year, Month, Day))
 SELECT 
 	a.*, 
 	Year(a.MeasurementTime) as Year, 
-	Month(a.MeasurementTime) as Month 
+	Month(a.MeasurementTime) as Month, 
+        Day(a.MeasurementTime) as Day
 	from TCloudRecordsWithMeasurementTime as a 
 	left join 
-	TGreatestMeasurementTimePerMonth as b 
+	TGreatestMeasurementTimePerDay as b 
 	on (
 		Year(a.MeasurementTime) = b.Year and 
 		Month(a.MeasurementTime) = b.Month and
+                Day(a.MeasurementTime) = b.Day and                                  
 	        a.VMUUID = b.VMUUID
 	)       
 	where a.MeasurementTime = b.MaxMT
 	
-	ORDER BY a.VMUUID, Year(a.MeasurementTime), Month(a.MeasurementTime)
+	ORDER BY a.VMUUID, Year(a.MeasurementTime), Month(a.MeasurementTime), Day(a.MeasurementTime)
 ;
 
 -- Based on discussion here: http://stackoverflow.com/questions/13196190/mysql-subtracting-value-from-previous-row-group-by
 
-CREATE TEMPORARY TABLE TVMUsagePerMonth
-(INDEX index_VMUsagePerMonth USING BTREE (VMUUID, Month, Year))
+CREATE TABLE TVMUsagePerDay
+(INDEX index_VMUsagePerDay USING BTREE (VMUUID, Day, Month, Year))
 SELECT
 	ThisRecord.VMUUID as VMUUID,
 	ThisRecord.SiteID as SiteID,
+        ThisRecord.Day as Day,
 	ThisRecord.Month as Month,
 	ThisRecord.Year as Year,
 	ThisRecord.GlobalUserNameID as GlobalUserNameID,
@@ -212,20 +218,20 @@ SELECT
 	-- If it doesn't change:
 	ThisRecord.Memory,
 	ThisRecord.Disk -- As above: constant or changing?
-FROM	LastCloudRecordPerMonth as ThisRecord
-LEFT JOIN LastCloudRecordPerMonth as PrevRecord
+FROM	LastCloudRecordPerDay as ThisRecord
+LEFT JOIN LastCloudRecordPerDay as PrevRecord
 ON 	(ThisRecord.VMUUID = PrevRecord.VMUUID and
 	PrevRecord.MeasurementTime = (SELECT max(MeasurementTime)
-					FROM LastCloudRecordPerMonth
+					FROM LastCloudRecordPerDay
 					WHERE VMUUID = ThisRecord.VMUUID
 					AND MeasurementTime < ThisRecord.MeasurementTime)
 	);
 
-    REPLACE INTO CloudSummaries(SiteID, Month, Year, GlobalUserNameID, VOID,
+    REPLACE INTO CloudSummaries(SiteID, Day, Month, Year, GlobalUserNameID, VOID,
 		VOGroupID, VORoleID, Status, CloudType, ImageId, EarliestStartTime, LatestStartTime, WallDuration, CpuDuration, NetworkInbound,
 			NetworkOutbound, Memory, Disk, NumberOfVMs, PublisherDNID)
     SELECT SiteID,
-    Month, Year,
+    Day, Month, Year,
     GlobalUserNameID, VOID, VOGroupID, VORoleID, Status, CloudType, ImageId,
     MIN(StartTime),
     MAX(StartTime),
@@ -237,8 +243,8 @@ ON 	(ThisRecord.VMUUID = PrevRecord.VMUUID and
     SUM(Disk),
     COUNT(*),
     'summariser'
-    FROM TVMUsagePerMonth
-    GROUP BY SiteID, Month, Year, GlobalUserNameID, VOID, VOGroupID, VORoleID, Status, CloudType, ImageId
+    FROM TVMUsagePerDay
+    GROUP BY SiteID, Day, Month, Year, GlobalUserNameID, VOID, VOGroupID, VORoleID, Status, CloudType, ImageId
     ORDER BY NULL;
 END //
 DELIMITER ;
@@ -420,7 +426,7 @@ CREATE VIEW VAnonCloudRecords AS
 -- -----------------------------------------------------------------------------
 -- View on CloudSummaries
 CREATE VIEW VCloudSummaries AS
-    SELECT UpdateTime, site.name SiteName, Month, Year,
+    SELECT UpdateTime, site.name SiteName, Day, Month, Year,
            userdn.name GlobalUserName, vo.name VO, 
            vogroup.name VOGroup, vorole.name VORole,
            Status, CloudType, ImageId, EarliestStartTime, LatestStartTime,
