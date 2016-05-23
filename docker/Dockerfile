@@ -27,19 +27,19 @@ RUN rm -f apel-setup-script.zip
 RUN rm -rf apel-apel-setup-script
 
 # get APEL REST interface
-RUN wget https://github.com/apel/rest/archive/dev.zip
+RUN wget https://github.com/apel/rest/archive/summariser.zip
 
 # unzip APEL REST interface
-RUN unzip dev.zip
+RUN unzip summariser.zip
 
 # remove APEL REST zip
-RUN rm dev.zip
+RUN rm summariser.zip
 
 # install APEL REST requirements
-RUN cd rest-dev && pip install -r requirements.txt
+RUN cd rest-summariser && pip install -r requirements.txt
 
 # copy APEL REST files to apache root
-RUN cp -r rest-dev/* /var/www/html/
+RUN cp -r rest-summariser/* /var/www/html/
 
 # copy APEL REST conf files to apache conf
 RUN cp /var/www/html/conf/apel_rest_api.conf /etc/httpd/conf.d/apel_rest_api.conf
