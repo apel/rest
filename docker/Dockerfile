@@ -60,4 +60,4 @@ RUN cp /var/www/html/conf/apeldbloader-cloud /etc/init.d/apeldbloader-cloud
 EXPOSE 80
 EXPOSE 443
 
-ENTRYPOINT /rest-dev/docker/run_on_entry.sh
+ENTRYPOINT /rest-summariser/docker/run_on_entry.sh
