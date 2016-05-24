@@ -22,6 +22,9 @@ host=$MYSQL_PORT_3306_TCP_ADDR" >> /etc/my.cnf
 # start apache
 service httpd start
 
+#start cron
+service crond start
+
 #keep docker running
 while true
 do

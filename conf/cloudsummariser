@@ -1,1 +1,1 @@
-10 3,14 * * * root /usr/bin/run_cloud_summariser.sh
+10 3,14 * * * root /usr/bin/run_cloud_summariser.sh >> ~/cronlog

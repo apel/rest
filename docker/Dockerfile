@@ -9,7 +9,8 @@ RUN rpm -ivh http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noar
 # install python tools
 # install mysql
 # install apache
-RUN yum -y install wget unzip python-pip python-devel python-ldap mysql mysql-devel gcc httpd httpd-devel mod_wsgi mod_ssl
+# install cron
+RUN yum -y install wget unzip python-pip python-devel python-ldap mysql mysql-devel gcc httpd httpd-devel mod_wsgi mod_ssl vixie-cron
 
 # get APEL codebase
 RUN wget https://github.com/gregcorbett/apel/archive/apel-setup-script.zip
@@ -48,7 +49,7 @@ RUN cp /var/www/html/conf/apel_rest_api.conf /etc/httpd/conf.d/apel_rest_api.con
 RUN cp /var/www/html/conf/ssl.conf /etc/httpd/conf.d/ssl.conf
 
 # copy the cron job that runs the summariser
-RUN mkdir -p /etc/cron.d && cp /var/www/html/conf/cloudsummariser /etc/cron.d/cloudsummariser
+RUN cp /var/www/html/conf/cloudsummariser /etc/cron.d/cloudsummariser
 
 # copy the script the cron job runs
 RUN cp /var/www/html/conf/run_cloud_summariser.sh /usr/bin/run_cloud_summariser.sh
