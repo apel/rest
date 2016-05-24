@@ -19,6 +19,26 @@ user=root
 password=$MYSQL_ROOT_PASSWORD
 host=$MYSQL_PORT_3306_TCP_ADDR" >> /etc/my.cnf
 
+# add clouddb.cfg
+echo "[db]
+# type of database
+backend = mysql
+# host with database
+hostname = $MYSQL_PORT_3306_TCP_ADDR
+# port to connect to
+port = 3306
+# database name
+name = apel_rest
+# database user
+username = root
+# password for database
+password = $MYSQL_ROOT_PASSWORD
+# how many records should be put/fetched to/from database
+# in single query
+records = 1000
+# option for summariser so that SummariseVMs is called
+type = cloud" >> /etc/apel/clouddb.cfg
+
 # start apache
 service httpd start
 
