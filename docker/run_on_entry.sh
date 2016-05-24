@@ -25,6 +25,9 @@ service httpd start
 #start cron
 service crond start
 
+# start the loader service
+service apeldbloader-cloud start
+
 #keep docker running
 while true
 do
