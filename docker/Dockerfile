@@ -57,7 +57,12 @@ RUN cp /var/www/html/conf/run_cloud_summariser.sh /usr/bin/run_cloud_summariser.
 # register the dbloader-cloud as a service
 RUN cp /var/www/html/conf/apeldbloader-cloud /etc/init.d/apeldbloader-cloud
 
+# copy the cloud loader conf
 RUN cp /var/www/html/conf/cloudloader.cfg /etc/apel/cloudloader.cfg
+
+# cop the cloud summariser conf
+RUN cp /var/www/html/conf/cloudsummariser.cfg /etc/apel/cloudsummariser.cfg
+
 # expose apache and SSL ports
 EXPOSE 80
 EXPOSE 443
