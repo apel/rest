@@ -1,1 +1,1 @@
-5 * * * * root /usr/bin/run_cloud_summariser.sh >> ~/cronlog
+*/5 * * * * root /usr/bin/run_cloud_summariser.sh >> ~/cronlog 2>&1

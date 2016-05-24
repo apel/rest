@@ -140,7 +140,7 @@ REST_FRAMEWORK = {
 
 # QPATH defines where the rest api will store
 # incoming messages for later processing
-QPATH = '/tmp/django'
+QPATH = '/var/spool/apel/cloud'
 
 
 # this should hide the GET?format button
