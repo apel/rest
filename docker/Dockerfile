@@ -63,6 +63,9 @@ RUN cp /var/www/html/conf/cloudloader.cfg /etc/apel/cloudloader.cfg
 # cop the cloud summariser conf
 RUN cp /var/www/html/conf/cloudsummariser.cfg /etc/apel/cloudsummariser.cfg
 
+# Make cloud log directory
+RUN mkdir /var/log/cloud
+
 # expose apache and SSL ports
 EXPOSE 80
 EXPOSE 443
