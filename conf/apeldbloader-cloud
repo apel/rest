@@ -10,7 +10,7 @@
 # Source function library.
 . /etc/rc.d/init.d/functions
 
-user="apel"
+user="root"
 prog="apeldbloader"
 dbconf="/etc/apel/clouddb.cfg"
 conf="/etc/apel/cloudloader.cfg"
