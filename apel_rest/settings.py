@@ -138,10 +138,13 @@ REST_FRAMEWORK = {
     # ),
 }
 
-# QPATH defines where the rest api will store
+# QPATH defines where the REST API will store
 # incoming messages for later processing
 QPATH = '/var/spool/apel/cloud'
 
+# CLOUD_DB_CONF defines the database
+# settings used by the REST API
+CLOUD_DB_CONF = '/etc/apel/clouddb.cfg'
 
 # this should hide the GET?format button
 # this doesnt do anything, probably because of using older Django

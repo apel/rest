@@ -1,3 +1,4 @@
+import ConfigParser
 import datetime
 import logging
 import MySQLdb
@@ -78,8 +79,29 @@ class CloudSummaryRecordView(APIView):
                     start_date,
                     end_date)
 
+        # Read configuration from file
+        try:
+            dbcp = ConfigParser.ConfigParser()
+            dbcp.read(settings.CLOUD_DB_CONF)
+
+            db_hostname = dbcp.get('db', 'hostname')
+            # db_port = int(dbcp.get('db', 'port'))
+            db_name = dbcp.get('db', 'name')
+            db_username = dbcp.get('db', 'username')
+            db_password = dbcp.get('db', 'password')
+        except (ConfigParser.Error, ValueError, IOError) as err:
+            logger.info('Error in configuration file %s: %s',
+                        settings.CLOUD_DB_CONF,
+                        str(err))
+
+            return Response(status=500)
+
         # get the data requested
-        database = MySQLdb.connect('localhost', 'root', '', 'apel_rest')
+        database = MySQLdb.connect(db_hostname,
+                                   db_username,
+                                   db_password,
+                                   db_name)
+
         cursor = database.cursor()
 
         if group_name is not None:
@@ -191,5 +213,5 @@ class CloudSummaryRecordView(APIView):
 
         logger.info("Message saved to in queue as %s/%s", inqpath, name)
 
-        response = "Data successfully loaded."
+        response = "Data successfully saved for future loading."
         return Response(response, status=202)
