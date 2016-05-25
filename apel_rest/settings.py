@@ -138,13 +138,29 @@ REST_FRAMEWORK = {
     # ),
 }
 
-# QPATH defines where the REST API will store
+# Defines where the REST API will store
 # incoming messages for later processing
 QPATH = '/var/spool/apel/cloud'
 
-# CLOUD_DB_CONF defines the database
-# settings used by the REST API
+# Defines the database settings
+# used by the REST API
 CLOUD_DB_CONF = '/etc/apel/clouddb.cfg'
+
+# Defines the maximum results per page
+# returned from the REST API
+RESULTS_PER_PAGE = 100
+
+# Defines what field to return
+# in the REST API
+RETURN_HEADERS = ["VOGroupID",
+                  "SiteID",
+                  "UpdateTime",
+                  "WallDuration",
+                  "EarliestStartTime",
+                  "LatestStartTime",
+                  "Day",
+                  "Month",
+                  "Year"]
 
 # this should hide the GET?format button
 # this doesnt do anything, probably because of using older Django
