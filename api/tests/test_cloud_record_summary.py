@@ -8,7 +8,7 @@ import logging
 import os
 import shutil
 
-from api.views import CloudSummaryRecordView
+from api.views.CloudRecordSummaryView import CloudRecordSummaryView
 from django.test import Client, TestCase
 from rest_framework.request import Request
 from rest_framework.test import APIRequestFactory
@@ -16,7 +16,7 @@ from rest_framework.test import APIRequestFactory
 QPATH_TEST = '/tmp/django-test/'
 
 
-class CloudSummaryRecordTest(TestCase):
+class CloudRecordSummaryTest(TestCase):
     """
     Tests GET and POST requests to the Cloud Sumamry Record endpoint.
     """
@@ -80,7 +80,7 @@ class CloudSummaryRecordTest(TestCase):
 
     def test_paginate_result(self):
         """Test an empty result is paginated correctly."""
-        test_cloud_view = CloudSummaryRecordView()
+        test_cloud_view = CloudRecordSummaryView()
         content = test_cloud_view._paginate_result(None, [])
         expected_content = {'count': 0,
                             'previous': None,
@@ -90,7 +90,7 @@ class CloudSummaryRecordTest(TestCase):
         self.assertEqual(content, expected_content)
 
     def test_parse_query_parameters(self):
-        test_cloud_view = CloudSummaryRecordView()
+        test_cloud_view = CloudRecordSummaryView()
         factory = APIRequestFactory()
         request = factory.post('/api/v1/cloud/summaryrecord?group=Group1&service=Service1&from=FromDate&to=ToDate', {})
 

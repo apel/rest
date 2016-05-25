@@ -12,7 +12,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 
-class CloudSummaryRecordView(APIView):
+class CloudRecordSummaryView(APIView):
     """
     Submit Cloud Accounting Records or Retrieve Cloud Accounting Summaries.
     GET Useage:

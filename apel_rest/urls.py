@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, include, url
 
 from django.contrib import admin
-from api.views import CloudSummaryRecordView
+from api.views.CloudRecordSummaryView import CloudRecordSummaryView
 admin.autodiscover()
 
 urlpatterns = patterns('',
@@ -10,5 +10,5 @@ urlpatterns = patterns('',
     # url(r'^blog/', include('blog.urls')),
 
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^api/v1/cloud/summaryrecord$', CloudSummaryRecordView.as_view())
+    url(r'^api/v1/cloud/summaryrecord$', CloudRecordSummaryView.as_view())
 )
