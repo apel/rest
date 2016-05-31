@@ -14,9 +14,6 @@ sleep 30
 
 docker exec apel-mysql mysql -u root -p$MYSQL_ROOT_PASSWORD -e "create database apel_rest"
 docker exec apel-mysql mysql -u root -p$MYSQL_ROOT_PASSWORD apel_rest -e "`cat schemas/cloud.sql`"
-docker exec apel-mysql mysql -u root -p$MYSQL_ROOT_PASSWORD apel_rest -e "CREATE USER 'apel'@'localhost' IDENTIFIED BY '$MYSQL_APEL_PASSWORD'"
-docker exec apel-mysql mysql -u root -p$MYSQL_ROOT_PASSWORD apel_rest -e "GRANT ALL PRIVILEGES ON apel_rest.* TO 'apel'@'localhost'"
-docker exec apel-mysql mysql -u root -p$MYSQL_ROOT_PASSWORD apel_rest -e "FLUSH PRIVILEGES"
 
 echo "Done"
 
@@ -24,7 +21,7 @@ HOST_NAME=$(hostname)
 echo "Creating (self-signed) cert of $HOST_NAME"
 
 echo "Configuring APEL Server"
-docker run -d --link apel-mysql:mysql -p 80:80 -p 443:443 -e "HOST_NAME=$HOST_NAME" -e "MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD" gregcorbett/rest
+docker run -d --link apel-mysql:mysql -p 80:80 -p 443:443 -e "HOST_NAME=$HOST_NAME" -e "MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD" -e"MYSQL_APEL_PASSWORD=$MYSQL_APEL_PASSWORD" gregcorbett/rest
 
 # this allows the APEL REST interface to configure
 sleep 60
