@@ -5,6 +5,7 @@ docker pull gregcorbett/rest
 
 echo "Configuring Database"
 MYSQL_ROOT_PASSWORD="EagerOmega"
+MYSQL_APEL_PASSWORD="${MYSQL_ROOT_PASSWORD}APEL"
 
 docker run -v /var/lib/mysql --name apel-mysql -p 3306:3306 -e "MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD" -d mysql
 
@@ -13,6 +14,9 @@ sleep 30
 
 docker exec apel-mysql mysql -u root -p$MYSQL_ROOT_PASSWORD -e "create database apel_rest"
 docker exec apel-mysql mysql -u root -p$MYSQL_ROOT_PASSWORD apel_rest -e "`cat schemas/cloud.sql`"
+docker exec apel-mysql mysql -u root -p$MYSQL_ROOT_PASSWORD apel_rest -e "CREATE USER 'apel'@'localhost' IDENTIFIED BY '$MYSQL_APEL_PASSWORD'"
+docker exec apel-mysql mysql -u root -p$MYSQL_ROOT_PASSWORD apel_rest -e "GRANT ALL PRIVILEGES ON apel_rest.* TO 'apel'@'localhost'"
+docker exec apel-mysql mysql -u root -p$MYSQL_ROOT_PASSWORD apel_rest -e "FLUSH PRIVILEGES"
 
 echo "Done"
 
