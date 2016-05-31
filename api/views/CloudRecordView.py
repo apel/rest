@@ -14,9 +14,8 @@ from rest_framework.views import APIView
 
 class CloudRecordView(APIView):
     """
-    Submit Cloud Accounting Records or Retrieve Cloud Accounting Summaries.
-    POST Usage:
-    .../computing/summaryrecord
+    Submit Cloud Accounting Records.
+    .../cloud/record
 
     Will save Cloud Accounting Records for later loading.
     """
@@ -25,7 +24,7 @@ class CloudRecordView(APIView):
         """
         Submit Cloud Accounting Records.
 
-        .../computing/summaryrecord
+        .../cloud/record
 
         Will save Cloud Accounting Records for later loading.
         """
