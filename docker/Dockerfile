@@ -66,6 +66,9 @@ RUN cp /var/www/html/conf/cloudsummariser.cfg /etc/apel/cloudsummariser.cfg
 # Make cloud log and run directory
 RUN mkdir /var/log/cloud &&  mkdir /var/run/cloud
 
+# Make spool dir writeable by apache
+RUN chmod -R a+rwx /var/spool/apel/cloud/
+
 # expose apache and SSL ports
 EXPOSE 80
 EXPOSE 443
