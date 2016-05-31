@@ -64,7 +64,9 @@ class CloudRecordView(APIView):
                    'empaid': 'string?'}
 
         inqpath = os.path.join(settings.QPATH, 'incoming')
+        logger.info("QUEUE try")
         inq = Queue(inqpath, schema=QSCHEMA)
+        logger.info("QUEUE DONE")
 
         try:
             name = inq.add({'body': body,
