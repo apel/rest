@@ -19,13 +19,16 @@ user=root
 password=$MYSQL_ROOT_PASSWORD
 host=$MYSQL_PORT_3306_TCP_ADDR" >> /etc/my.cnf
 
+# Create an APEL user in mysql
 mysql -u root -h $MYSQL_PORT_3306_TCP_ADDR -p$MYSQL_ROOT_PASSWORD -e "CREATE USER 'apel'@'%' IDENTIFIED BY '$MYSQL_APEL_PASSWORD'"
 
+# Grant the APEL user privileges
 mysql -u root -h $MYSQL_PORT_3306_TCP_ADDR -p$MYSQL_ROOT_PASSWORD -e "GRANT ALL PRIVILEGES ON apel_rest.* TO 'apel'@'%' WITH GRANT OPTION"
 
+# Flush the privileges
 mysql -u root -h $MYSQL_PORT_3306_TCP_ADDR -p$MYSQL_ROOT_PASSWORD -e "FLUSH PRIVILEGES"
 
-# add clouddb.cfg
+# add clouddb.cfg, so that the default user of mysql is APEL
 echo "[db]
 # type of database
 backend = mysql
@@ -36,9 +39,9 @@ port = 3306
 # database name
 name = apel_rest
 # database user
-username = root
+username = apel
 # password for database
-password = $MYSQL_ROOT_PASSWORD
+password = $MYSQL_APEL_PASSWORD
 # how many records should be put/fetched to/from database
 # in single query
 records = 1000
