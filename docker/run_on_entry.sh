@@ -13,12 +13,6 @@ mkdir -p /etc/httpd/ssl
 # create self signed certificates
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/httpd/ssl/apache.key -out /etc/httpd/ssl/apache.crt -subj "/C=GB/ST=Example/L=Example/O=Example/OU=Example/CN=$HOST_NAME"
 
-# configure mysql
-echo "[client]
-user=root
-password=$MYSQL_ROOT_PASSWORD
-host=$MYSQL_PORT_3306_TCP_ADDR" >> /etc/my.cnf
-
 # Create an APEL user in mysql
 mysql -u root -h $MYSQL_PORT_3306_TCP_ADDR -p$MYSQL_ROOT_PASSWORD -e "CREATE USER 'apel'@'%' IDENTIFIED BY '$MYSQL_APEL_PASSWORD'"
 
@@ -27,6 +21,12 @@ mysql -u root -h $MYSQL_PORT_3306_TCP_ADDR -p$MYSQL_ROOT_PASSWORD -e "GRANT ALL 
 
 # Flush the privileges
 mysql -u root -h $MYSQL_PORT_3306_TCP_ADDR -p$MYSQL_ROOT_PASSWORD -e "FLUSH PRIVILEGES"
+
+# configure mysql
+echo "[client]
+user=apel
+password=$MYSQL_APEL_PASSWORD
+host=$MYSQL_PORT_3306_TCP_ADDR" >> /etc/my.cnf
 
 # add clouddb.cfg, so that the default user of mysql is APEL
 echo "[db]
