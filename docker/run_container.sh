@@ -21,7 +21,7 @@ HOST_NAME=$(hostname)
 echo "Creating (self-signed) cert of $HOST_NAME"
 
 echo "Configuring APEL Server"
-docker run -d --link apel-mysql:mysql -p 80:80 -p 443:443 -e "HOST_NAME=$HOST_NAME" -e "MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD" -e"MYSQL_APEL_PASSWORD=$MYSQL_APEL_PASSWORD" gregcorbett/rest
+docker run -d --link apel-mysql:mysql -p 80:80 -p 443:443 -e "HOST_NAME=$HOST_NAME" -e "MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD" -e "MYSQL_APEL_PASSWORD=$MYSQL_APEL_PASSWORD" gregcorbett/rest
 
 # this allows the APEL REST interface to configure
 sleep 60
