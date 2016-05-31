@@ -14,6 +14,7 @@ sleep 30
 
 docker exec apel-mysql mysql -u root -p$MYSQL_ROOT_PASSWORD -e "create database apel_rest"
 docker exec apel-mysql mysql -u root -p$MYSQL_ROOT_PASSWORD apel_rest -e "`cat schemas/cloud.sql`"
+docker exec apel-mysql mysql -u root -p$MYSQL_ROOT_PASSWORD apel_rest -e "`cat schemas/cloud-extra.sql`"
 
 echo "Done"
 
