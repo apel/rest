@@ -14,20 +14,19 @@ from rest_framework.views import APIView
 
 class CloudRecordSummaryView(APIView):
     """
-    Submit Cloud Accounting Records or Retrieve Cloud Accounting Summaries.
-    GET Useage:
+    Retrieve Cloud Accounting Summaries.
 
-    .../computing/summaryrecord?Group=<group_name>&from=<date_from>&to=<date_to>
+    .../cloud/record/summary?Group=<group_name>&from=<date_from>&to=<date_to>
 
     Will return the summary for group_name at all services,
     between date_from and date_to as daily summaries
 
-    .../computing/summaryrecord?service=<service_name>&from=<date_from>&to=<date_to>
+    .../cloud/record/summary?service=<service_name>&from=<date_from>&to=<date_to>
 
     Will return the summary for service_name at all groups,
     between date_from and date_to as daily summaries
 
-    .../computing/summaryrecord?&from=<date_from>
+    .../cloud/record/summary?from=<date_from>
     Will give summary for whole infrastructure from <data> to now
     """
 
@@ -35,17 +34,17 @@ class CloudRecordSummaryView(APIView):
         """
         Retrieve Cloud Accounting Summaries.
 
-        .../computing/summaryrecord?Group=<group_name>&from=<date_from>&to=<date_to>
+        .../cloud/record/summary?Group=<group_name>&from=<date_from>&to=<date_to>
 
         Will return the summary for group_name at all services,
         between date_from and date_to as daily summaries
 
-        .../computing/summaryrecord?service=<service_name>&from=<date_from>&to=<date_to>
+        .../cloud/record/summary?service=<service_name>&from=<date_from>&to=<date_to>
 
         Will return the summary for service_name at all groups,
         between date_from and date_to as daily summaries
 
-        .../computing/summaryrecord?&from=<date_from>
+        .../cloud/record/summary?from=<date_from>
         Will give summary for whole infrastructure from <data> to now
         """
         logger = logging.getLogger(__name__)
