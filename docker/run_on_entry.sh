@@ -39,6 +39,9 @@ records = 1000
 # option for summariser so that SummariseVMs is called
 type = cloud" >> /etc/apel/clouddb.cfg
 
+# Make cloud spool dir owned by apache
+chown apache -R /var/spool/apel/cloud/
+
 # start apache
 service httpd start
 
