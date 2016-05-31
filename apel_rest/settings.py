@@ -152,8 +152,8 @@ RESULTS_PER_PAGE = 100
 
 # Defines what field to return
 # in the REST API
-RETURN_HEADERS = ["VOGroupID",
-                  "SiteID",
+RETURN_HEADERS = ["VOGroup",
+                  "SiteName",
                   "UpdateTime",
                   "WallDuration",
                   "EarliestStartTime",

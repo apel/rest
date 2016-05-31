@@ -94,15 +94,15 @@ class CloudRecordSummaryView(APIView):
         cursor = database.cursor()
 
         if group_name is not None:
-            cursor.execute('select * from CloudSummaries where VOGroupID = %s and EarliestStartTime > %s and LatestStartTime < %s',
+            cursor.execute('select * from VCloudSummaries where VOGroup = %s and EarliestStartTime > %s and LatestStartTime < %s',
                            [group_name, start_date, end_date])
 
         elif service_name is not None:
-            cursor.execute('select * from CloudSummaries where SiteID = %s and EarliestStartTime > %s and LatestStartTime < %s',
+            cursor.execute('select * from VCloudSummaries where SiteName = %s and EarliestStartTime > %s and LatestStartTime < %s',
                            [service_name, start_date, end_date])
 
         else:
-            cursor.execute('select * from CloudSummaries where EarliestStartTime > %s',
+            cursor.execute('select * from VCloudSummaries where EarliestStartTime > %s',
                            [start_date])
 
         results = self._filter_cursor(cursor)
