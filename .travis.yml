@@ -1,0 +1,33 @@
+language: python
+python:
+  - "2.6"
+  - "2.7"
+  - "3.4"
+matrix:
+  allow_failures:
+    - python: "2.7"
+    - python: "3.4"
+  fast_finish: true
+
+# use the mysql service
+services:
+  - mysql
+
+# Route build to container-based infrastructure
+sudo: false
+# Cache the dependencies installed by pip
+cache: pip
+
+# Install defaults to "pip install -r requirements.txt"
+
+# Commands that prepare things for the test
+before_script:
+  # create an empty mysql database
+  - mysql -u root -e "create database apel_rest"
+  - mysql -u root apel_rest < schemas/cloud.sql
+  - export PYTHONPATH=$PYTHONPATH:`pwd -P`
+
+# Command to run tests
+script: coverage run --source='.' manage.py test
+
+after_success: coveralls
