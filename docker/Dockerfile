@@ -26,7 +26,7 @@ RUN rpm -i apel-server-1.5.1-1.el6.noarch.rpm --nodeps
 RUN wget https://github.com/apel/rest/archive/dev.zip
 
 # unzip APEL REST interface
-RUN unzip summarise.zip
+RUN unzip dev.zip
 
 # remove APEL REST zip
 RUN rm dev.zip
