@@ -2,35 +2,31 @@ FROM centos:6
 
 MAINTAINER APEL Administrator <apel-admins@stfc.ac.uk>
 
-# add EPEL repo so we can get pip
+# Add EPEL repo so we can get pip
 RUN rpm -ivh http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
 
 # install tools needed to get files from GitHub
 # install python tools
 # install mysql
 # install apache
-RUN yum -y install wget unzip python-pip python-devel python-ldap mysql mysql-devel gcc httpd httpd-devel mod_wsgi mod_ssl
+# install cron
+# install APEL requirements
+RUN yum -y install wget unzip python-pip python-devel mysql mysql-devel gcc httpd httpd-devel mod_wsgi mod_ssl vixie-cron MySQL-python python-iso8601 python-ldap
 
 # get APEL codebase
-RUN wget https://github.com/gregcorbett/apel/archive/apel-setup-script.zip
+RUN wget https://github.com/apel/apel/releases/download/1.5.1-1/apel-lib-1.5.1-1.el6.noarch.rpm
+RUN wget https://github.com/apel/apel/releases/download/1.5.1-1/apel-server-1.5.1-1.el6.noarch.rpm
 
-# unzip APEL codebase
-RUN unzip apel-setup-script.zip
-
-# install APEL
-RUN cd apel-apel-setup-script && python setup.py install
-
-# delete APEL codebase zip
-RUN rm -f apel-setup-script.zip
-
-# delete APEL codebase directory
-RUN rm -rf apel-apel-setup-script
+# Install APEL code base
+# use --nodeps because we dont need the ssm
+RUN rpm -i apel-lib-1.5.1-1.el6.noarch.rpm --nodeps
+RUN rpm -i apel-server-1.5.1-1.el6.noarch.rpm --nodeps
 
 # get APEL REST interface
 RUN wget https://github.com/apel/rest/archive/dev.zip
 
 # unzip APEL REST interface
-RUN unzip dev.zip
+RUN unzip summarise.zip
 
 # remove APEL REST zip
 RUN rm dev.zip
@@ -46,6 +42,27 @@ RUN cp /var/www/html/conf/apel_rest_api.conf /etc/httpd/conf.d/apel_rest_api.con
 
 # copy SSL conf files to apache conf
 RUN cp /var/www/html/conf/ssl.conf /etc/httpd/conf.d/ssl.conf
+
+# copy the cron job that runs the summariser
+RUN cp /var/www/html/conf/cloudsummariser /etc/cron.d/cloudsummariser
+
+# copy the script the cron job runs
+RUN cp /var/www/html/conf/run_cloud_summariser.sh /usr/bin/run_cloud_summariser.sh
+
+# register the dbloader-cloud as a service
+RUN cp /var/www/html/conf/apeldbloader-cloud /etc/init.d/apeldbloader-cloud
+
+# copy the cloud loader conf
+RUN cp /var/www/html/conf/cloudloader.cfg /etc/apel/cloudloader.cfg
+
+# cop the cloud summariser conf
+RUN cp /var/www/html/conf/cloudsummariser.cfg /etc/apel/cloudsummariser.cfg
+
+# Make cloud log and run directory
+RUN mkdir /var/log/cloud &&  mkdir /var/run/cloud
+
+# Make cloud spool dir
+RUN mkdir -p /var/spool/apel/cloud/
 
 # expose apache and SSL ports
 EXPOSE 80

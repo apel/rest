@@ -8,17 +8,20 @@ import logging
 import os
 import shutil
 
+from api.views.CloudRecordSummaryView import CloudRecordSummaryView
 from django.test import Client, TestCase
+from rest_framework.request import Request
+from rest_framework.test import APIRequestFactory
 
 QPATH_TEST = '/tmp/django-test/'
 
 
-class CloudSummaryRecordTest(TestCase):
+class CloudRecordSummaryTest(TestCase):
     """
     Tests GET and POST requests to the Cloud Sumamry Record endpoint.
     """
     def setUp(self):
-        """Disables logging.INFO from appearing in test output."""
+        """Disable logging.INFO from appearing in test output."""
         logging.disable(logging.INFO)
 
     def test_cloud_summary_get_fail(self):
@@ -27,7 +30,7 @@ class CloudSummaryRecordTest(TestCase):
         if querying with no FROM parameter
         """
         test_client = Client()
-        response = test_client.get('/api/v1/cloud/summaryrecord')
+        response = test_client.get('/api/v1/cloud/record/summary')
 
         # without a from parameter, the request will fail
         self.assertEqual(response.status_code, 501)
@@ -35,7 +38,7 @@ class CloudSummaryRecordTest(TestCase):
     def test_cloud_summary_get(self):
         """Test a GET call returning empty data."""
         test_client = Client()
-        response = test_client.get('/api/v1/cloud/summaryrecord?from=2000/01/01')
+        response = test_client.get('/api/v1/cloud/record/summary?from=2000/01/01')
 
         self.assertEqual(response.status_code, 200)
 
@@ -49,7 +52,7 @@ class CloudSummaryRecordTest(TestCase):
         """
         with self.settings(QPATH=QPATH_TEST):
             test_client = Client()
-            response = test_client.post("/api/v1/cloud/summaryrecord",
+            response = test_client.post("/api/v1/cloud/record",
                                         MESSAGE,
                                         content_type="text/plain",
                                         HTTP_EMPA_ID="Test Process",
@@ -73,10 +76,35 @@ class CloudSummaryRecordTest(TestCase):
 
             # check saved message content
             self.assertEqual(MESSAGE, message_content)
+            self.delete_messages(QPATH_TEST)
+
+    def test_paginate_result(self):
+        """Test an empty result is paginated correctly."""
+        test_cloud_view = CloudRecordSummaryView()
+        content = test_cloud_view._paginate_result(None, [])
+        expected_content = {'count': 0,
+                            'previous': None,
+                            u'results': [],
+                            'next': None}
+
+        self.assertEqual(content, expected_content)
+
+    def test_parse_query_parameters(self):
+        test_cloud_view = CloudRecordSummaryView()
+        factory = APIRequestFactory()
+        request = factory.post('/api/v1/cloud/record/summary?group=Group1&service=Service1&from=FromDate&to=ToDate', {})
+
+        parsed_responses = test_cloud_view._parse_query_parameters(request)
+        self.assertEqual(parsed_responses,
+                         ("Group1", "Service1", "FromDate", "ToDate"))
+
+
+
+    def test_filter_cursor(self):
+        pass
 
     def tearDown(self):
-        """Delete any messages under QPATH and re-enable logging.INFO"""
-        self.delete_messages(QPATH_TEST)
+        """Delete any messages under QPATH and re-enable logging.INFO."""
         logging.disable(logging.NOTSET)
 
     def delete_messages(self, message_path):
