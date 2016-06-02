@@ -1,7 +1,15 @@
 #!/bin/bash
 echo "This script will deploy the containers for INDIGO-DataCloud Accounting."
 
-docker pull gregcorbett/rest
+if [ $# -ne 1 ]
+then
+    echo "ERROR: Must supply APEL REST Image name as first arguement."
+    exit -1
+fi
+
+apel_rest_image = $1
+
+docker pull $apel_rest_image
 
 echo "Configuring Database"
 MYSQL_ROOT_PASSWORD="EagerOmega"
@@ -26,7 +34,7 @@ HOST_NAME=$(hostname)
 echo "Creating (self-signed) cert of $HOST_NAME"
 
 echo "Configuring APEL Server"
-docker run -d --link apel-mysql:mysql -p 80:80 -p 443:443 -e "HOST_NAME=$HOST_NAME" -e "MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD" -e "MYSQL_APEL_PASSWORD=$MYSQL_APEL_PASSWORD" gregcorbett/rest
+docker run -d --link apel-mysql:mysql -p 80:80 -p 443:443 -e "HOST_NAME=$HOST_NAME" -e "MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD" -e "MYSQL_APEL_PASSWORD=$MYSQL_APEL_PASSWORD" $apel_rest_image
 
 # this allows the APEL REST interface to configure
 sleep 60
