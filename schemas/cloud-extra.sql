@@ -1,8 +1,7 @@
--- Extra views and partitioning for the central APEL server.
--- This schema does not need to be loaded by regional servers.
+-- Extra views and partitioning for the Indigo DataCloud APEL server.
 -- -----------------------------------------------------------------------------
 
--- Partitioning for JobRecords to aid query performance and monthly deletions
+-- Partitioning for CloudRecords to aid query performance and monthly deletions
 
 ALTER TABLE CloudRecords
 PARTITION BY RANGE (TO_DAYS(EndTime)) (
