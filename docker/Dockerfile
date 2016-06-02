@@ -2,7 +2,7 @@ FROM centos:6
 
 MAINTAINER APEL Administrator <apel-admins@stfc.ac.uk>
 
-# add EPEL repo so we can get pip
+# Add EPEL repo so we can get pip
 RUN rpm -ivh http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
 
 # install tools needed to get files from GitHub
@@ -10,22 +10,17 @@ RUN rpm -ivh http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noar
 # install mysql
 # install apache
 # install cron
-RUN yum -y install wget unzip python-pip python-devel python-ldap mysql mysql-devel gcc httpd httpd-devel mod_wsgi mod_ssl vixie-cron
+# install APEL requirements
+RUN yum -y install wget unzip python-pip python-devel mysql mysql-devel gcc httpd httpd-devel mod_wsgi mod_ssl vixie-cron MySQL-python python-iso8601 python-ldap
 
 # get APEL codebase
-RUN wget https://github.com/gregcorbett/apel/archive/apel-setup-script.zip
+RUN wget https://github.com/apel/apel/releases/download/1.5.1-1/apel-lib-1.5.1-1.el6.noarch.rpm
+RUN wget https://github.com/apel/apel/releases/download/1.5.1-1/apel-server-1.5.1-1.el6.noarch.rpm
 
-# unzip APEL codebase
-RUN unzip apel-setup-script.zip
-
-# install APEL
-RUN cd apel-apel-setup-script && python setup.py install
-
-# delete APEL codebase zip
-RUN rm -f apel-setup-script.zip
-
-# delete APEL codebase directory
-RUN rm -rf apel-apel-setup-script
+# Install APEL code base
+# use --nodeps because we dont need the ssm
+RUN rpm -i apel-lib-1.5.1-1.el6.noarch.rpm --nodeps
+RUN rpm -i apel-server-1.5.1-1.el6.noarch.rpm --nodeps
 
 # get APEL REST interface
 RUN wget https://github.com/apel/rest/archive/summariser.zip
