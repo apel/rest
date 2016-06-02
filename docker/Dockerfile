@@ -23,19 +23,19 @@ RUN rpm -i apel-lib-1.5.1-1.el6.noarch.rpm --nodeps
 RUN rpm -i apel-server-1.5.1-1.el6.noarch.rpm --nodeps
 
 # get APEL REST interface
-RUN wget https://github.com/apel/rest/archive/dev.zip
+RUN wget https://github.com/apel/rest/archive/0.1.0-0.1.rc1.zip
 
 # unzip APEL REST interface
-RUN unzip dev.zip
+RUN unzip 0.1.0-0.1.rc1.zip
 
 # remove APEL REST zip
-RUN rm dev.zip
+RUN rm 0.1.0-0.1.rc1.zip
 
 # install APEL REST requirements
-RUN cd rest-dev && pip install -r requirements.txt
+RUN cd rest-0.1.0-0.1.rc1 && pip install -r requirements.txt
 
 # copy APEL REST files to apache root
-RUN cp -r rest-dev/* /var/www/html/
+RUN cp -r rest-0.1.0-0.1.rc1/* /var/www/html/
 
 # copy APEL REST conf files to apache conf
 RUN cp /var/www/html/conf/apel_rest_api.conf /etc/httpd/conf.d/apel_rest_api.conf
