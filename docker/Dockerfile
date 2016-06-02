@@ -23,19 +23,19 @@ RUN rpm -i apel-lib-1.5.1-1.el6.noarch.rpm --nodeps
 RUN rpm -i apel-server-1.5.1-1.el6.noarch.rpm --nodeps
 
 # get APEL REST interface
-RUN wget https://github.com/apel/rest/archive/summariser.zip
+RUN wget https://github.com/apel/rest/archive/dev.zip
 
 # unzip APEL REST interface
-RUN unzip summariser.zip
+RUN unzip summarise.zip
 
 # remove APEL REST zip
-RUN rm summariser.zip
+RUN rm dev.zip
 
 # install APEL REST requirements
-RUN cd rest-summariser && pip install -r requirements.txt
+RUN cd rest-dev && pip install -r requirements.txt
 
 # copy APEL REST files to apache root
-RUN cp -r rest-summariser/* /var/www/html/
+RUN cp -r rest-dev/* /var/www/html/
 
 # copy APEL REST conf files to apache conf
 RUN cp /var/www/html/conf/apel_rest_api.conf /etc/httpd/conf.d/apel_rest_api.conf
@@ -68,4 +68,4 @@ RUN mkdir -p /var/spool/apel/cloud/
 EXPOSE 80
 EXPOSE 443
 
-ENTRYPOINT /rest-summariser/docker/run_on_entry.sh
+ENTRYPOINT /rest-dev/docker/run_on_entry.sh
