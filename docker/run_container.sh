@@ -7,7 +7,7 @@ echo "Configuring Database"
 MYSQL_ROOT_PASSWORD="EagerOmega"
 MYSQL_APEL_PASSWORD="${MYSQL_ROOT_PASSWORD}APEL"
 
-docker run -v /var/lib/mysql --name apel-mysql -p 3306:3306 -e "MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD" -d mysql
+docker run -v /var/lib/mysql --name apel-mysql -p 3306:3306 -e "MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD" -d mysql:5
 
 #wait for apel-mysql to configure
 sleep 30
