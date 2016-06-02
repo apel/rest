@@ -7,7 +7,7 @@ then
     exit -1
 fi
 
-apel_rest_image = $1
+apel_rest_image=$1
 
 docker pull $apel_rest_image
 
