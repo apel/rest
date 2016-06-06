@@ -1,0 +1,95 @@
+---
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: apel-mysql
+  labels:
+    app: apel-accounting
+    tier: apel-mysql
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: apel-mysql
+        app: apel-accounting
+        tier: apel-mysql
+    spec:
+      containers:
+        - name: apel-mysql
+          image: mysql:5
+          ports:
+          - containerPort: 3306
+            name: apel-mysql
+          env:
+           - name: MYSQL_ROOT_PASSWORD
+             value: EagerOmega
+#           - name: MYSQL_DATABASE
+#             value: im-db
+          volumeMounts:
+           - name: apel-mysql-db
+             mountPath: /var/lib/mysql
+      volumes:
+        - name: apel-mysql-db
+          cinder:
+#            volumeID: 1279cb12-put-your-volume-id-ca611c0107ba
+            fsType: ext4
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: apel-mysql
+  labels:
+    app: apel-accounting
+spec:
+  clusterIP: 10.254.10.20
+  ports:
+  - port: 3306
+    protocol: TCP
+  selector:
+    name: apel-mysql
+
+
+---
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: apel-accounting
+spec:
+  replicas: 1
+  selector:
+    name: apel-server
+  template:
+    metadata:
+      labels:
+        name: apel-server
+    spec:
+      containers:
+      - name: apel-server
+        image: gregcorbett/rest:0.1.0-1
+        ports:
+        - "8080:8080"
+        - "443:443"
+        imagePullPolicy: Always
+        env:
+          - name: DATA_DB
+          # change this
+          value: mysql://apel:$MYSQL_ROOT_PASSWORD@10.254.10.20/apel-mysql-db
+          
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: apel-accounting
+  labels:
+    name: apel-accounting
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 8800
+    protocol: TCP
+    name: apel-accounting
+  selector:
+    name: apel-accounting
+          
