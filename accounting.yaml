@@ -72,9 +72,11 @@ spec:
         - "443:443"
         imagePullPolicy: Always
         env:
+          - name: : MYSQL_ROOT_PASSWORD
+            value: EagerOmega
           - name: DATA_DB
           # change this
-          value: mysql://apel:$MYSQL_ROOT_PASSWORD@10.254.10.20/apel-mysql-db
+            value: mysql://apel:$MYSQL_ROOT_PASSWORD@10.254.10.20/apel-mysql-db
           
 ---
 apiVersion: v1
