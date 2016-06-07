@@ -25,10 +25,13 @@ spec:
            - name: MYSQL_ROOT_PASSWORD
              value: PutYourPassWord
           volumeMounts:
-           - name: accounting-mysql-db
+           - name: accounting-mysql
              mountPath: /var/lib/mysql
       volumes:
-        - name: accounting-mysql-db
+        - name: accounting-mysql
+          cinder:
+            volumeID: 44de1b82-2642-4753-915a-54d3d6b54fea
+            fsType: ext4
 ---
 apiVersion: v1
 kind: Service
