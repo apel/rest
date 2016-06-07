@@ -2,96 +2,94 @@
 apiVersion: v1
 kind: ReplicationController
 metadata:
-  name: apel-mysql
+  name: accounting-mysql-rc
   labels:
-    app: apel-accounting
-    tier: apel-mysql
+    app: accounting
+    tier: accounting-mysql
 spec:
   replicas: 1
   template:
     metadata:
       labels:
-        name: apel-mysql
-        app: apel-accounting
-        tier: apel-mysql
+        name: accounting-mysql-rc
+        app: accounting
+        tier: accounting-mysql
     spec:
       containers:
-        - name: apel-mysql
+        - name: accounting-mysql
           image: mysql:5
           ports:
-          - containerPort: 3306
-            name: apel-mysql
+           - containerPort: 3306
+             name: mysql
           env:
            - name: MYSQL_ROOT_PASSWORD
-             value: EagerOmega
-#           - name: MYSQL_DATABASE
-#             value: im-db
+             value: PutYourPassWord
           volumeMounts:
-           - name: apel-mysql-db
+           - name: accounting-mysql-db
              mountPath: /var/lib/mysql
       volumes:
-        - name: apel-mysql-db
-          cinder:
-#            volumeID: 1279cb12-put-your-volume-id-ca611c0107ba
-            fsType: ext4
+        - name: accounting-mysql-db
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: apel-mysql
+  name: accounting-mysql
   labels:
-    app: apel-accounting
+    app: accounting
 spec:
-  clusterIP: 10.254.10.20
+  clusterIP: None
   ports:
   - port: 3306
     protocol: TCP
   selector:
-    name: apel-mysql
+    name: accounting-mysql
 
 
 ---
 apiVersion: v1
 kind: ReplicationController
 metadata:
-  name: apel-accounting
+  name: accounting-server-rc
 spec:
   replicas: 1
   selector:
-    name: apel-server
+    name: accounting-server-rc
   template:
     metadata:
       labels:
-        name: apel-server
+        name: accounting-server-rc
     spec:
       containers:
-      - name: apel-server
-        image: gregcorbett/rest:0.1.0-1
+      - name: accounting
+        image: indigodatacloud/accounting:0.1.0-1
         ports:
-        - "8080:8080"
-        - "443:443"
+        - containerPort: 8080
+          hostPort: 8080
+        - containerPort: 443
+          hostPort: 443
         imagePullPolicy: Always
         env:
-          - name: : MYSQL_ROOT_PASSWORD
-            value: EagerOmega
           - name: DATA_DB
-          # change this
-            value: mysql://apel:$MYSQL_ROOT_PASSWORD@10.254.10.20/apel-mysql-db
-          
+            value: mysql://root:PutYourPassword@127.0.0.1/accounting-db
+
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: apel-accounting
+  name: accounting-server
   labels:
-    name: apel-accounting
+    name: accounting-server
 spec:
   type: ClusterIP
   ports:
-  - port: 80
-    targetPort: 8800
+  - port: 8080
+    targetPort: 8080
     protocol: TCP
-    name: apel-accounting
+    name: accounting-http
+  - port: 443
+    targetPort: 443
+    protocol: TCP
+    name: accounting-https
   selector:
-    name: apel-accounting
-          
+    name: accounting
+
