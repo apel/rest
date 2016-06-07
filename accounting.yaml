@@ -66,8 +66,8 @@ spec:
       - name: accounting
         image: indigodatacloud/accounting:0.1.0-1
         ports:
-        - containerPort: 8080
-          hostPort: 8080
+        - containerPort: 80
+          hostPort: 80
         - containerPort: 443
           hostPort: 443
         imagePullPolicy: Always
@@ -85,8 +85,8 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-  - port: 8080
-    targetPort: 8080
+  - port: 80
+    targetPort: 80
     protocol: TCP
     name: accounting-http
   - port: 443
