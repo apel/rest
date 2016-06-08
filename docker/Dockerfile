@@ -61,6 +61,10 @@ RUN cp /var/www/html/conf/cloudsummariser.cfg /etc/apel/cloudsummariser.cfg
 # Make cloud log and run directory
 RUN mkdir /var/log/cloud &&  mkdir /var/run/cloud
 
+# Generate static files
+RUN cd /var/www/html/ && python manage.py collectstatic
+
+
 # Make cloud spool dir
 RUN mkdir -p /var/spool/apel/cloud/
 
