@@ -24,6 +24,12 @@ spec:
           env:
            - name: MYSQL_ROOT_PASSWORD
              value: PutYourPassWord
+           - name: MYSQL_DATABASE
+             value: apel_rest
+           - name: MYSQL_USER
+             value: apel
+           - name: MYSQL_PASSWORD
+             value: PutYourPassWordAPEL
           volumeMounts:
            - name: accounting-mysql
              mountPath: /var/lib/mysql
@@ -40,7 +46,7 @@ metadata:
   labels:
     app: accounting
 spec:
-  clusterIP: None
+  clusterIP: 10.254.10.20
   ports:
   - port: 3306
     protocol: TCP
@@ -64,7 +70,7 @@ spec:
     spec:
       containers:
       - name: accounting
-        image: indigodatacloud/accounting:0.1.0-1
+        image: gregcorbett/rest:ansible
         ports:
         - containerPort: 80
           hostPort: 80
@@ -73,7 +79,7 @@ spec:
         imagePullPolicy: Always
         env:
           - name: DATA_DB
-            value: mysql://root:PutYourPassword@127.0.0.1/accounting-db
+            value: mysql://root:PutYourPassword@10.254.10.20/accounting-db
 
 ---
 apiVersion: v1
