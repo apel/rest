@@ -42,6 +42,9 @@ class CloudRecordView(APIView):
         except KeyError:
             logger.error("No DN supplied in header")
             return Response(status=401)
+ 
+        # authorise DNs here
+
 
         if "_content" in request.POST.dict():
             # then POST likely to come via the rest api framework
