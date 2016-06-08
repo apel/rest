@@ -40,7 +40,8 @@ class CloudRecordView(APIView):
         try:
             signer = request.META['SSL_CLIENT_S_DN']
         except KeyError:
-            signer = "None"
+            logger.error("No DN supplied in header")
+            return Response(status=401)
 
         if "_content" in request.POST.dict():
             # then POST likely to come via the rest api framework
@@ -63,9 +64,7 @@ class CloudRecordView(APIView):
                    'empaid': 'string?'}
 
         inqpath = os.path.join(settings.QPATH, 'incoming')
-        logger.info("QUEUE try")
         inq = Queue(inqpath, schema=QSCHEMA)
-        logger.info("QUEUE DONE")
 
         try:
             name = inq.add({'body': body,
