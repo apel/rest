@@ -7,33 +7,17 @@ echo -e "# EGI Software Repository - REPO META (releaseId,repositoryId,repofileI
 # install IGTF trust bundle
 yum -y install ca-policy-egi-core
 
-# make dir for ssl keys
-mkdir -p /etc/httpd/ssl
-
-# create self signed certificates
-#openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/httpd/ssl/apache.key -out /etc/httpd/ssl/apache.crt -subj "/C=GB/ST=Example/L=Example/O=Example/OU=Example/CN=$HOST_NAME"
-
-# Create an APEL user in mysql
-#mysql -u root -h $MYSQL_PORT_3306_TCP_ADDR -p$MYSQL_ROOT_PASSWORD -e "CREATE USER 'apel'@'%' IDENTIFIED BY '$MYSQL_APEL_PASSWORD'"
-
-# Grant the APEL user privileges
-#mysql -u root -h $MYSQL_PORT_3306_TCP_ADDR -p$MYSQL_ROOT_PASSWORD -e "GRANT ALL PRIVILEGES ON apel_rest.* TO 'apel'@'%' WITH GRANT OPTION"
-
-# Flush the privileges
-#mysql -u root -h $MYSQL_PORT_3306_TCP_ADDR -p$MYSQL_ROOT_PASSWORD -e "FLUSH PRIVILEGES"
-
-# configure mysql
 echo "[client]
 user=apel
-password=PutYourPassWordAPEL
-host=10.254.10.20" >> /etc/my.cnf
+password=$MYSQL_PASSWORD
+host=10.254.10.21" >> /etc/my.cnf
 
 # add clouddb.cfg, so that the default user of mysql is APEL
 echo "[db]
 # type of database
 backend = mysql
 # host with database
-hostname = 10.254.10.20
+hostname = 10.254.10.21
 # port to connect to
 port = 3306
 # database name
@@ -41,7 +25,7 @@ name = apel_rest
 # database user
 username = apel
 # password for database
-password = 10.254.10.20
+password = $MYSQL_PASSWORD
 # how many records should be put/fetched to/from database
 # in single query
 records = 1000
