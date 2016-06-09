@@ -7,10 +7,15 @@ echo -e "# EGI Software Repository - REPO META (releaseId,repositoryId,repofileI
 # install IGTF trust bundle
 yum -y install ca-policy-egi-core
 
+if [ -z $MYSQL_PORT_3306_TCP_ADDR ]
+then
+    $MYSQL_PORT_3306_TCP_ADDR = $MYSQL_HOST
+fi
+
 echo "[client]
 user=apel
 password=$MYSQL_PASSWORD
-host=10.254.10.21" >> /etc/my.cnf
+host=$MYSQL_PORT_3306_TCP_ADDR" >> /etc/my.cnf
 
 # add clouddb.cfg, so that the default user of mysql is APEL
 echo "[db]
