@@ -166,6 +166,3 @@ RETURN_HEADERS = ["VOGroup",
 # this doesnt do anything, probably because of using older Django
 URL_FORMAT_OVERRIDE = None
 
-ALLOWED_FOR_GET=os.environ["ALLOWED_FOR_GET"]
-SERVER_ID=os.environ["SERVER_IAM_ID"]
-SERVER_SECRET=os.environ["SEVER_IAM_SECRET"]
