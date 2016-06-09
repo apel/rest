@@ -65,7 +65,7 @@ class CloudRecordSummaryView(APIView):
             logger.error(request.META['HTTP_AUTHORIZATION'])
             return Response(status=401)
 
-        logger.debug("Request from: %s", client_token)
+        logger.info("%s Authenticated", client_token)
 
         try:
             client_id = self._token_to_id(client_token)
@@ -91,10 +91,7 @@ class CloudRecordSummaryView(APIView):
             logger.error("%s does not have permission to view summaries", client_id)
             return Response(status=403)
 
-        logger.info("%s in settings.ALLOWED_FOR_GET", client_id)
- 
-        logger.info(client_id)
-        logger.info(settings.ALLOWED_FOR_GET)
+        logger.info("%s Authorized.", client_id)
  
         # parse query parameters
         (group_name,
