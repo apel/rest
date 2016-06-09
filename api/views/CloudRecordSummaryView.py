@@ -60,6 +60,10 @@ class CloudRecordSummaryView(APIView):
         except KeyError:
             logger.error("No AUTHORIZATION header provided, authentication failed.")
             return Response(status=401)
+        except IndexError:
+            logger.error("AUTHORIZATION header provided, but not of expected form.")
+            logger.error(request.META['HTTP_AUTHORIZATION'])
+            return Response(status=401)
 
         logger.debug("Request from: %s", client_token)
 
@@ -219,8 +223,8 @@ class CloudRecordSummaryView(APIView):
         #get the token
         try:
             token = request.META['HTTP_AUTHORIZATION'].split()[1]
-        except KeyError:
-            raise KeyError
+        except (KeyError, IndexError) as e:
+            raise e
         return token
 
     def _token_to_id(self, token):
