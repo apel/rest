@@ -37,6 +37,12 @@ records = 1000
 # option for summariser so that SummariseVMs is called
 type = cloud" >> /etc/apel/clouddb.cfg
 
+echo "ALLOWED_FOR_GET=$ALLOWED_FOR_GET
+SERVER_ID=$SERVER_ID
+SERVER_SECRET=$SERVER_SECRET
+" >> /var/www/html/apel_rest/settings.py
+
+
 # start apache
 service httpd start
 
