@@ -1,5 +1,6 @@
 import ConfigParser
 import datetime
+import httplib
 import json
 import logging
 import MySQLdb
@@ -95,10 +96,16 @@ class CloudRecordView(APIView):
 ###############################################################################
 
     def _signer_is_valid(self, signer):
+        logger = logging.getLogger(__name__)      
+  
         site_list = urllib2.Request('http://indigo.cloud.plgrid.pl/cmdb/service/list')
         site_list = urllib2.urlopen(site_list)
 
-        site_json = json.loads(site_list.read())
+        try:
+            site_json = json.loads(site_list.read())
+        except ValueError:
+            logger.error("List of providers could not be retrieved.")
+            return False
 
         for site in range(len(site_json['rows'])):
             try:
@@ -109,4 +116,5 @@ class CloudRecordView(APIView):
 
         # If we have not returned while in for loop
         # then site must be invalid
+        logger.info('Site is not found on list of providers')
         return False
