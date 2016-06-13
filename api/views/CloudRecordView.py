@@ -1,8 +1,10 @@
 import ConfigParser
 import datetime
+import json
 import logging
 import MySQLdb
 import os
+import urllib2
 
 from dirq.queue import Queue, QueueError
 from rest_framework.pagination import PaginationSerializer
@@ -44,7 +46,9 @@ class CloudRecordView(APIView):
             return Response(status=401)
  
         # authorise DNs here
-
+        if not self._signer_is_valid(signer):
+            logger.error("%s not a valid provider" % signer)
+            return Response(status=403)
 
         if "_content" in request.POST.dict():
             # then POST likely to come via the rest api framework
@@ -83,3 +87,26 @@ class CloudRecordView(APIView):
 
         response = "Data successfully saved for future loading."
         return Response(response, status=202)
+
+###############################################################################
+#                                                                             #
+# Helper methods                                                              #
+#                                                                             #
+###############################################################################
+
+    def _signer_is_valid(self, signer):
+        site_list = urllib2.Request('http://indigo.cloud.plgrid.pl/cmdb/service/list')
+        site_list = urllib2.urlopen(site_list)
+
+        site_json = json.loads(site_list.read())
+
+        for site in range(len(site_json['rows'])):
+            try:
+                if signer in site_json['rows'][site]['value']['hostname']:
+                    return True
+            except KeyError:
+                pass
+
+        # If we have not returned while in for loop
+        # then site must be invalid
+        return False
