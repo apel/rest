@@ -46,13 +46,24 @@ class CloudRecordSummaryTest(TestCase):
         self.assertEqual(response.content, expected_content)
 
     def test_parse_query_parameters(self):
-        test_cloud_view = CloudRecordSummaryView()
+        test_cloud_view = CloudRecordSummaryView() 
         factory = APIRequestFactory()
         request = factory.post('/accounting-server/api/v1/cloud/record/summary?group=Group1&service=Service1&from=FromDate&to=ToDate', {})
 
         parsed_responses = test_cloud_view._parse_query_parameters(request)
         self.assertEqual(parsed_responses,
                          ("Group1", "Service1", "FromDate", "ToDate"))
+
+    def test_paginate_result(self):
+        """Test an empty result is paginated correctly."""
+        test_cloud_view = CloudRecordSummaryView()
+        content = test_cloud_view._paginate_result(None, [])
+        expected_content = {'count': 0,
+                            'previous': None,
+                            u'results': [],
+                            'next': None}
+
+        self.assertEqual(content, expected_content)
 
     def test_filter_cursor(self):
         pass

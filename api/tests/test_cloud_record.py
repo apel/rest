@@ -8,7 +8,6 @@ import logging
 import os
 import shutil
 
-#from api.views.CloudRecordSummaryView import CloudRecordSummaryView
 from django.test import Client, TestCase
 from rest_framework.request import Request
 from rest_framework.test import APIRequestFactory
@@ -56,18 +55,6 @@ class CloudRecordTest(TestCase):
             # check saved message content
             self.assertEqual(MESSAGE, message_content)
             self.delete_messages(QPATH_TEST)
-
-    def test_paginate_result(self):
-        """Test an empty result is paginated correctly."""
-        test_cloud_view = CloudRecordSummaryView()
-        content = test_cloud_view._paginate_result(None, [])
-        expected_content = {'count': 0,
-                            'previous': None,
-                            u'results': [],
-                            'next': None}
-
-        self.assertEqual(content, expected_content)
-
 
     def test_filter_cursor(self):
         pass
