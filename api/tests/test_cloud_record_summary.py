@@ -24,31 +24,10 @@ class CloudRecordSummaryTest(TestCase):
         """Disable logging.INFO from appearing in test output."""
         logging.disable(logging.INFO)
 
-    def test_cloud_summary_get_fail(self):
-        """
-        Test if a GET call on Clud Summaries returns 501
-        if querying with no FROM parameter
-        """
-        test_client = Client()
-        response = test_client.get('/accounting-server/api/v1/cloud/record/summary')
-
-        # without a from parameter, the request will fail
-        self.assertEqual(response.status_code, 501)
-
-    def test_cloud_summary_get(self):
-        """Test a GET call returning empty data."""
-        test_client = Client()
-        response = test_client.get('/accounting-server/api/v1/cloud/record/summary?from=2000/01/01')
-
-        self.assertEqual(response.status_code, 200)
-
-        expected_content = '{"count":0,"next":null,"previous":null,"results":[]}'
-        self.assertEqual(response.content, expected_content)
-
     def test_parse_query_parameters(self):
         test_cloud_view = CloudRecordSummaryView() 
         factory = APIRequestFactory()
-        request = factory.post('/accounting-server/api/v1/cloud/record/summary?group=Group1&service=Service1&from=FromDate&to=ToDate', {})
+        request = factory.get('/accounting-server/api/v1/cloud/record/summary?group=Group1&service=Service1&from=FromDate&to=ToDate', {})
 
         parsed_responses = test_cloud_view._parse_query_parameters(request)
         self.assertEqual(parsed_responses,
@@ -64,6 +43,40 @@ class CloudRecordSummaryTest(TestCase):
                             'next': None}
 
         self.assertEqual(content, expected_content)
+
+    def test_request_to_token(self):
+        """Test a token can be extracted from request"""
+        test_cloud_view = CloudRecordSummaryView()
+        factory = APIRequestFactory()
+        request = factory.get('/api/v1/cloud/record/summary?from=FromDate', 
+                              HTTP_AUTHORIZATION = 'Bearer ThisIsAToken')
+
+        token = test_cloud_view._request_to_token(request)
+        self.assertEqual(token, 'ThisIsAToken')
+
+    def test_request_to_token_fail(self):
+        """Test the response of a tokenless request."""
+        test_cloud_view = CloudRecordSummaryView()
+        factory = APIRequestFactory()
+        request = factory.get('/api/v1/cloud/record/summary?from=FromDate')
+
+        self.assertRaises(KeyError, test_cloud_view._request_to_token, request)
+
+
+    def test_is_client_authorized(self):
+        """Test a example client is authorised."""
+        test_cloud_view = CloudRecordSummaryView()
+        factory = APIRequestFactory()
+        with self.settings(ALLOWED_FOR_GET='IAmAllowed'):
+            self.assertTrue(test_cloud_view._is_client_authorized('IAmAllowed'))
+
+    def test_is_client_authorized_fail(self):
+        """Test the failure of un-authorised clients."""
+        test_cloud_view = CloudRecordSummaryView()
+        factory = APIRequestFactory()
+        with self.settings(ALLOWED_FOR_GET='IAmAllowed'):
+            self.assertFalse(test_cloud_view._is_client_authorized('IAmNotAllowed'))
+
 
     def test_filter_cursor(self):
         pass
