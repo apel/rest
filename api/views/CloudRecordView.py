@@ -96,6 +96,7 @@ class CloudRecordView(APIView):
 ###############################################################################
 
     def _signer_is_valid(self, signer):
+        """Return True is signer is listed as a Indigo Provider."""
         logger = logging.getLogger(__name__)      
   
         site_list = urllib2.Request('http://indigo.cloud.plgrid.pl/cmdb/service/list')
@@ -107,9 +108,9 @@ class CloudRecordView(APIView):
             logger.error("List of providers could not be retrieved.")
             return False
 
-        for site in range(len(site_json['rows'])):
+        for site_num, site_name in enumerate(site_json['rows']):
             try:
-                if signer in site_json['rows'][site]['value']['hostname']:
+                if signer in site_json['rows'][site_num]['value']['hostname']:
                     return True
             except KeyError:
                 pass
