@@ -47,7 +47,7 @@ metadata:
   labels:
     app: accounting
 spec:
-  clusterIP: 10.254.10.21
+  clusterIP: 
   ports:
   - port: 3306
     protocol: TCP
@@ -78,7 +78,7 @@ spec:
         imagePullPolicy: Always
         env:
           - name: DATA_DB
-            value: mysql://root:PutYourPassHere@10.254.10.21/accounting-db
+            value: mysql://root:PutYourPassHere@xx.xxx.xx.xx/accounting-db
           - name: MYSQL_PASSWORD
             value: PutYourPassHere
 
