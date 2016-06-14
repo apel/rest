@@ -83,7 +83,7 @@ class CloudRecordSummaryView(APIView):
             logger.error("No client id in IAM response, likely token has expired")
             return Response(status=401)        
 
-        logger.info("Token identifed as %s", client_id)
+        logger.debug("Token identifed as %s", client_id)
 
         if not self._is_client_authorized(client_id):
             logger.error("%s does not have permission to view summaries", client_id)
