@@ -72,8 +72,4 @@ RUN mkdir -p /var/spool/apel/cloud/
 EXPOSE 80
 EXPOSE 443
 
-<<<<<<< HEAD
 ENTRYPOINT /apel_rest/docker/run_on_entry.sh
-=======
-ENTRYPOINT /rest-auth/docker/run_on_entry.sh
->>>>>>> Allow for auth info to be passed at start up
