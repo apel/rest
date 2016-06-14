@@ -1,6 +1,5 @@
 import ConfigParser
 import datetime
-import httplib
 import json
 import logging
 import MySQLdb
@@ -48,7 +47,7 @@ class CloudRecordView(APIView):
  
         # authorise DNs here
         if not self._signer_is_valid(signer):
-            logger.error("%s not a valid provider" % signer)
+            logger.error("%s not a valid provider", signer)
             return Response(status=403)
 
         if "_content" in request.POST.dict():

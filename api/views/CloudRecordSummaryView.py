@@ -8,8 +8,6 @@ import MySQLdb
 import os
 import urllib2
 
-import sys
-
 from dirq.queue import Queue, QueueError
 from rest_framework.pagination import PaginationSerializer
 from django.conf import settings
