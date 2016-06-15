@@ -44,10 +44,11 @@ https://indigo-paas.cloud.ba.infn.it/accounting/api/v1/cloud/record/summary?serv
 * to: Display summaries for dates (YYYYMMDD) up until this value
 * from: Display summaries for dates (YYYYMMDD) up after this value
 
-`from` is the only compulsary option, failure to include it will result in a 501 response.
+`from` is the only compulsary option, failure to include it will result in a 401 response.
 
 ### Expected Responses
+* 200: Your request was succesfully met
+* 400: No key=value pair provided for from
 * 401: Your services OAuth token was not provided by the request, or was not successfully extracted by the server
 * 403: Your services OAuth token was extracted by the server, but the IAM does not recognise it. 
 * 500: An unknown error has a occured
-* 501: No key=value pair provided for from
