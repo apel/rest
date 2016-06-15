@@ -63,12 +63,12 @@ class CloudRecordTest(TestCase):
         """Delete any messages under QPATH and re-enable logging.INFO."""
         logging.disable(logging.NOTSET)
 
-    def delete_messages(self, message_path):
+    def _delete_messages(self, message_path):
         """Delete any messages under message_path."""
         if os.path.exists(message_path):
             shutil.rmtree(message_path)
 
-    def saved_messages(self, message_path):
+    def _saved_messages(self, message_path):
         """
         Return a list of file locations,
         corresponding to messages under message_path.
