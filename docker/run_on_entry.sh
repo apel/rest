@@ -7,10 +7,15 @@ echo -e "# EGI Software Repository - REPO META (releaseId,repositoryId,repofileI
 # install IGTF trust bundle
 yum -y install ca-policy-egi-core
 
+if [ -z $MYSQL_PORT_3306_TCP_ADDR ]
+then
+    $MYSQL_PORT_3306_TCP_ADDR = $MYSQL_HOST
+fi
+
 echo "[client]
 user=apel
 password=$MYSQL_PASSWORD
-host=10.254.10.21" >> /etc/my.cnf
+host=$MYSQL_PORT_3306_TCP_ADDR" >> /etc/my.cnf
 
 # add clouddb.cfg, so that the default user of mysql is APEL
 echo "[db]
@@ -31,6 +36,13 @@ password = $MYSQL_PASSWORD
 records = 1000
 # option for summariser so that SummariseVMs is called
 type = cloud" >> /etc/apel/clouddb.cfg
+
+echo "
+ALLOWED_FOR_GET=$ALLOWED_FOR_GET
+SERVER_IAM_ID=$SERVER_IAM_ID
+SERVER_IAM_SECRET=$SERVER_IAM_SECRET
+" >> /var/www/html/apel_rest/settings.py
+
 
 # start apache
 service httpd start

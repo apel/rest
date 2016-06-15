@@ -165,3 +165,4 @@ RETURN_HEADERS = ["VOGroup",
 # this should hide the GET?format button
 # this doesnt do anything, probably because of using older Django
 URL_FORMAT_OVERRIDE = None
+

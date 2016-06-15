@@ -1,8 +1,10 @@
 import ConfigParser
 import datetime
+import json
 import logging
 import MySQLdb
 import os
+import urllib2
 
 from dirq.queue import Queue, QueueError
 from rest_framework.pagination import PaginationSerializer
@@ -40,7 +42,13 @@ class CloudRecordView(APIView):
         try:
             signer = request.META['SSL_CLIENT_S_DN']
         except KeyError:
-            signer = "None"
+            logger.error("No DN supplied in header")
+            return Response(status=401)
+ 
+        # authorise DNs here
+        if not self._signer_is_valid(signer):
+            logger.error("%s not a valid provider", signer)
+            return Response(status=403)
 
         if "_content" in request.POST.dict():
             # then POST likely to come via the rest api framework
@@ -63,9 +71,7 @@ class CloudRecordView(APIView):
                    'empaid': 'string?'}
 
         inqpath = os.path.join(settings.QPATH, 'incoming')
-        logger.info("QUEUE try")
         inq = Queue(inqpath, schema=QSCHEMA)
-        logger.info("QUEUE DONE")
 
         try:
             name = inq.add({'body': body,
@@ -81,3 +87,34 @@ class CloudRecordView(APIView):
 
         response = "Data successfully saved for future loading."
         return Response(response, status=202)
+
+###############################################################################
+#                                                                             #
+# Helper methods                                                              #
+#                                                                             #
+###############################################################################
+
+    def _signer_is_valid(self, signer):
+        """Return True is signer is listed as a Indigo Provider."""
+        logger = logging.getLogger(__name__)      
+  
+        site_list = urllib2.Request('http://indigo.cloud.plgrid.pl/cmdb/service/list')
+        site_list = urllib2.urlopen(site_list)
+
+        try:
+            site_json = json.loads(site_list.read())
+        except ValueError:
+            logger.error("List of providers could not be retrieved.")
+            return False
+
+        for site_num, site_name in enumerate(site_json['rows']):
+            try:
+                if signer in site_json['rows'][site_num]['value']['hostname']:
+                    return True
+            except KeyError:
+                pass
+
+        # If we have not returned while in for loop
+        # then site must be invalid
+        logger.info('Site is not found on list of providers')
+        return False
