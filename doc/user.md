@@ -21,9 +21,9 @@ For more information on the SSM, please see https://github.com/apel/ssm
 
 ### Expected Responses
 * 202: The data has been successfully saved for future loading and summarising.
-* 401: A X509 certifcate was not provided by the request, you're data was not saved.
-* 403: A X509 certifcate was provided, but it was not authorised to publish, you're data was not saved.
-* 500: An unknown error has a occured, you're data was not saved.
+* 401: A X509 certifcate was not provided by the request, your data was not saved.
+* 403: A X509 certifcate was provided, but it was not authorised to publish, your data was not saved.
+* 500: An unknown error has a occured, your data was not saved.
 
 ## As a Member of Indigo DataCloud
 
