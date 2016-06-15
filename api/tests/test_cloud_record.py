@@ -17,7 +17,7 @@ QPATH_TEST = '/tmp/django-test/'
 
 class CloudRecordTest(TestCase):
     """
-    Tests GET and POST requests to the Cloud Sumamry Record endpoint.
+    Tests POST requests to the Cloud Record endpoint.
     """
     def setUp(self):
         """Disable logging.INFO from appearing in test output."""
@@ -30,7 +30,7 @@ class CloudRecordTest(TestCase):
         """
         with self.settings(QPATH=QPATH_TEST):
             test_client = Client()
-            response = test_client.post("/api/v1/cloud/record",
+            response = test_client.post("/accounting-server/api/v1/cloud/record",
                                         MESSAGE,
                                         content_type="text/plain",
                                         HTTP_EMPA_ID="Test Process",

@@ -18,7 +18,7 @@ QPATH_TEST = '/tmp/django-test/'
 
 class CloudRecordSummaryTest(TestCase):
     """
-    Tests GET and POST requests to the Cloud Sumamry Record endpoint.
+    Tests GET requests to the Cloud Sumamry Record endpoint.
     """
     def setUp(self):
         """Disable logging.INFO from appearing in test output."""
@@ -78,8 +78,8 @@ class CloudRecordSummaryTest(TestCase):
             self.assertFalse(test_cloud_view._is_client_authorized('IAmNotAllowed'))
 
 
-    def test_filter_cursor(self):
-        pass
+    #def test_filter_cursor(self):
+    #    pass
 
     def tearDown(self):
         """Delete any messages under QPATH and re-enable logging.INFO."""
