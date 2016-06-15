@@ -30,7 +30,7 @@ class CloudRecordSummaryTest(TestCase):
         if querying with no FROM parameter
         """
         test_client = Client()
-        response = test_client.get('/api/v1/cloud/record/summary')
+        response = test_client.get('/accounting-server/api/v1/cloud/record/summary')
 
         # without a from parameter, the request will fail
         self.assertEqual(response.status_code, 501)
@@ -38,7 +38,7 @@ class CloudRecordSummaryTest(TestCase):
     def test_cloud_summary_get(self):
         """Test a GET call returning empty data."""
         test_client = Client()
-        response = test_client.get('/api/v1/cloud/record/summary?from=2000/01/01')
+        response = test_client.get('/accounting-server/api/v1/cloud/record/summary?from=2000/01/01')
 
         self.assertEqual(response.status_code, 200)
 
@@ -52,7 +52,7 @@ class CloudRecordSummaryTest(TestCase):
         """
         with self.settings(QPATH=QPATH_TEST):
             test_client = Client()
-            response = test_client.post("/api/v1/cloud/record",
+            response = test_client.post("/accounting-server/api/v1/cloud/record",
                                         MESSAGE,
                                         content_type="text/plain",
                                         HTTP_EMPA_ID="Test Process",
@@ -92,7 +92,7 @@ class CloudRecordSummaryTest(TestCase):
     def test_parse_query_parameters(self):
         test_cloud_view = CloudRecordSummaryView()
         factory = APIRequestFactory()
-        request = factory.post('/api/v1/cloud/record/summary?group=Group1&service=Service1&from=FromDate&to=ToDate', {})
+        request = factory.post('/accounting-server/api/v1/cloud/record/summary?group=Group1&service=Service1&from=FromDate&to=ToDate', {})
 
         parsed_responses = test_cloud_view._parse_query_parameters(request)
         self.assertEqual(parsed_responses,

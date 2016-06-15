@@ -23,25 +23,25 @@ RUN rpm -i apel-lib-1.5.1-1.el6.noarch.rpm --nodeps
 RUN rpm -i apel-server-1.5.1-1.el6.noarch.rpm --nodeps
 
 # get APEL REST interface
-RUN wget https://github.com/apel/rest/archive/0.1.0-1.zip
+RUN wget https://github.com/apel/rest/archive/0.1.0-1.zip -O apel_rest.zip
 
-# unzip APEL REST interface
-RUN unzip 0.1.0-1.zip
+# unzip APEL REST interface and mv to apel_rest dir
+RUN unzip apel_rest.zip && mv rest-0.1.0-1 apel_rest
 
 # remove APEL REST zip
-RUN rm 0.1.0-1.zip
+RUN rm apel_rest.zip
 
 # install APEL REST requirements
-RUN cd rest-0.1.0-1 && pip install -r requirements.txt
+RUN cd apel_rest && pip install -r requirements.txt
 
 # copy APEL REST files to apache root
-RUN cp -r rest-0.1.0-1/* /var/www/html/
+RUN cp -r apel_rest/* /var/www/html/
 
 # copy APEL REST conf files to apache conf
 RUN cp /var/www/html/conf/apel_rest_api.conf /etc/httpd/conf.d/apel_rest_api.conf
 
 # copy SSL conf files to apache conf
-RUN cp /var/www/html/conf/ssl.conf /etc/httpd/conf.d/ssl.conf
+#RUN cp /var/www/html/conf/ssl.conf /etc/httpd/conf.d/ssl.conf
 
 # copy the cron job that runs the summariser
 RUN cp /var/www/html/conf/cloudsummariser /etc/cron.d/cloudsummariser
@@ -61,6 +61,10 @@ RUN cp /var/www/html/conf/cloudsummariser.cfg /etc/apel/cloudsummariser.cfg
 # Make cloud log and run directory
 RUN mkdir /var/log/cloud &&  mkdir /var/run/cloud
 
+# Generate static files
+RUN cd /var/www/html/ && echo "yes" | python manage.py collectstatic 
+
+
 # Make cloud spool dir
 RUN mkdir -p /var/spool/apel/cloud/
 
@@ -68,4 +72,4 @@ RUN mkdir -p /var/spool/apel/cloud/
 EXPOSE 80
 EXPOSE 443
 
-ENTRYPOINT /rest-0.1.0-1/docker/run_on_entry.sh
+ENTRYPOINT /apel_rest/docker/run_on_entry.sh
