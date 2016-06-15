@@ -40,7 +40,7 @@ class CloudRecordTest(TestCase):
             self.assertEqual(response.status_code, 202)
 
             # get save messages under QPATH_TEST
-            messages = self.saved_messages('%s*/*/*/body' % QPATH_TEST)
+            messages = self._saved_messages('%s*/*/*/body' % QPATH_TEST)
 
             # check one and only one message body saved
             self.assertEqual(len(messages), 1)
@@ -54,7 +54,7 @@ class CloudRecordTest(TestCase):
 
             # check saved message content
             self.assertEqual(MESSAGE, message_content)
-            self.delete_messages(QPATH_TEST)
+            self._delete_messages(QPATH_TEST)
 
     # def test_filter_cursor(self):
         # pass
