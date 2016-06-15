@@ -5,13 +5,19 @@ MAINTAINER APEL Administrator <apel-admins@stfc.ac.uk>
 # Add EPEL repo so we can get pip
 RUN rpm -ivh http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
 
+# Add IGTF trust repo, so it can be installed
+RUN touch /etc/yum.repos.d/EGI-trustanchors.repo
+RUN echo -e "# EGI Software Repository - REPO META (releaseId,repositoryId,repofileId) - (10824,-,2000)\n[EGI-trustanchors]\nname=EGI-trustanchors\nbaseurl=http://repository.egi.eu/sw/production/cas/1/current/\nenabled=1\ngpgcheck=1\ngpgkey=http://repository.egi.eu/sw/production/cas/1/GPG-KEY-EUGridPMA-RPM-3" >> /etc/yum.repos.d/EGI-trustanchors.repo
+
 # install tools needed to get files from GitHub
 # install python tools
 # install mysql
 # install apache
 # install cron
+# install at (for scheduling the IGTF update after start up)
+# install IGTF trust bundle
 # install APEL requirements
-RUN yum -y install wget unzip python-pip python-devel mysql mysql-devel gcc httpd httpd-devel mod_wsgi mod_ssl vixie-cron MySQL-python python-iso8601 python-ldap
+RUN yum -y install wget unzip python-pip python-devel mysql mysql-devel gcc httpd httpd-devel mod_wsgi mod_ssl vixie-cron at ca-policy-egi-core MySQL-python python-iso8601 python-ldap
 
 # get APEL codebase
 RUN wget https://github.com/apel/apel/releases/download/1.5.1-1/apel-lib-1.5.1-1.el6.noarch.rpm
