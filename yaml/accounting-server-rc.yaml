@@ -25,3 +25,11 @@ spec:
             value: mysql://root:PutYourPassHere@xx.xxx.xx.xx/accounting-db
           - name: MYSQL_PASSWORD
             value: PutYourPassHere
+          - name: ALLOWED_FOR_GET
+          - value: []
+          - name: SERVER_IAM_ID
+          - value:
+          - name: SERVER_IAM_SECRET
+          - value:
+          - name: DJANGO_SECRET_KEY
+          - value:
