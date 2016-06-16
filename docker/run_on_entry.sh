@@ -42,9 +42,9 @@ ALLOWED_FOR_GET=$ALLOWED_FOR_GET
 SERVER_IAM_ID=$SERVER_IAM_ID
 SERVER_IAM_SECRET=$SERVER_IAM_SECRET
 
-SECRET_KEY=$DJANGO_SECRET_KEY
 " >> /var/www/html/apel_rest/settings.py
 
+sed -i "s/Put a secret here/$DJANGO_SECRET_KEY/g" /var/www/html/apel_rest/settings.py
 
 # start apache
 service httpd start
