@@ -44,7 +44,7 @@ https://indigo-paas.cloud.ba.infn.it/accounting/api/v1/cloud/record/summary?serv
 * to: Display summaries for dates (YYYYMMDD) up until this value
 * from: Display summaries for dates (YYYYMMDD) up after this value
 
-`from` is the only compulsary option, failure to include it will result in a 401 response.
+`from` is the only compulsary option, failure to include it will result in a 400 response.
 
 ### Expected Responses
 * 200: Your request was succesfully met
