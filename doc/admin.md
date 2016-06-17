@@ -1,10 +1,10 @@
-# Adminstrators
+# Administrators
 
-## Kuberenetes Deployment
+## Kubernetes Deployment
 
-YAML files have been provided for deployment in the yaml directory.
+YAML files have been provided for deployment in the `yaml` directory.
 
-They are split by wether they pertain to the APEL Server or the persistant MySQL database. These are then further divided into files for the service itself and the service's replication controller, which is responsible for keeping the service containers running.
+They are split by whether they pertain to the APEL Server or to the persistant MySQL database. These are then further divided into files for the service itself and the service's replication controller, which is responsible for keeping the service containers running.
 
 There are, therefore, four YMAL files.
 
@@ -31,10 +31,10 @@ To do this, you must first install kubectl (See https://coreos.com/kubernetes/do
 
 You should now have terminal access to the Accounting Server.
 
-## Service Running in the Accounting Server Container
+## Services Running in the Accounting Server Container
 
-* `httpd`: The  apache webserver hosting the REST interface
-* `cron` : Nessacary to periodically run the Summariser
+* `httpd`: The Apache webserver hosting the REST interface
+* `cron` : Necessary to periodically run the Summariser
 * `apeldbloader-cloud` : Loads received messages into the MySQL image
 
 ## Important Configuration files
@@ -47,7 +47,7 @@ You should now have terminal access to the Accounting Server.
 
 * `/etc/httpd/conf.d/apel_rest_api.conf` : Enforces HTTPS
 
-* `/etc/httpd/conf.d/ssl.conf` : Handles the HTTPS 
+* `/etc/httpd/conf.d/ssl.conf` : Handles the HTTPS
 
 ## Important Scripts
 
