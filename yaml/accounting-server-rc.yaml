@@ -26,10 +26,10 @@ spec:
           - name: MYSQL_PASSWORD
             value: PutYourPassHere
           - name: ALLOWED_FOR_GET
-          - value: []
+            value: []
           - name: SERVER_IAM_ID
-          - value:
+            value:
           - name: SERVER_IAM_SECRET
-          - value:
+            value:
           - name: DJANGO_SECRET_KEY
-          - value:
+            value:
