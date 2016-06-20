@@ -27,7 +27,7 @@ class CloudRecordSummaryTest(TestCase):
     def test_parse_query_parameters(self):
         test_cloud_view = CloudRecordSummaryView() 
         factory = APIRequestFactory()
-        request = factory.get('/accounting-server/api/v1/cloud/record/summary?group=Group1&service=Service1&from=FromDate&to=ToDate', {})
+        request = factory.get('/api/v1/cloud/record/summary?group=Group1&service=Service1&from=FromDate&to=ToDate', {})
 
         parsed_responses = test_cloud_view._parse_query_parameters(request)
         self.assertEqual(parsed_responses,
