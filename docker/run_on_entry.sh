@@ -3,9 +3,9 @@
 # install IGTF trust bundle 10 minutes after start up
 echo "yum -y update ca-policy-egi-core >> /var/log/IGTF-startup-update.log" | at now + 10 min
 
-if [ -z $MYSQL_PORT_3306_TCP_ADDR ]
+if [ -z "$MYSQL_PORT_3306_TCP_ADDR" ]
 then
-    $MYSQL_PORT_3306_TCP_ADDR = $MYSQL_HOST
+    MYSQL_PORT_3306_TCP_ADDR=$MYSQL_HOST
 fi
 
 echo "[client]
@@ -18,7 +18,7 @@ echo "[db]
 # type of database
 backend = mysql
 # host with database
-hostname = 10.254.10.21
+hostname = $MYSQL_PORT_3306_TCP_ADDR
 # port to connect to
 port = 3306
 # database name
