@@ -1,9 +1,5 @@
 #!/bin/bash
 
-# Need to add trust anchor repo
-touch /etc/yum.repos.d/EGI-trustanchors.repo
-echo -e "# EGI Software Repository - REPO META (releaseId,repositoryId,repofileId) - (10824,-,2000)\n[EGI-trustanchors]\nname=EGI-trustanchors\nbaseurl=http://repository.egi.eu/sw/production/cas/1/current/\nenabled=1\ngpgcheck=1\ngpgkey=http://repository.egi.eu/sw/production/cas/1/GPG-KEY-EUGridPMA-RPM-3" >> /etc/yum.repos.d/EGI-trustanchors.repo
-
 # install IGTF trust bundle 10 minutes after start up
 echo "yum -y update ca-policy-egi-core >> /var/log/IGTF-startup-update.log" | at now + 10 min
 
