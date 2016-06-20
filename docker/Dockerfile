@@ -47,7 +47,7 @@ RUN cp -r apel_rest/* /var/www/html/
 RUN cp /var/www/html/conf/apel_rest_api.conf /etc/httpd/conf.d/apel_rest_api.conf
 
 # copy SSL conf files to apache conf
-RUN cp /var/www/html/conf/ssl.conf /etc/httpd/conf.d/ssl.conf
+#RUN cp /var/www/html/conf/ssl.conf /etc/httpd/conf.d/ssl.conf
 
 # copy the cron job that runs the summariser
 RUN cp /var/www/html/conf/cloudsummariser /etc/cron.d/cloudsummariser
