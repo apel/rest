@@ -99,7 +99,7 @@ class CloudRecordSummaryView(APIView):
 
         if start_date is None:
             # querying without a from is not supported
-            return Response(status=501)
+            return Response(status=400)
 
         # Read configuration from file
         try:
