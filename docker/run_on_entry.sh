@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# install IGTF trust bundle 10 minutes after start up
-echo "yum -y update ca-policy-egi-core >> /var/log/IGTF-startup-update.log" | at now + 10 min
-
 if [ -z "$MYSQL_PORT_3306_TCP_ADDR" ]
 then
     MYSQL_PORT_3306_TCP_ADDR=$MYSQL_HOST
@@ -45,14 +42,23 @@ sed -i "s/Put a secret here/$DJANGO_SECRET_KEY/g" /var/www/html/apel_rest/settin
 # start apache
 service httpd start
 
-#start cron
+# start cron
 service crond start
+
+# start at
+service atd start
 
 # start the loader service
 service apeldbloader-cloud start
 
 # Make cloud spool dir owned by apache
 chown apache -R /var/spool/apel/cloud/
+
+# install IGTF trust bundle 10 minutes after start up
+echo "yum -y update ca-policy-egi-core >> /var/log/IGTF-startup-update.log" | at now + 10 min
+
+# set cronjob to update trust bundle every month
+echo "0 10 1 * * root yum -y update ca-policy-egi-core >> ~/cronlog 2>&1" >> /etc/cron.d/IGTF-bundle-update
 
 #keep docker running
 while true
