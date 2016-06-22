@@ -1,15 +1,8 @@
 #!/bin/bash
 
-# Need to add trust anchor repo
-touch /etc/yum.repos.d/EGI-trustanchors.repo
-echo -e "# EGI Software Repository - REPO META (releaseId,repositoryId,repofileId) - (10824,-,2000)\n[EGI-trustanchors]\nname=EGI-trustanchors\nbaseurl=http://repository.egi.eu/sw/production/cas/1/current/\nenabled=1\ngpgcheck=1\ngpgkey=http://repository.egi.eu/sw/production/cas/1/GPG-KEY-EUGridPMA-RPM-3" >> /etc/yum.repos.d/EGI-trustanchors.repo
-
-# install IGTF trust bundle
-yum -y install ca-policy-egi-core
-
-if [ -z $MYSQL_PORT_3306_TCP_ADDR ]
+if [ -z "$MYSQL_PORT_3306_TCP_ADDR" ]
 then
-    $MYSQL_PORT_3306_TCP_ADDR = $MYSQL_HOST
+    MYSQL_PORT_3306_TCP_ADDR=$MYSQL_HOST
 fi
 
 echo "[client]
@@ -22,7 +15,7 @@ echo "[db]
 # type of database
 backend = mysql
 # host with database
-hostname = 10.254.10.21
+hostname = $MYSQL_PORT_3306_TCP_ADDR
 # port to connect to
 port = 3306
 # database name
@@ -39,22 +32,33 @@ type = cloud" >> /etc/apel/clouddb.cfg
 
 echo "
 ALLOWED_FOR_GET=$ALLOWED_FOR_GET
-SERVER_IAM_ID=$SERVER_IAM_ID
-SERVER_IAM_SECRET=$SERVER_IAM_SECRET
+SERVER_IAM_ID=\"$SERVER_IAM_ID\"
+SERVER_IAM_SECRET=\"$SERVER_IAM_SECRET\"
+
 " >> /var/www/html/apel_rest/settings.py
 
+sed -i "s/Put a secret here/$DJANGO_SECRET_KEY/g" /var/www/html/apel_rest/settings.py
 
 # start apache
 service httpd start
 
-#start cron
+# start cron
 service crond start
+
+# start at
+service atd start
 
 # start the loader service
 service apeldbloader-cloud start
 
 # Make cloud spool dir owned by apache
 chown apache -R /var/spool/apel/cloud/
+
+# install IGTF trust bundle 10 minutes after start up
+echo "yum -y update ca-policy-egi-core >> /var/log/IGTF-startup-update.log" | at now + 10 min
+
+# set cronjob to update trust bundle every month
+echo "0 10 1 * * root yum -y update ca-policy-egi-core >> ~/cronlog 2>&1" >> /etc/cron.d/IGTF-bundle-update
 
 #keep docker running
 while true

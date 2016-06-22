@@ -15,6 +15,8 @@ Experimental REST API for APEL
 
 4. Navigate a web browser to "https://\<hostname\>/index/"
 
+The Docker Image does not enforce HTTPS connections due to it's primary deployment being on Indigo DataCloud infrastructure.
+
 ## Setup from source
 
 1. Install python, pip, mysql, apache, apache modules and IGTF trust bundle
@@ -42,10 +44,14 @@ Experimental REST API for APEL
 
 8. Copy `conf/ssl.connf` to `/etc/httpd/conf.d/ssl.conf`
 
-9. Copy `conf/apel_rest_api.conf to `/etc/httpd/conf.d/apel_rest_api.conf`
+9. Uncomment the HTTPS re-direct code in `conf/apel_rest_api.conf` for a secure instance
 
-10. Run `python manage.py collectstatic`
+10. Copy `conf/apel_rest_api.conf` to `/etc/httpd/conf.d/apel_rest_api.conf`
 
-11. Start Apache with `service httpd start`
+11. Uncomment the HTTPS re-direct code in `conf/apel_rest_api.conf` for a secure instance
 
-12. Navigate a web browser to "https://\<hostname\>/index/"
+12. Run `python manage.py collectstatic`
+
+13. Start Apache with `service httpd start`
+
+14. Navigate a web browser to "https://\<hostname\>/index/"

@@ -17,7 +17,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '6^&2c@p@nld52qs4nfp1%99plh&*69&@@9%no3sgq6v+ci&g73'
+SECRET_KEY = 'Put a secret here'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
@@ -86,7 +86,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
 STATIC_ROOT = '/var/www/html/static'
-STATIC_URL = '/static/'
+STATIC_URL = '/accounting-server/static/'
 
 # debugging stuff
 LOGGING = {
@@ -165,4 +165,3 @@ RETURN_HEADERS = ["VOGroup",
 # this should hide the GET?format button
 # this doesnt do anything, probably because of using older Django
 URL_FORMAT_OVERRIDE = None
-
