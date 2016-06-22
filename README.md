@@ -15,7 +15,7 @@ Experimental REST API for APEL
 
 4. Navigate a web browser to "https://\<hostname\>/index/"
 
-The Docker Image does not enforce HTTPS connecitons due to it's primary deployment being on Indigo DataCloud infrastructure.
+The Docker Image does not enforce HTTPS connections due to it's primary deployment being on Indigo DataCloud infrastructure.
 
 ## Setup from source
 
