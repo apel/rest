@@ -54,3 +54,9 @@ You should now have terminal access to the Accounting Server.
 * `/etc/cron.d/cloudsummariser` : Cron job that runs `run_cloud_summariser.sh`
 
 * `/usr/bin/run_cloud_summariser.sh` : Stops the loader servic, summarises the database and restarts the loader
+
+## Authorize new WP5 components to view Summaries
+
+* In `yaml/accounting-server-rc.yaml`, add the IAM registered ID corresponding to the service in the env variable `ALLOWED_FOR_GET`. It should be of form below, quotes included. Python needs to be able to interpret this variable as a list of strings, the outer quotes prevent kubernetes interpreting it as something meaningful in YAML. The accounting-server-rc on kubernetes will have to be restarted for that to take effect. This can be done by deleting the accounting-server-service pod. 
+
+`"['XXXXXXXXXXXX','XXXXXXXXXXXXXXXX']".`
