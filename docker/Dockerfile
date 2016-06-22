@@ -7,7 +7,13 @@ RUN rpm -ivh http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noar
 
 # Add IGTF trust repo, so it can be installed
 RUN touch /etc/yum.repos.d/EGI-trustanchors.repo
-RUN echo -e "# EGI Software Repository - REPO META (releaseId,repositoryId,repofileId) - (10824,-,2000)\n[EGI-trustanchors]\nname=EGI-trustanchors\nbaseurl=http://repository.egi.eu/sw/production/cas/1/current/\nenabled=1\ngpgcheck=1\ngpgkey=http://repository.egi.eu/sw/production/cas/1/GPG-KEY-EUGridPMA-RPM-3" >> /etc/yum.repos.d/EGI-trustanchors.repo
+RUN echo -e $'# EGI Software Repository - REPO META (releaseId,repositoryId,repofileId) - (10824,-,2000)\n\
+[EGI-trustanchors]\n\
+name=EGI-trustanchors\n\
+baseurl=http://repository.egi.eu/sw/production/cas/1/current/\n\
+enabled=1\n\
+gpgcheck=1\n\
+gpgkey=http://repository.egi.eu/sw/production/cas/1/GPG-KEY-EUGridPMA-RPM-3' >> /etc/yum.repos.d/EGI-trustanchors.repo
 
 # install tools needed to get files from GitHub
 # install python tools
