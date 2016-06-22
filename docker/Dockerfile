@@ -23,7 +23,7 @@ gpgkey=http://repository.egi.eu/sw/production/cas/1/GPG-KEY-EUGridPMA-RPM-3' >> 
 # install at (for scheduling the IGTF update after start up)
 # install IGTF trust bundle
 # install APEL requirements
-RUN yum -y install wget unzip python-pip python-devel mysql mysql-devel gcc httpd httpd-devel mod_wsgi mod_ssl vixie-cron at ca-policy-egi-core MySQL-python python-iso8601 python-ldap
+RUN yum -y install wget unzip python-pip python-devel mysql mysql-devel gcc httpd httpd-devel mod_wsgi vixie-cron at ca-policy-egi-core MySQL-python python-iso8601 python-ldap
 
 # get APEL codebase
 RUN wget https://github.com/apel/apel/releases/download/1.5.1-1/apel-lib-1.5.1-1.el6.noarch.rpm
