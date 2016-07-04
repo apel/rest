@@ -4,9 +4,11 @@ to the Cloud Sumamry Record endpoint.
 """
 
 import logging
+import MySQLdb
 
 from api.views.CloudRecordSummaryView import CloudRecordSummaryView
 from django.test import TestCase
+from mock import Mock
 from rest_framework.test import APIRequestFactory
 
 QPATH_TEST = '/tmp/django-test/'
@@ -90,8 +92,25 @@ class CloudRecordSummaryTest(TestCase):
         with self.settings(ALLOWED_FOR_GET='IAmAllowed'):
             self.assertFalse(test_cloud_view._is_client_authorized('IAmNotAllowed'))
 
-    # def test_filter_cursor(self):
-    #    pass
+    def test_filter_cursor(self):
+        """Test the filtering of a query object based on settings."""
+        test_cloud_view = CloudRecordSummaryView()
+
+        # this approximates a cursor object
+        # in future, a cursor dict may be better
+        # to use in _filter_cursor
+        cursor_headers = [['SiteName'], ['Day'], ['Month'], ['Year']]
+        cursor_data = [[['SiteName', 'Test'], ['Day', 01], ['Month', 02], ['Year', 2000]]]
+
+        cursor = Mock()
+        cursor.description = cursor_headers
+        cursor.fetchall = Mock(return_value=cursor_data)
+
+        with self.settings(RETURN_HEADERS=['SiteName', 'Day']):
+            result = test_cloud_view._filter_cursor(cursor)
+
+        expected_result = [{'SiteName': ['SiteName', 'Test'], 'Day': ['Day', 1]}]
+        self.assertEqual(result, expected_result)
 
     def tearDown(self):
         """Delete any messages under QPATH and re-enable logging.INFO."""
