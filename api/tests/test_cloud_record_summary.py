@@ -37,6 +37,7 @@ class CloudRecordSummaryTest(TestCase):
 
     def test_paginate_result(self):
         """Test an empty result is paginated correctly."""
+        # test when no page is given.
         test_cloud_view = CloudRecordSummaryView()
         content = test_cloud_view._paginate_result(None, [])
         expected_content = {'count': 0,
@@ -44,6 +45,19 @@ class CloudRecordSummaryTest(TestCase):
                             u'results': [],
                             'next': None}
 
+        self.assertEqual(content, expected_content)
+
+        # test when page number is incorrect/invalid
+        factory = APIRequestFactory()
+
+        # test when page number is not a number
+        request = factory.get('/api/v1/cloud/record/summary?page=a')
+        content = test_cloud_view._paginate_result(request, [])
+        self.assertEqual(content, expected_content)
+
+        # test when page number is out of bounds
+        request = factory.get('/api/v1/cloud/record/summary?page=9999')
+        content = test_cloud_view._paginate_result(request, [])
         self.assertEqual(content, expected_content)
 
     def test_request_to_token(self):
