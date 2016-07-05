@@ -1,3 +1,5 @@
+"""This file maps url patterns to classes."""
+
 from django.conf.urls import patterns, include, url
 
 from django.contrib import admin
