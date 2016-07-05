@@ -20,17 +20,19 @@ class CloudRecordSummaryView(APIView):
     """
     Retrieve Cloud Accounting Summaries.
 
-    .../cloud/record/summary?Group=<group_name>&from=<date_from>&to=<date_to>
+    Usage:
+
+    .../api/v1/cloud/record/summary?Group=<group_name>&from=<date_from>&to=<date_to>
 
     Will return the summary for group_name at all services,
     between date_from and date_to as daily summaries
 
-    .../cloud/record/summary?service=<service_name>&from=<date_from>&to=<date_to>
+    .../api/v1/cloud/record/summary?service=<service_name>&from=<date_from>&to=<date_to>
 
     Will return the summary for service_name at all groups,
     between date_from and date_to as daily summaries
 
-    .../cloud/record/summary?from=<date_from>
+    .../api/v1/cloud/record/summary?from=<date_from>
     Will give summary for whole infrastructure from <data> to now
     """
 
@@ -38,17 +40,17 @@ class CloudRecordSummaryView(APIView):
         """
         Retrieve Cloud Accounting Summaries.
 
-        .../cloud/record/summary?Group=<group_name>&from=<date_from>&to=<date_to>
+        .../api/v1/cloud/record/summary?Group=<group_name>&from=<date_from>&to=<date_to>
 
         Will return the summary for group_name at all services,
         between date_from and date_to as daily summaries
 
-        .../cloud/record/summary?service=<service_name>&from=<date_from>&to=<date_to>
+        .../api/v1/cloud/record/summary?service=<service_name>&from=<date_from>&to=<date_to>
 
         Will return the summary for service_name at all groups,
         between date_from and date_to as daily summaries
 
-        .../cloud/record/summary?from=<date_from>
+        .../api/v1/cloud/record/summary?from=<date_from>
         Will give summary for whole infrastructure from <data> to now
         """
         logger = logging.getLogger(__name__)
