@@ -94,7 +94,8 @@ LOGGING = {
     'disable_existing_loggers': False,
     'formatters': {
         'verbose': {
-            'format': "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s]: %(message)s",
+            'format': ("[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s]: "
+                       " %(message)s"),
             'datefmt': "%d/%b/%Y %H:%M:%S"
         },
         'simple': {
@@ -132,10 +133,8 @@ REST_FRAMEWORK = {
         'apel_rest.PlainTextParser.PlainTextParser',
     ),
     # this would add HTML buttons for pagination, but only in 3.3
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    # 'DEFAULT_RENDERER_CLASSES': (
-    #     'rest_framework_xml.renderers.XMLRenderer',
-    # ),
+    # 'DEFAULT_PAGINATION_CLASS':
+    # 'rest_framework.pagination.PageNumberPagination',
 }
 
 # Defines where the REST API will store
