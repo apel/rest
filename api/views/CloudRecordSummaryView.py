@@ -1,3 +1,5 @@
+"""This file contains the CloudRecordSummaryView class."""
+
 import base64
 import ConfigParser
 import datetime

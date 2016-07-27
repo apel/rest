@@ -1,3 +1,5 @@
+"""This file contains the CloudRecordView class."""
+
 import ConfigParser
 import datetime
 import json
@@ -17,6 +19,7 @@ from rest_framework.views import APIView
 class CloudRecordView(APIView):
     """
     Submit Cloud Accounting Records.
+
     .../api/v1/cloud/record
 
     Will save Cloud Accounting Records for later loading.

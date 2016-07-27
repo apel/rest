@@ -26,7 +26,7 @@ spec:
           - name: MYSQL_HOST
             value: 
           - name: MYSQL_PASSWORD
-            value: PutYourPassHere
+            value: PutYourPassHere # for the non root user
           - name: ALLOWED_FOR_GET
             value: "[]"
           - name: SERVER_IAM_ID
