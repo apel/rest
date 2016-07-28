@@ -73,15 +73,15 @@ class CloudRecordSummaryView(APIView):
             client_id = self._token_to_id(client_token)
         except urllib2.HTTPError, e:
             logger.error('HTTPError = ' + str(e.code))
-            logger.error('Could not Authorize.')
+            logger.error('Could not Authenticate.')
             return Response(status=401)
         except urllib2.URLError, e:
             logger.error('URLError = ' + str(e.reason))
-            logger.error('Could not Authorize.')
+            logger.error('Could not Authenticate.')
             return Response(status=401)
         except httplib.HTTPException:
             logger.error('HTTPException')
-            logger.error('Could not Authorize.')
+            logger.error('Could not Authenticate.')
             return Response(status=401)
         except KeyError:
             logger.error("No client id in IAM response, likely token has expired")
