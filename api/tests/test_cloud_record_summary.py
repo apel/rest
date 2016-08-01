@@ -26,7 +26,11 @@ class CloudRecordSummaryTest(TestCase):
         # test a get with group, summary, start and end
         test_cloud_view = CloudRecordSummaryView()
         factory = APIRequestFactory()
-        request = factory.get('/api/v1/cloud/record/summary?group=Group1&service=Service1&from=FromDate&to=ToDate', {})
+        request = factory.get(('/api/v1/cloud/record/summary?'
+                               'group=Group1&'
+                               'service=Service1&'
+                               'from=FromDate&to=ToDate'), {})
+
         parsed_responses = test_cloud_view._parse_query_parameters(request)
         self.assertEqual(parsed_responses,
                          ("Group1", "Service1", "FromDate", "ToDate"))
@@ -84,13 +88,17 @@ class CloudRecordSummaryTest(TestCase):
         """Test a example client is authorised."""
         test_cloud_view = CloudRecordSummaryView()
         with self.settings(ALLOWED_FOR_GET='IAmAllowed'):
-            self.assertTrue(test_cloud_view._is_client_authorized('IAmAllowed'))
+            self.assertTrue(
+                test_cloud_view._is_client_authorized(
+                    'IAmAllowed'))
 
     def test_is_client_authorized_fail(self):
         """Test the failure of un-authorised clients."""
         test_cloud_view = CloudRecordSummaryView()
         with self.settings(ALLOWED_FOR_GET='IAmAllowed'):
-            self.assertFalse(test_cloud_view._is_client_authorized('IAmNotAllowed'))
+            self.assertFalse(
+                test_cloud_view._is_client_authorized(
+                    'IAmNotAllowed'))
 
     def test_filter_cursor(self):
         """Test the filtering of a query object based on settings."""
@@ -100,7 +108,10 @@ class CloudRecordSummaryTest(TestCase):
         # in future, a cursor dict may be better
         # to use in _filter_cursor
         cursor_headers = [['SiteName'], ['Day'], ['Month'], ['Year']]
-        cursor_data = [[['SiteName', 'Test'], ['Day', 01], ['Month', 02], ['Year', 2000]]]
+        cursor_data = [[['SiteName', 'Test'],
+                        ['Day', 01],
+                        ['Month', 02],
+                        ['Year', 2000]]]
 
         cursor = Mock()
         cursor.description = cursor_headers
@@ -109,7 +120,8 @@ class CloudRecordSummaryTest(TestCase):
         with self.settings(RETURN_HEADERS=['SiteName', 'Day']):
             result = test_cloud_view._filter_cursor(cursor)
 
-        expected_result = [{'SiteName': ['SiteName', 'Test'], 'Day': ['Day', 1]}]
+        expected_result = [{'SiteName': ['SiteName', 'Test'],
+                            'Day': ['Day', 1]}]
         self.assertEqual(result, expected_result)
 
     def tearDown(self):

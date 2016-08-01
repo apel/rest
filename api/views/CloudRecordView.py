@@ -47,7 +47,7 @@ class CloudRecordView(APIView):
         except KeyError:
             logger.error("No DN supplied in header")
             return Response(status=401)
- 
+
         # authorise DNs here
         if not self._signer_is_valid(signer):
             logger.error("%s not a valid provider", signer)
@@ -99,9 +99,10 @@ class CloudRecordView(APIView):
 
     def _signer_is_valid(self, signer):
         """Return True is signer is listed as a Indigo Provider."""
-        logger = logging.getLogger(__name__)      
-  
-        site_list = urllib2.Request('http://indigo.cloud.plgrid.pl/cmdb/service/list')
+        logger = logging.getLogger(__name__)
+
+        site_list = urllib2.Request(
+            'http://indigo.cloud.plgrid.pl/cmdb/service/list')
         site_list = urllib2.urlopen(site_list)
 
         try:

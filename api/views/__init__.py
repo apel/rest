@@ -16,4 +16,3 @@ limitations under the License.
 @author Greg Corbett
 """
 __version__ = '0, 1, 0'
-

@@ -60,10 +60,12 @@ class CloudRecordSummaryView(APIView):
         try:
             client_token = self._request_to_token(request)
         except KeyError:
-            logger.error("No AUTHORIZATION header provided, authentication failed.")
+            logger.error("No AUTHORIZATION header provided, "
+                         "authentication failed.")
             return Response(status=401)
         except IndexError:
-            logger.error("AUTHORIZATION header provided, but not of expected form.")
+            logger.error("AUTHORIZATION header provided, "
+                         "but not of expected form.")
             logger.error(request.META['HTTP_AUTHORIZATION'])
             return Response(status=401)
 
@@ -84,17 +86,19 @@ class CloudRecordSummaryView(APIView):
             logger.error('Could not Authenticate.')
             return Response(status=401)
         except KeyError:
-            logger.error("No client id in IAM response, likely token has expired")
-            return Response(status=401)        
+            logger.error("No client id in IAM response, "
+                         "likely token has expired")
+            return Response(status=401)
 
         logger.debug("Token identifed as %s", client_id)
 
         if not self._is_client_authorized(client_id):
-            logger.error("%s does not have permission to view summaries", client_id)
+            logger.error("%s does not have permission to view summaries",
+                         client_id)
             return Response(status=403)
 
         logger.info("%s Authorized.", client_id)
- 
+
         # parse query parameters
         (group_name,
          service_name,
@@ -140,15 +144,22 @@ class CloudRecordSummaryView(APIView):
         cursor = database.cursor()
 
         if group_name is not None:
-            cursor.execute('select * from VCloudSummaries where VOGroup = %s and EarliestStartTime > %s and LatestStartTime < %s',
+            cursor.execute('select * from VCloudSummaries '
+                           'where VOGroup = %s '
+                           'and EarliestStartTime > %s '
+                           'and LatestStartTime < %s',
                            [group_name, start_date, end_date])
 
         elif service_name is not None:
-            cursor.execute('select * from VCloudSummaries where SiteName = %s and EarliestStartTime > %s and LatestStartTime < %s',
+            cursor.execute('select * from VCloudSummaries '
+                           'where SiteName = %s and '
+                           'EarliestStartTime > %s and '
+                           'LatestStartTime < %s',
                            [service_name, start_date, end_date])
 
         else:
-            cursor.execute('select * from VCloudSummaries where EarliestStartTime > %s',
+            cursor.execute('select * from VCloudSummaries '
+                           'where EarliestStartTime > %s',
                            [start_date])
 
         results = self._filter_cursor(cursor)
@@ -219,7 +230,7 @@ class CloudRecordSummaryView(APIView):
         return results
 
     def _request_to_token(self, request):
-        #get the token
+        # get the token
         try:
             token = request.META['HTTP_AUTHORIZATION'].split()[1]
         except (KeyError, IndexError) as e:
@@ -228,13 +239,15 @@ class CloudRecordSummaryView(APIView):
 
     def _token_to_id(self, token):
         try:
-            auth_request = urllib2.Request('https://iam-test.indigo-datacloud.eu/introspect',
-                                       data='token=%s' % token)
+            auth_request = urllib2.Request(
+                           'https://iam-test.indigo-datacloud.eu/introspect',
+                           data='token=%s' % token)
 
             server_id = settings.SERVER_IAM_ID
             server_secret = settings.SERVER_IAM_SECRET
 
-            base64string = base64.encodestring('%s:%s' % (server_id, server_secret)).replace('\n', '')
+            base64string = base64.encodestring(
+                    '%s:%s' % (server_id, server_secret)).replace('\n', '')
             auth_request.add_header("Authorization", "Basic %s" % base64string)
             auth_result = urllib2.urlopen(auth_request)
 
