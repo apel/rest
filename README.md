@@ -9,13 +9,13 @@ Experimental REST API for APEL
 
 1. install docker and httpd (httpd is needed on the host machine for `/usr/sbin/apachectl`, do NOT start httpd)
 
-2. pull in the latest image: `docker pull gregcorbett/rest`
+2. pull in the latest image: `docker pull indigo-dc/Accounting`
 
-3. Run the docker with `docker run -d -p 80:80 -p 443:443 gregcorbett/rest /usr/sbin/apachectl -D FOREGROUND`
+3. Run the docker with `docker run -d -p 80:80 -p 443:443 indigo-dc/Accounting /usr/sbin/apachectl -D FOREGROUND`
 
-4. Navigate a web browser to "https://\<hostname\>/index/"
+4. Before the server will start, a certificate needs to be added to the container. Use the exec command to enter the container and then execute step 6 of the "Setup from source" instructions.
 
-The Docker Image does not enforce HTTPS connections due to it's primary deployment being on Indigo DataCloud infrastructure.
+5. Navigate a web browser to "https://\<hostname\>/index/"
 
 ## Setup from source
 
