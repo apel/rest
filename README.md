@@ -7,15 +7,17 @@ Experimental REST API for APEL
 
 ## Using the docker image
 
-1. install docker and httpd (httpd is needed on the host machine for `/usr/sbin/apachectl`, do NOT start httpd)
+1. Install docker
 
-2. pull in the latest image: `docker pull indigo-dc/Accounting`
+2. Download the corresponding run_container.sh script corresponding to the release.
 
-3. Run the docker with `docker run -d -p 80:80 -p 443:443 indigo-dc/Accounting /usr/sbin/apachectl -D FOREGROUND`
+3. Populate the MYSQL variables and and IAM variables
 
-4. Before the server will start, a certificate needs to be added to the container. Run `docker exec -it <docker_id> bash` to enter the container and then execute step 6 of the "Setup from source" instructions.
+4. Run `./run_container.sh indigo-dc/Accounting:X.X.X-X`
 
-5. Navigate a web browser to "https://\<hostname\>/index/"
+5. Before the server will start, a certificate needs to be added to the container. Run `docker exec -it <docker_id> bash` to enter the container and then execute step 6 of the "Setup from source" instructions.
+
+6. Navigate a web browser to "https://\<hostname\>/index/"
 
 ## Setup from source
 
