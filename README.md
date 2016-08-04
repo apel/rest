@@ -46,14 +46,10 @@ Experimental REST API for APEL
 
 8. Copy `conf/ssl.connf` to `/etc/httpd/conf.d/ssl.conf`
 
-9. Uncomment the HTTPS re-direct code in `conf/apel_rest_api.conf` for a secure instance
+9. Copy `conf/apel_rest_api.conf` to `/etc/httpd/conf.d/apel_rest_api.conf`
 
-10. Copy `conf/apel_rest_api.conf` to `/etc/httpd/conf.d/apel_rest_api.conf`
+10. Run `python manage.py collectstatic`
 
-11. Uncomment the HTTPS re-direct code in `conf/apel_rest_api.conf` for a secure instance
+11. Start Apache with `service httpd start`
 
-12. Run `python manage.py collectstatic`
-
-13. Start Apache with `service httpd start`
-
-14. Navigate a web browser to "https://\<hostname\>/index/"
+12. Navigate a web browser to "https://\<hostname\>/index/"
