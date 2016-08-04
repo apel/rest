@@ -13,7 +13,7 @@ Experimental REST API for APEL
 
 3. Run the docker with `docker run -d -p 80:80 -p 443:443 indigo-dc/Accounting /usr/sbin/apachectl -D FOREGROUND`
 
-4. Before the server will start, a certificate needs to be added to the container. Use the exec command to enter the container and then execute step 6 of the "Setup from source" instructions.
+4. Before the server will start, a certificate needs to be added to the container. Run `docker exec -it <docker_id> bash` to enter the container and then execute step 6 of the "Setup from source" instructions.
 
 5. Navigate a web browser to "https://\<hostname\>/index/"
 
