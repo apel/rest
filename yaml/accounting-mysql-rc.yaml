@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: accounting-mysql-rc
+  labels:
+    app: accounting
+    tier: accounting-mysql
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: accounting-mysql-rc
+        app: accounting
+        tier: accounting-mysql
+    spec:
+      containers:
+        - name: accounting-mysql
+          image: mysql:5.6
+          ports:
+           - containerPort: 3306
+             name: mysql
+          env:
+           - name: MYSQL_ROOT_PASSWORD
+             value: PutYourPassHere
+           - name: MYSQL_DATABASE
+             value: apel_rest
+           - name: MYSQL_USER
+             value: apel
+           - name: MYSQL_PASSWORD
+             value: PutYourPassHere
+          volumeMounts:
+           - name: accounting-mysql
+             mountPath: /var/lib/mysql
+      volumes:
+        - name: accounting-mysql
+          cinder:
+            volumeID:
+            fsType: ext4

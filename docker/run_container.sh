@@ -12,15 +12,16 @@ apel_rest_image=$1
 docker pull $apel_rest_image
 
 echo "Configuring Database"
-MYSQL_ROOT_PASSWORD="EagerOmega"
-MYSQL_APEL_PASSWORD="${MYSQL_ROOT_PASSWORD}APEL"
 
-docker run -v /var/lib/mysql --name apel-mysql -p 3306:3306 -e "MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD" -d mysql:5
+MYSQL_ROOT_PASSWORD=
+MYSQL_DATABASE="apel_rest"
+MYSQL_USER="apel"
+MYSQL_PASSWORD="${MYSQL_ROOT_PASSWORD}APEL"
+
+docker run -v /var/lib/mysql --name apel-mysql -p 3306:3306 -e "MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD" -e "MYSQL_DATABASE=$MYSQL_DATABASE" -e "MYSQL_USER=$MYSQL_USER" -e "MYSQL_PASSWORD=$MYSQL_PASSWORD" -d mysql:5.6
 
 #wait for apel-mysql to configure
 sleep 30
-
-docker exec apel-mysql mysql -u root -p$MYSQL_ROOT_PASSWORD -e "create database apel_rest"
 
 # Create schema
 docker exec apel-mysql mysql -u root -p$MYSQL_ROOT_PASSWORD apel_rest -e "`cat schemas/cloud.sql`"
@@ -30,11 +31,14 @@ docker exec apel-mysql mysql -u root -p$MYSQL_ROOT_PASSWORD apel_rest -e "`cat s
 
 echo "Done"
 
-HOST_NAME=$(hostname)
-echo "Creating (self-signed) cert of $HOST_NAME"
-
 echo "Configuring APEL Server"
-docker run -d --link apel-mysql:mysql -p 80:80 -p 443:443 -e "HOST_NAME=$HOST_NAME" -e "MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD" -e "MYSQL_APEL_PASSWORD=$MYSQL_APEL_PASSWORD" $apel_rest_image
+
+ALLOWED_FOR_GET=
+SERVER_IAM_ID=
+SERVER_IAM_SECRET=
+DJANGO_SECRET_KEY=
+
+docker run -d --link apel-mysql:mysql -p 80:80 -p 443:443 -e "MYSQL_PASSWORD=$MYSQL_PASSWORD" -e "ALLOWED_FOR_GET=$ALLOWED_FOR_GET" -e "SERVER_IAM_ID=$SERVER_IAM_ID" -e "SERVER_IAM_SECRET=$SERVER_IAM_SECRET" -e "DJANGO_SECRET_KEY=$DJANGO_SECRET_KEY" $apel_rest_image
 
 # this allows the APEL REST interface to configure
 sleep 60

@@ -4,7 +4,7 @@
 -- Partitioning for CloudRecords to aid query performance and monthly deletions
 
 ALTER TABLE CloudRecords
-PARTITION BY RANGE (TO_DAYS(EndTime)) (
+PARTITION BY RANGE (TO_DAYS(StartTime)) (
 PARTITION p2012_12 VALUES LESS THAN (TO_DAYS('2013-01-01')),
 PARTITION p2013_01 VALUES LESS THAN (TO_DAYS('2013-02-01')),
 PARTITION p2013_02 VALUES LESS THAN (TO_DAYS('2013-03-01')),

@@ -17,7 +17,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '6^&2c@p@nld52qs4nfp1%99plh&*69&@@9%no3sgq6v+ci&g73'
+SECRET_KEY = 'Put a secret here'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
@@ -86,7 +86,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
 STATIC_ROOT = '/var/www/html/static'
-STATIC_URL = '/static/'
+STATIC_URL = '/accounting-server/static/'
 
 # debugging stuff
 LOGGING = {
@@ -94,7 +94,8 @@ LOGGING = {
     'disable_existing_loggers': False,
     'formatters': {
         'verbose': {
-            'format': "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s]: %(message)s",
+            'format': ("[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s]: "
+                       " %(message)s"),
             'datefmt': "%d/%b/%Y %H:%M:%S"
         },
         'simple': {
@@ -121,7 +122,7 @@ LOGGING = {
         'api': {
             'handlers': ['console'],
             'level': 'INFO',
-            #'level': 'DEBUG',
+            # 'level': 'DEBUG',
         },
     }
 }
@@ -132,10 +133,8 @@ REST_FRAMEWORK = {
         'apel_rest.PlainTextParser.PlainTextParser',
     ),
     # this would add HTML buttons for pagination, but only in 3.3
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    # 'DEFAULT_RENDERER_CLASSES': (
-    #     'rest_framework_xml.renderers.XMLRenderer',
-    # ),
+    # 'DEFAULT_PAGINATION_CLASS':
+    # 'rest_framework.pagination.PageNumberPagination',
 }
 
 # Defines where the REST API will store

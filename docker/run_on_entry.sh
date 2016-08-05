@@ -1,31 +1,13 @@
 #!/bin/bash
 
-# Need to add trust anchor repo
-touch /etc/yum.repos.d/EGI-trustanchors.repo
-echo -e "# EGI Software Repository - REPO META (releaseId,repositoryId,repofileId) - (10824,-,2000)\n[EGI-trustanchors]\nname=EGI-trustanchors\nbaseurl=http://repository.egi.eu/sw/production/cas/1/current/\nenabled=1\ngpgcheck=1\ngpgkey=http://repository.egi.eu/sw/production/cas/1/GPG-KEY-EUGridPMA-RPM-3" >> /etc/yum.repos.d/EGI-trustanchors.repo
+if [ -z "$MYSQL_PORT_3306_TCP_ADDR" ]
+then
+    MYSQL_PORT_3306_TCP_ADDR=$MYSQL_HOST
+fi
 
-# install IGTF trust bundle
-yum -y install ca-policy-egi-core
-
-# make dir for ssl keys
-mkdir -p /etc/httpd/ssl
-
-# create self signed certificates
-openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/httpd/ssl/apache.key -out /etc/httpd/ssl/apache.crt -subj "/C=GB/ST=Example/L=Example/O=Example/OU=Example/CN=$HOST_NAME"
-
-# Create an APEL user in mysql
-mysql -u root -h $MYSQL_PORT_3306_TCP_ADDR -p$MYSQL_ROOT_PASSWORD -e "CREATE USER 'apel'@'%' IDENTIFIED BY '$MYSQL_APEL_PASSWORD'"
-
-# Grant the APEL user privileges
-mysql -u root -h $MYSQL_PORT_3306_TCP_ADDR -p$MYSQL_ROOT_PASSWORD -e "GRANT ALL PRIVILEGES ON apel_rest.* TO 'apel'@'%' WITH GRANT OPTION"
-
-# Flush the privileges
-mysql -u root -h $MYSQL_PORT_3306_TCP_ADDR -p$MYSQL_ROOT_PASSWORD -e "FLUSH PRIVILEGES"
-
-# configure mysql
 echo "[client]
 user=apel
-password=$MYSQL_APEL_PASSWORD
+password=$MYSQL_PASSWORD
 host=$MYSQL_PORT_3306_TCP_ADDR" >> /etc/my.cnf
 
 # add clouddb.cfg, so that the default user of mysql is APEL
@@ -41,24 +23,42 @@ name = apel_rest
 # database user
 username = apel
 # password for database
-password = $MYSQL_APEL_PASSWORD
+password = $MYSQL_PASSWORD
 # how many records should be put/fetched to/from database
 # in single query
 records = 1000
 # option for summariser so that SummariseVMs is called
 type = cloud" >> /etc/apel/clouddb.cfg
 
+echo "
+ALLOWED_FOR_GET=$ALLOWED_FOR_GET
+SERVER_IAM_ID=\"$SERVER_IAM_ID\"
+SERVER_IAM_SECRET=\"$SERVER_IAM_SECRET\"
+
+" >> /var/www/html/apel_rest/settings.py
+
+sed -i "s/Put a secret here/$DJANGO_SECRET_KEY/g" /var/www/html/apel_rest/settings.py
+
 # start apache
 service httpd start
 
-#start cron
+# start cron
 service crond start
+
+# start at
+service atd start
 
 # start the loader service
 service apeldbloader-cloud start
 
 # Make cloud spool dir owned by apache
 chown apache -R /var/spool/apel/cloud/
+
+# install IGTF trust bundle 10 minutes after start up
+echo "yum -y update ca-policy-egi-core >> /var/log/IGTF-startup-update.log" | at now + 10 min
+
+# set cronjob to update trust bundle every month
+echo "0 10 1 * * root yum -y update ca-policy-egi-core >> ~/cronlog 2>&1" >> /etc/cron.d/IGTF-bundle-update
 
 #keep docker running
 while true
