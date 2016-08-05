@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - name: accounting
-        image: gregcorbett/rest:deploy
+        image: indigodatacloud/accounting:1.0.0-1
         ports:
         - containerPort: 80
           hostPort: 80
@@ -26,7 +26,7 @@ spec:
           - name: MYSQL_HOST
             value: 
           - name: MYSQL_PASSWORD
-            value: PutYourPassHere
+            value: PutYourPassHere # for the non root user
           - name: ALLOWED_FOR_GET
             value: "[]"
           - name: SERVER_IAM_ID

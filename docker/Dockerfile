@@ -35,10 +35,10 @@ RUN rpm -i apel-lib-1.5.1-1.el6.noarch.rpm --nodeps
 RUN rpm -i apel-server-1.5.1-1.el6.noarch.rpm --nodeps
 
 # get APEL REST interface
-RUN wget https://github.com/apel/rest/archive/release-1.0.0-1.zip -O apel_rest.zip
+RUN wget https://github.com/indigo-dc/Accounting/archive/1.0.0-1.zip -O apel_rest.zip
 
 # unzip APEL REST interface and mv to apel_rest dir
-RUN unzip apel_rest.zip && mv rest-release-1.0.0-1 apel_rest
+RUN unzip apel_rest.zip && mv Accounting-1.0.0-1 apel_rest
 
 # remove APEL REST zip
 RUN rm apel_rest.zip
@@ -53,7 +53,9 @@ RUN cp -r apel_rest/* /var/www/html/
 RUN cp /var/www/html/conf/apel_rest_api.conf /etc/httpd/conf.d/apel_rest_api.conf
 
 # copy SSL conf files to apache conf
-#RUN cp /var/www/html/conf/ssl.conf /etc/httpd/conf.d/ssl.conf
+RUN cp /var/www/html/conf/ssl.conf /etc/httpd/conf.d/ssl.conf
+# make a directory for the certificates
+RUN mkdir /etc/httpd/ssl/
 
 # copy the cron job that runs the summariser
 RUN cp /var/www/html/conf/cloudsummariser /etc/cron.d/cloudsummariser

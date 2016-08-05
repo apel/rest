@@ -20,7 +20,6 @@ MYSQL_PASSWORD="${MYSQL_ROOT_PASSWORD}APEL"
 
 docker run -v /var/lib/mysql --name apel-mysql -p 3306:3306 -e "MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD" -e "MYSQL_DATABASE=$MYSQL_DATABASE" -e "MYSQL_USER=$MYSQL_USER" -e "MYSQL_PASSWORD=$MYSQL_PASSWORD" -d mysql:5.6
 
-echo "Configuring Database"
 #wait for apel-mysql to configure
 sleep 30
 
