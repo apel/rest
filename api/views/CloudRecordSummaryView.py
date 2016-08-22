@@ -195,13 +195,13 @@ class CloudRecordSummaryView(APIView):
     def _filter_cursor(self, cursor):
         """Filter database results based on settings.RETURN_HEADERS."""
         results = []  # Return list.
-        for record in cursor.fetchall(): # record refers to one days summary
+        for record in cursor.fetchall():  # record refers to one days summary
             # Construct a new summary with only the values we care about.
             result = {}
             for key, value in record.iteritems():
                 # If the key is int settings.RETURN_HEADERS, add it
                 # to the new Dictionary.
-                if key in settings.RETURN_HEADERS:  
+                if key in settings.RETURN_HEADERS:
                     result.update({key: value})
             # Append new Dictionary to return list.
             results.append(result)

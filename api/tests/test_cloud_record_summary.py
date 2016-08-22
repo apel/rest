@@ -270,9 +270,9 @@ class CloudRecordSummaryTest(TestCase):
 
         # A list of test summaries.
         test_data = [{'Day': 30,
-                     'Month': 7,
-                     'Year': 2016,
-                     'SiteName': 'TEST'}]
+                      'Month': 7,
+                      'Year': 2016,
+                      'SiteName': 'TEST'}]
 
         cursor = Mock()
         # Get the mock cursor object return the test_data.
