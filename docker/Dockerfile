@@ -54,8 +54,12 @@ RUN cp /var/www/html/conf/apel_rest_api.conf /etc/httpd/conf.d/apel_rest_api.con
 
 # copy SSL conf files to apache conf
 RUN cp /var/www/html/conf/ssl.conf /etc/httpd/conf.d/ssl.conf
-# make a directory for the certificates
-RUN mkdir /etc/httpd/ssl/
+
+# copy the cloud loader conf
+RUN cp /var/www/html/conf/cloudloader.cfg /etc/apel/cloudloader.cfg
+
+# cop the cloud summariser conf
+RUN cp /var/www/html/conf/cloudsummariser.cfg /etc/apel/cloudsummariser.cfg
 
 # copy the cron job that runs the summariser
 RUN cp /var/www/html/scripts/cloudsummariser /etc/cron.d/cloudsummariser
@@ -66,20 +70,17 @@ RUN cp /var/www/html/scripts/run_cloud_summariser.sh /usr/bin/run_cloud_summaris
 # register the dbloader-cloud as a service
 RUN cp /var/www/html/scripts/apeldbloader-cloud /etc/init.d/apeldbloader-cloud
 
-# copy the cloud loader conf
-RUN cp /var/www/html/conf/cloudloader.cfg /etc/apel/cloudloader.cfg
-
-# cop the cloud summariser conf
-RUN cp /var/www/html/conf/cloudsummariser.cfg /etc/apel/cloudsummariser.cfg
+# make a directory for the certificates
+RUN mkdir /etc/httpd/ssl/
 
 # Make cloud log and run directory
 RUN mkdir /var/log/cloud &&  mkdir /var/run/cloud
 
-# Generate static files
-RUN cd /var/www/html/ && echo "yes" | python manage.py collectstatic 
-
 # Make cloud spool dir
 RUN mkdir -p /var/spool/apel/cloud/
+
+# Generate static files
+RUN cd /var/www/html/ && echo "yes" | python manage.py collectstatic 
 
 # expose apache and SSL ports
 EXPOSE 80
