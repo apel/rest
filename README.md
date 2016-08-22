@@ -15,20 +15,32 @@ Accepted records are summarised twice daily. These summaries can be accessed wit
 
 It is currently expected that only the QoS/SLA tool will interact with these summaries.
 
+## Running the docker image on Centos 7 and Ubuntu 14.04
+We recommend using the docker image to run the Accounting server and REST interface. As such, having Docker installed is a prerequistie.
 
-## Using the docker image
+See https://docs.docker.com/engine/installation/linux/ubuntulinux/ or https://docs.docker.com/engine/installation/linux/centos/
 
-1. Install docker
+1. Download the run_container.sh script corresponding to the release, see https://github.com/indigo-dc/Accounting/releases for a list of releases and corresponding docker image tag.
 
-2. Download the corresponding run_container.sh script corresponding to the release.
+2. Populate the following variables in docker/run_container.sh
 
-3. Populate the MYSQL variables and and IAM variables
+MYSQL_ROOT_PASSWORD: The database root password.
 
-4. Run `./run_container.sh indigo-dc/Accounting:X.X.X-X`
+MYSQL_PASSWORD: The password for the APEL user.
 
-5. Before the server will start, a certificate needs to be added to the container. Run `docker exec -it <docker_id> bash` to enter the container and then execute step 6 of the "Setup from source" instructions.
+ALLOWED_FOR_GET: A (python) list of IAM service IDs allowed to submit GET requests.
 
-6. Navigate a web browser to "https://\<hostname\>/index/"
+SERVER_IAM_ID: A IAM ID corresponding to this instance, used to validate tokens.
+
+SERVER_IAM_SECRET: A IAM secret corresponding to this instance, used to validate tokens.
+
+DJANGO_SECRET_KEY: The Django server requires its own "secret".
+
+3. Run `./run_container.sh indigo-dc/Accounting:X.X.X-X`
+
+4. Before the server will start, a certificate needs to be added to the container. This can be done by either modifying ./run_container.sh to load the docker image with a certificate mounted into it, or by interacting with the image post start up with `docker exec -it <docker_id> bash`.
+
+5. Navigate a web browser to "https://\<hostname\>/index/"
 
 ## Setup from source
 
