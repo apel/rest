@@ -1,9 +1,20 @@
-# REST
-
+# REST API for APEL
 [![Build Status](https://travis-ci.org/apel/rest.svg?branch=dev)](https://travis-ci.org/apel/rest)
 [![Coverage Status](https://coveralls.io/repos/github/apel/rest/badge.svg?branch=dev)](https://coveralls.io/github/apel/rest?branch=dev)
 
-Experimental REST API for APEL
+The APEL project provides accounting for the Indigo DataCloud project. It is written in Python and uses MySQL.
+
+## Overview
+APEL Cloud Accounting can account for the usage of OpenNebula and OpenStack instances. Accounting "collectors" need to be installed on machines with access to the underlying Cloud infrastructure. The collectors can be found here: https://indigo-dc.gitbooks.io/indigo-datacloud-releases/content/indigo1/accounting1.html
+
+The collectors produce "Usage Records" in the APEL-Cloud v0.2 message format. Information about this format can be found here: https://wiki.egi.eu/wiki/Federated_Cloud_Accounting#Cloud_Accounting_Message_Format_for_use_with_SSM_2.0
+
+These records need to be sent as POST requests to the REST end point .../api/v1/cloud/record, where ... is the machine hosting the docker image. A POST request requires a X.509 certificate to authenticate the request. The hostnam eof the X.509 certificate must be listed as a provider here http://indigo.cloud.plgrid.pl/cmdb/service/list for the request to be authorized.
+
+Accepted records are summarised twice daily. These summaries can be accessed with a GET request to .../api/v1/cloud/record/summary. Summaries can be filtered using key=value pairs. See [Supported key=value pairs](doc/user.md) for a list of valid supported key=value pairs. A GET request requires a IAM access token be included in the request. This token is then sent to the IAM to authenticate the ID of the service requesting access to the summary. This ID needs to be in "ALLOWED_FOR_GET" in apel_rest/settings.py for access to be authorized. See [Authorize new WP5 components to view Summaries](doc/admin.md) for instructions on adding service to "ALLOWED_FOR_GET"
+
+It is currently expected that only the QoS/SLA tool will interact with these summaries.
+
 
 ## Using the docker image
 
