@@ -42,7 +42,8 @@ DJANGO_SECRET_KEY: The Django server requires its own "secret".
 
 5. Navigate a web browser to "https://\<hostname\>/index/"
 
-## Setup from source
+## Setup from source (on Centos 6)
+We recommend this for development work ONLY.
 
 1. Install python, pip, mysql, apache, apache modules, trust bundle and other required RPMS for development.
     ```
