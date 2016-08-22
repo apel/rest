@@ -111,7 +111,7 @@ class CloudRecordSummaryView(APIView):
                               db_name, db_hostname, db_username, db_password)
             return Response(status=500)
 
-        cursor = database.cursor()
+        cursor = database.cursor(MySQLdb.cursors.DictCursor)
 
         if group_name is not None:
             cursor.execute('select * from VCloudSummaries '
@@ -193,15 +193,13 @@ class CloudRecordSummaryView(APIView):
         return serializer.data
 
     def _filter_cursor(self, cursor):
-        """Filter database results based on setting.RETURN_HEADERS."""
-        columns = cursor.description
+        """Filter database results based on settings.RETURN_HEADERS."""
         results = []
-        for value in cursor.fetchall():
+        for data in cursor.fetchall():
             result = {}
-            for index, column in enumerate(value):
-                header = columns[index][0]
-                if header in settings.RETURN_HEADERS:
-                    result.update({header: column})
+            for key, value in data.iteritems():
+                if key in settings.RETURN_HEADERS:
+                    result.update({key: value})
             results.append(result)
 
         return results
