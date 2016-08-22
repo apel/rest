@@ -58,13 +58,13 @@ RUN cp /var/www/html/conf/ssl.conf /etc/httpd/conf.d/ssl.conf
 RUN mkdir /etc/httpd/ssl/
 
 # copy the cron job that runs the summariser
-RUN cp /var/www/html/conf/cloudsummariser /etc/cron.d/cloudsummariser
+RUN cp /var/www/html/scripts/cloudsummariser /etc/cron.d/cloudsummariser
 
 # copy the script the cron job runs
-RUN cp /var/www/html/conf/run_cloud_summariser.sh /usr/bin/run_cloud_summariser.sh
+RUN cp /var/www/html/scripts/run_cloud_summariser.sh /usr/bin/run_cloud_summariser.sh
 
 # register the dbloader-cloud as a service
-RUN cp /var/www/html/conf/apeldbloader-cloud /etc/init.d/apeldbloader-cloud
+RUN cp /var/www/html/scripts/apeldbloader-cloud /etc/init.d/apeldbloader-cloud
 
 # copy the cloud loader conf
 RUN cp /var/www/html/conf/cloudloader.cfg /etc/apel/cloudloader.cfg
