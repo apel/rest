@@ -92,6 +92,11 @@ class CloudRecordView(APIView):
 #                                                                             #
 ###############################################################################
 
+    def _get_signer_list(self):
+        """Return a list of Indigo Providers."""
+        site_list_request = urllib2.Request(settings.PROVIDERS_URL)
+        return urllib2.urlopen(site_list_request)
+
     def _signer_is_valid(self, signer_dn):
         """Return True is signer's host is listed as a Indigo Provider."""
         logger = logging.getLogger(__name__)
@@ -100,9 +105,7 @@ class CloudRecordView(APIView):
         signer_split = signer_dn.split("=")
         signer = signer_split[len(signer_split)-1]
 
-        site_list = urllib2.Request(
-            'http://indigo.cloud.plgrid.pl/cmdb/service/list')
-        site_list = urllib2.urlopen(site_list)
+        site_list = self._get_signer_list()
 
         try:
             site_json = json.loads(site_list.read())
