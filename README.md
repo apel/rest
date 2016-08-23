@@ -9,38 +9,39 @@ APEL Cloud Accounting can account for the usage of OpenNebula and OpenStack inst
 
 The collectors produce "Usage Records" in the APEL-Cloud v0.2 message format. Information about this format can be found here: https://wiki.egi.eu/wiki/Federated_Cloud_Accounting#Cloud_Accounting_Message_Format_for_use_with_SSM_2.0
 
-These records need to be sent as POST requests to the REST end point .../api/v1/cloud/record, where ... is the machine hosting the docker image. A POST request requires a X.509 certificate to authenticate the request. The hostnam eof the X.509 certificate must be listed as a provider here http://indigo.cloud.plgrid.pl/cmdb/service/list for the request to be authorized.
+These records need to be sent as POST requests to the REST end point `.../api/v1/cloud/record`, where ... is the machine hosting the docker image. A POST request requires a X.509 certificate to authenticate the request. The hostname of the X.509 certificate must be listed as a provider here http://indigo.cloud.plgrid.pl/cmdb/service/list for the request to be authorized.
 
-Accepted records are summarised twice daily. These summaries can be accessed with a GET request to .../api/v1/cloud/record/summary. Summaries can be filtered using key=value pairs. See [Supported key=value pairs](doc/user.md) for a list of valid supported key=value pairs. A GET request requires a IAM access token be included in the request. This token is then sent to the IAM to authenticate the ID of the service requesting access to the summary. This ID needs to be in "ALLOWED_FOR_GET" in apel_rest/settings.py for access to be authorized. See [Authorize new WP5 components to view Summaries](doc/admin.md) for instructions on adding service to "ALLOWED_FOR_GET"
+Accepted records are summarised twice daily. These summaries can be accessed with a GET request to `.../api/v1/cloud/record/summary`. Summaries can be filtered using `key=value` pairs. See [Supported key=value pairs](doc/user.md#supported-keyvalue-pairs) for a list of valid supported `key=value` pairs. A GET request requires a IAM access token be included in the request. This token is then sent to the IAM to authenticate the ID of the service requesting access to the summary. This ID needs to be in `ALLOWED_FOR_GET` in `apel_rest/settings.py` for access to be authorized. See [Authorize new WP5 components to view Summaries](doc/admin.md#authorize-new-wp5-components-to-view-summaries) for instructions on adding service to `ALLOWED_FOR_GET`
 
 It is currently expected that only the QoS/SLA tool will interact with these summaries.
 
 ## Running the docker image on Centos 7 and Ubuntu 14.04
-We recommend using the docker image to run the Accounting server and REST interface. As such, having Docker installed is a prerequistie.
+We recommend using the docker image to run the Accounting server and REST interface. As such, having Docker installed is a prerequisite.
 
 See https://docs.docker.com/engine/installation/linux/ubuntulinux/ or https://docs.docker.com/engine/installation/linux/centos/
 
 1. Download the run_container.sh script corresponding to the release, see https://github.com/indigo-dc/Accounting/releases for a list of releases and corresponding docker image tag.
 
-2. Populate the following variables in docker/run_container.sh
+2. Populate the following variables in `docker/run_container.sh`
+   ```
+   MYSQL_ROOT_PASSWORD: The database root password.
 
-MYSQL_ROOT_PASSWORD: The database root password.
+   MYSQL_PASSWORD: The password for the APEL user.
 
-MYSQL_PASSWORD: The password for the APEL user.
+   ALLOWED_FOR_GET: A (python) list of IAM service IDs allowed to submit GET requests.
 
-ALLOWED_FOR_GET: A (python) list of IAM service IDs allowed to submit GET requests.
+   SERVER_IAM_ID: A IAM ID corresponding to this instance, used to validate tokens.
 
-SERVER_IAM_ID: A IAM ID corresponding to this instance, used to validate tokens.
+   SERVER_IAM_SECRET: A IAM secret corresponding to this instance, used to validate tokens.
 
-SERVER_IAM_SECRET: A IAM secret corresponding to this instance, used to validate tokens.
-
-DJANGO_SECRET_KEY: The Django server requires its own "secret".
+   DJANGO_SECRET_KEY: The Django server requires its own "secret".
+   ```
 
 3. Run `./run_container.sh indigo-dc/Accounting:X.X.X-X`
 
-4. Before the server will start, a certificate needs to be added to the container. This can be done by either modifying ./run_container.sh to load the docker image with a certificate mounted into it, or by interacting with the image post start up with `docker exec -it <docker_id> bash`.
+4. Before the server will start, a certificate needs to be added to the container. This can be done by either modifying `./run_container.sh` to load the docker image with a certificate mounted into it, or by interacting with the image post start up with `docker exec -it <docker_id> bash`.
 
-5. Navigate a web browser to "https://\<hostname\>/index/"
+5. Navigate a web browser to `https://\<hostname\>/index/`
 
 ## Setup from source (on Centos 6)
 We recommend this for development work ONLY.
