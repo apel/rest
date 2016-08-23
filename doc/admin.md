@@ -13,6 +13,12 @@ There are, therefore, four YMAL files.
 * `yaml/accounting-server-rc.yaml`      - This configures the replication controller for the APEL Server service
 * `yaml/accounting-server-service.yaml` - This is the APEL server service
 
+## Exposed ports
+
+80   - used by the APEL server service, by the Apache server
+443  - used by the APEL server service, by the Apache server (for HTTOS)
+3306 - used by the APEL server service and the MySQL service
+
 ## Interacting with Running Docker Containers on Kubernetes
 
 To do this, you must first install kubectl (See https://coreos.com/kubernetes/docs/latest/configure-kubectl.html for a guide how to do this)
