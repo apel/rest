@@ -4,7 +4,7 @@
 
 Providers can publish accounting records to the endpoint:
 
-https://indigo-paas.cloud.ba.infn.it/accounting/api/v1/cloud/record
+.../api/v1/cloud/record
 
 To do this, Providers must be running OpenStack or OpenNubula and install the appropriate collectors. Links to these can be found at https://indigo-dc.gitbooks.io/indigo-datacloud-releases/content/indigo1/accounting1.html under 'List of Artifacts'.
 
@@ -18,13 +18,13 @@ To do this, Providers must be running OpenStack or OpenNubula and install the ap
 
 Micro services can retrieve accounting summaries from the endpoint.
 
-https://indigo-paas.cloud.ba.infn.it/accounting-server/api/v1/cloud/record/summary
+.../api/v1/cloud/record/summary
 
 The query space is limited by key=value pairs after a "?" seperated by "&".
 
 For Example:
 
-https://indigo-paas.cloud.ba.infn.it/accounting/api/v1/cloud/record/summary?service="service_name"&from="YYYYMMDD"
+.../api/v1/cloud/record/summary?service="service_name"&from="YYYYMMDD"
 
 ### Supported key=value pairs
 
