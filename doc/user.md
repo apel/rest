@@ -6,17 +6,7 @@ Providers can publish accounting records to the endpoint:
 
 https://indigo-paas.cloud.ba.infn.it/accounting/api/v1/cloud/record
 
-To do this, Providers must be running OpenStack or OpenNubula and install the appropriate collectors.
-
-* https://github.com/alvarolopez/caso if using OpenStack
-* https://github.com/EGI-FCTF/oneacct_export if using OpenNebula
-
-Providers may use APEL's Secure Stomp Messenger (SSM) to send accounting records. To do this, install the latest RPM and add `protocol: REST` to the `sender.cfg`.
-
-Set `https://indigo-paas.cloud.ba.infn.it/accounting/api/v1/cloud/record` to be the `destination:`
-
-For more information on the SSM, please see https://github.com/apel/ssm
-
+To do this, Providers must be running OpenStack or OpenNubula and install the appropriate collectors. Links to these can be found at https://indigo-dc.gitbooks.io/indigo-datacloud-releases/content/indigo1/accounting1.html under 'List of Artifacts'.
 
 ### Expected Responses
 * 202: The data has been successfully saved for future loading and summarising.
