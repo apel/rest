@@ -92,10 +92,18 @@ class CloudRecordView(APIView):
 #                                                                             #
 ###############################################################################
 
-    def _get_signer_list(self):
+    def _get_provider_list(self):
         """Return a list of Indigo Providers."""
-        site_list_request = urllib2.Request(settings.PROVIDERS_URL)
-        return urllib2.urlopen(site_list_request)
+        logger = logging.getLogger(__name__)
+
+        provider_list_request = urllib2.Request(settings.PROVIDERS_URL)
+        provider_list_response = urllib2.urlopen(provider_list_request)
+
+        try:
+            return json.loads(provider_list_response.read())
+        except ValueError:
+            logger.error("List of providers could not be retrieved.")
+            return {}
 
     def _signer_is_valid(self, signer_dn):
         """Return True is signer's host is listed as a Indigo Provider."""
@@ -105,17 +113,11 @@ class CloudRecordView(APIView):
         signer_split = signer_dn.split("=")
         signer = signer_split[len(signer_split)-1]
 
-        site_list = self._get_signer_list()
+        providers = self._get_provider_list()
 
-        try:
-            site_json = json.loads(site_list.read())
-        except ValueError:
-            logger.error("List of providers could not be retrieved.")
-            return False
-
-        for site_num, _ in enumerate(site_json['rows']):
+        for site_num, _ in enumerate(providers['rows']):
             try:
-                if signer in site_json['rows'][site_num]['value']['hostname']:
+                if signer in providers['rows'][site_num]['value']['hostname']:
                     return True
             except KeyError:
                 pass
