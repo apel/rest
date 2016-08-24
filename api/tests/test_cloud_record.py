@@ -93,9 +93,6 @@ class CloudRecordTest(TestCase):
             self.assertEqual(MESSAGE, message_content)
             self._delete_messages(QPATH_TEST)
 
-    # def test_filter_cursor(self):
-        # pass
-
     def tearDown(self):
         """Delete any messages under QPATH and re-enable logging.INFO."""
         logging.disable(logging.NOTSET)
