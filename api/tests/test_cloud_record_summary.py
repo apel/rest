@@ -1,13 +1,10 @@
-"""
-This module tests GET and POST requests.
-to the Cloud Sumamry Record endpoint.
-"""
+"""This module tests GET requests to the Cloud Sumamry Record endpoint."""
 
 import logging
 import MySQLdb
 
 from api.views.CloudRecordSummaryView import CloudRecordSummaryView
-from django.test import TestCase
+from django.test import Client, TestCase
 from mock import Mock
 from rest_framework.test import APIRequestFactory
 
@@ -18,8 +15,54 @@ class CloudRecordSummaryTest(TestCase):
     """Tests GET requests to the Cloud Sumamry Record endpoint."""
 
     def setUp(self):
-        """Disable logging.INFO from appearing in test output."""
+        """Prevent logging from appearing in test output."""
+        logging.disable(logging.CRITICAL)
+
+    def test_cloud_record_summary_get_200(self):
+        """Test a successful GET request."""
         logging.disable(logging.INFO)
+        # Clean up any lingering example data.
+        self._clear_database()
+        # Add example data
+        self._populate_database()
+
+        # Mock the functionality of the IAM
+        CloudRecordSummaryView._token_to_id = Mock(return_value="TestService")
+
+        with self.settings(ALLOWED_FOR_GET='TestService',
+                           RETURN_HEADERS=["WallDuration",
+                                           "Day",
+                                           "Month",
+                                           "Year"]):
+            test_client = Client()
+            response = test_client.get(
+                                    '/api/v1/cloud/record/summary?'
+                                    'group=TestGroup&'
+                                    'from=20000101&to=20191231',
+                                    HTTP_AUTHORIZATION="Bearer TestToken")
+
+        # Check the expected response code has been received.
+        self.assertEqual(response.status_code, 200)
+
+        expected_response = ('{'
+                             '"count":2,'
+                             '"next":null,'
+                             '"previous":null,'
+                             '"results":[{'
+                             '"WallDuration":43200,'
+                             '"Year":2016,'
+                             '"Day":31,'
+                             '"Month":7'
+                             '},{'
+                             '"WallDuration":86399,'
+                             '"Year":2016,'
+                             '"Day":30,'
+                             '"Month":7}]}')
+
+        # Check the response received is as expected.
+        self.assertEqual(response.content, expected_response)
+        # Clean up after test.
+        self._clear_database()
 
     def test_parse_query_parameters(self):
         """Test the parsing of query parameters."""
@@ -127,3 +170,73 @@ class CloudRecordSummaryTest(TestCase):
     def tearDown(self):
         """Delete any messages under QPATH and re-enable logging.INFO."""
         logging.disable(logging.NOTSET)
+
+    def _populate_database(self):
+        """Populate the database with example summaries."""
+        cursor = self._connect_to_database()
+
+        # Insert example usage data
+        cursor.execute('INSERT INTO CloudRecords '
+                       '(VMUUID, SiteID, GlobalUserNameID, VOID, '
+                       'VOGroupID, VORoleID, Status, StartTime, '
+                       'SuspendDuration, WallDuration, PublisherDNID, '
+                       'CloudType, ImageId) '
+                       'VALUES '
+                       '("TEST-VM", 1, 1, 1, 1, 1, "Running", '
+                       '"2016-07-30 00:00:00", 0, 86399, 1, "TEST", "1");')
+
+        # Insert example usage data
+        cursor.execute('INSERT INTO CloudRecords '
+                       '(VMUUID, SiteID, GlobalUserNameID, VOID, '
+                       'VOGroupID, VORoleID, Status, StartTime, '
+                       'SuspendDuration, WallDuration, PublisherDNID, '
+                       'CloudType, ImageId) '
+                       'VALUES '
+                       '("TEST-VM", 1, 1, 1, 1, 1, "Running", '
+                       '"2016-07-30 00:00:00", 0, 129599, 1, "TEST", "1");')
+
+        # These INSERT statements are needed
+        # because we query VCloudSummaries
+        cursor.execute('INSERT INTO Sites VALUES (1, "TestSite");')
+        cursor.execute('INSERT INTO VOs VALUES (1, "TestVO");')
+        cursor.execute('INSERT INTO VOGroups VALUES (1, "TestGroup");')
+        cursor.execute('INSERT INTO VORoles VALUES (1, "TestRole");')
+        cursor.execute('INSERT INTO DNs VALUES (1, "TestDN");')
+
+        # Summarise example usage data
+        cursor.execute('CALL SummariseVMs();')
+
+    def _clear_database(self):
+        """Clear the database of example data."""
+        cursor = self._connect_to_database()
+
+        cursor.execute('DELETE FROM CloudRecords '
+                       'WHERE VMUUID="TEST-VM";')
+
+        cursor.execute('DELETE FROM CloudSummaries '
+                       'WHERE CloudType="TEST";')
+
+        cursor.execute('DELETE FROM Sites '
+                       'WHERE id=1;')
+
+        cursor.execute('DELETE FROM VOs '
+                       'WHERE id=1;')
+
+        cursor.execute('DELETE FROM VOGroups '
+                       'WHERE id=1;')
+
+        cursor.execute('DELETE FROM VORoles '
+                       'WHERE id=1;')
+
+        cursor.execute('DELETE FROM DNs '
+                       'WHERE id=1;')
+
+    def _connect_to_database(self,
+                             host='localhost',
+                             user='root',
+                             password='',
+                             name='apel_test'):
+        """Connect to and return a cursor to the given database."""
+        database = MySQLdb.connect(host, user, password, name)
+        cursor = database.cursor()
+        return cursor
