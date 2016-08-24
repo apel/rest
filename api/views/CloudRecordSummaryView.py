@@ -238,6 +238,7 @@ class CloudRecordSummaryView(APIView):
         return token
 
     def _token_to_id(self, token):
+        logger = logging.getLogger(__name__)
         try:
             auth_request = urllib2.Request(
                            'https://iam-test.indigo-datacloud.eu/introspect',
@@ -257,7 +258,8 @@ class CloudRecordSummaryView(APIView):
                 urllib2.URLError,
                 httplib.HTTPException,
                 KeyError) as e:
-            raise e
+            logger.error(e)
+            return None
 
         return client_id
 
