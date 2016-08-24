@@ -20,11 +20,11 @@ class CloudRecordTest(TestCase):
     """Tests POST requests to the Cloud Record endpoint."""
 
     def setUp(self):
-        """Disable logging from appearing in test output."""
+        """Prevent logging from appearing in test output."""
         logging.disable(logging.CRITICAL)
 
     def test_cloud_record_post_403(self):
-        """Test a POST request from a unregistered provider."""
+        """Test unknown provider POST request returns a 403 code."""
         with self.settings(QPATH=QPATH_TEST):
             # Mock the functionality of the provider url
             # Used in the underlying POST handling method
@@ -44,23 +44,21 @@ class CloudRecordTest(TestCase):
             self.assertEqual(response.status_code, 403)
 
     def test_cloud_record_post_401(self):
-        """Test a certificate-less POST request."""
+        """Test certificate-less POST request returns a 401 code."""
         with self.settings(QPATH=QPATH_TEST):
             test_client = Client()
-            response = test_client.post(
-                                    "/api/v1/cloud/record",
-                                    MESSAGE,
-                                    content_type="text/plain",
-                                    HTTP_EMPA_ID="Test Process")
-                                    # No DN to simulate
-                                    # a certificate-less request
+            # No SSL_CLIENT_S_DN in POST to
+            # simulate a certificate-less request
+            response = test_client.post("/api/v1/cloud/record",
+                                        MESSAGE,
+                                        content_type="text/plain",
+                                        HTTP_EMPA_ID="Test Process")
 
             # check the expected response code has been received
             self.assertEqual(response.status_code, 401)
 
-
     def test_cloud_record_post_202(self):
-        """Test a POST call for content equality and a 202 return code."""
+        """Test POST request for content equality and a 202 return code."""
         with self.settings(QPATH=QPATH_TEST):
             # Mock the functionality of the provider url
             # Used in the underlying POST handling method
@@ -111,16 +109,16 @@ class CloudRecordTest(TestCase):
         """Return a list of messages under message_path."""
         return glob.glob(message_path)
 
-PROVIDERS = {'total_rows':735,
-             'offset':695,
-             'rows':[
-                 {'id':'1',
-                  'key':['service'],
+PROVIDERS = {'total_rows': 735,
+             'offset': 695,
+             'rows': [
+                 {'id': '1',
+                  'key': ['service'],
                   'value':{
-                      'sitename':'TEST',
-                      'provider_id':'TEST',
-                      'hostname':'allowed_host.test',
-                      'type':'cloud'}}]}
+                      'sitename': 'TEST',
+                      'provider_id': 'TEST',
+                      'hostname': 'allowed_host.test',
+                      'type': 'cloud'}}]}
 
 MESSAGE = """APEL-cloud-message: v0.2
 VMUUID: TestVM1 2013-02-25 17:37:27+00:00
