@@ -18,9 +18,19 @@ class CloudRecordSummaryTest(TestCase):
         """Prevent logging from appearing in test output."""
         logging.disable(logging.CRITICAL)
 
+    def test_cloud_record_summary_get_401(self):
+        """Test a successful GET request."""
+        test_client = Client()
+        response = test_client.get(
+                                '/api/v1/cloud/record/summary?'
+                                'group=TestGroup&'
+                                'from=20000101&to=20191231')
+
+        # Check the expected response code has been received.
+        self.assertEqual(response.status_code, 401)
+
     def test_cloud_record_summary_get_200(self):
         """Test a successful GET request."""
-        logging.disable(logging.INFO)
         # Clean up any lingering example data.
         self._clear_database()
         # Add example data
@@ -49,14 +59,14 @@ class CloudRecordSummaryTest(TestCase):
                              '"next":null,'
                              '"previous":null,'
                              '"results":[{'
-                             '"WallDuration":43200,'
-                             '"Year":2016,'
-                             '"Day":31,'
-                             '"Month":7'
-                             '},{'
                              '"WallDuration":86399,'
                              '"Year":2016,'
                              '"Day":30,'
+                             '"Month":7'
+                             '},{'
+                             '"WallDuration":43200,'
+                             '"Year":2016,'
+                             '"Day":31,'
                              '"Month":7}]}')
 
         # Check the response received is as expected.
@@ -173,7 +183,7 @@ class CloudRecordSummaryTest(TestCase):
 
     def _populate_database(self):
         """Populate the database with example summaries."""
-        cursor = self._connect_to_database()
+        (database, cursor) = self._connect_to_database()
 
         # Insert example usage data
         cursor.execute('INSERT INTO CloudRecords '
@@ -205,10 +215,11 @@ class CloudRecordSummaryTest(TestCase):
 
         # Summarise example usage data
         cursor.execute('CALL SummariseVMs();')
+        database.commit()
 
     def _clear_database(self):
         """Clear the database of example data."""
-        cursor = self._connect_to_database()
+        (database, cursor) = self._connect_to_database()
 
         cursor.execute('DELETE FROM CloudRecords '
                        'WHERE VMUUID="TEST-VM";')
@@ -231,12 +242,14 @@ class CloudRecordSummaryTest(TestCase):
         cursor.execute('DELETE FROM DNs '
                        'WHERE id=1;')
 
+        database.commit()
+
     def _connect_to_database(self,
                              host='localhost',
                              user='root',
                              password='',
-                             name='apel_test'):
+                             name='apel_rest'):
         """Connect to and return a cursor to the given database."""
         database = MySQLdb.connect(host, user, password, name)
         cursor = database.cursor()
-        return cursor
+        return (database, cursor)
