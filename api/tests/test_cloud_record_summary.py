@@ -18,6 +18,27 @@ class CloudRecordSummaryTest(TestCase):
         """Prevent logging from appearing in test output."""
         logging.disable(logging.CRITICAL)
 
+    def test_cloud_record_summary_get_IAM_fail(self):
+        # Test what happens if we fail to contact the IAM,
+        # i.e, _token_to_id returns None
+        CloudRecordSummaryView._token_to_id = Mock(return_value=None)
+
+        with self.settings(ALLOWED_FOR_GET='TestService',
+                           RETURN_HEADERS=["WallDuration",
+                                           "Day",
+                                           "Month",
+                                           "Year"]):
+            test_client = Client()
+            response = test_client.get(
+                                    '/api/v1/cloud/record/summary?'
+                                    'group=TestGroup&'
+                                    'from=20000101&to=20191231',
+                                    HTTP_AUTHORIZATION="Bearer TestToken")
+
+        # Check the expected response code has been received.
+        self.assertEqual(response.status_code, 403)
+
+
     def test_cloud_record_summary_get_400(self):
         """Test a GET request without the from field."""
         # Mock the functionality of the IAM
@@ -36,7 +57,6 @@ class CloudRecordSummaryTest(TestCase):
 
         # Check the expected response code has been received.
         self.assertEqual(response.status_code, 400)
-
 
     def test_cloud_record_summary_get_403(self):
         """Test a unauthorized GET request."""
