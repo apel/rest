@@ -31,10 +31,12 @@ class CloudRecordSummaryTest(TestCase):
 
     def test_cloud_record_summary_get_200(self):
         """Test a successful GET request."""
+        # Connect to database
+        database = self._connect_to_database()
         # Clean up any lingering example data.
-        self._clear_database()
+        self._clear_database(database)
         # Add example data
-        self._populate_database()
+        self._populate_database(database)
 
         # Mock the functionality of the IAM
         CloudRecordSummaryView._token_to_id = Mock(return_value="TestService")
@@ -72,7 +74,8 @@ class CloudRecordSummaryTest(TestCase):
         # Check the response received is as expected.
         self.assertEqual(response.content, expected_response)
         # Clean up after test.
-        self._clear_database()
+        self._clear_database(database)
+        database.close()
 
     def test_parse_query_parameters(self):
         """Test the parsing of query parameters."""
@@ -181,9 +184,9 @@ class CloudRecordSummaryTest(TestCase):
         """Delete any messages under QPATH and re-enable logging.INFO."""
         logging.disable(logging.NOTSET)
 
-    def _populate_database(self):
+    def _populate_database(self, database):
         """Populate the database with example summaries."""
-        (database, cursor) = self._connect_to_database()
+        cursor = database.cursor()
 
         # Insert example usage data
         cursor.execute('INSERT INTO CloudRecords '
@@ -217,9 +220,9 @@ class CloudRecordSummaryTest(TestCase):
         cursor.execute('CALL SummariseVMs();')
         database.commit()
 
-    def _clear_database(self):
+    def _clear_database(self, database):
         """Clear the database of example data."""
-        (database, cursor) = self._connect_to_database()
+        cursor = database.cursor()
 
         cursor.execute('DELETE FROM CloudRecords '
                        'WHERE VMUUID="TEST-VM";')
@@ -251,5 +254,4 @@ class CloudRecordSummaryTest(TestCase):
                              name='apel_rest'):
         """Connect to and return a cursor to the given database."""
         database = MySQLdb.connect(host, user, password, name)
-        cursor = database.cursor()
-        return (database, cursor)
+        return database
