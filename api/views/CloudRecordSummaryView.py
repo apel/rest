@@ -264,4 +264,6 @@ class CloudRecordSummaryView(APIView):
         return client_id
 
     def _is_client_authorized(self, client_id):
+        if client_id == None:
+            return False
         return client_id in settings.ALLOWED_FOR_GET
