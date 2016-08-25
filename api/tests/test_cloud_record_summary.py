@@ -19,12 +19,23 @@ class CloudRecordSummaryTest(TestCase):
         logging.disable(logging.CRITICAL)
 
     def test_cloud_record_summary_get_401(self):
-        """Test a successful GET request."""
+        """Test a un authenticated GET request."""
         test_client = Client()
+        # Test without the HTTP_AUTHORIZATION header
         response = test_client.get(
                                 '/api/v1/cloud/record/summary?'
                                 'group=TestGroup&'
                                 'from=20000101&to=20191231')
+
+        # Check the expected response code has been received.
+        self.assertEqual(response.status_code, 401)
+
+        # Test with a malformed HTTP_AUTHORIZATION header
+        response = test_client.get(
+                                '/api/v1/cloud/record/summary?'
+                                'group=TestGroup&'
+                                'from=20000101&to=20191231',
+                                HTTP_AUTHORIZATION='TestToken')
 
         # Check the expected response code has been received.
         self.assertEqual(response.status_code, 401)
