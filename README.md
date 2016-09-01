@@ -74,10 +74,20 @@ Experimental REST API for APEL
      mkdir /var/log/cloud
      mkdir /var/run/cloud
      mkdir -p /var/spool/apel/cloud/
+     chown apache -R /var/spool/apel/cloud/
      ```
 
-11. Run `python manage.py collectstatic`
+11. To allow successful GET requests, you will need to register your APEL REST instance with the Indigo DataCloud IAM and add IAM variables in `/var/www/html/apel_rest/settings.py`. You will also need to register a second service (the querying service), and authorise it by adding it's ID to `ALLOWED_FOR_GET`
+    ```
+    SERVER_IAM_ID=
+    SERVER_IAM_SECRET=
+    ALLOWED_FOR_GET=
+    ```
 
-12. Start Apache with `service httpd start`
+12. Run `python manage.py collectstatic`
 
-13. Navigate a web browser to "https://\<hostname\>/index/"
+13. Start Apache with `service httpd start`
+
+14. Start the loader with `service apeldbloader-cloud start`
+
+15. Navigate a web browser to "https://\<hostname\>/index/"
