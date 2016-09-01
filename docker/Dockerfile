@@ -58,7 +58,7 @@ RUN cp /var/www/html/conf/ssl.conf /etc/httpd/conf.d/ssl.conf
 # copy the cloud loader conf
 RUN cp /var/www/html/conf/cloudloader.cfg /etc/apel/cloudloader.cfg
 
-# cop the cloud summariser conf
+# copy the cloud summariser conf
 RUN cp /var/www/html/conf/cloudsummariser.cfg /etc/apel/cloudsummariser.cfg
 
 # copy the cron job that runs the summariser
