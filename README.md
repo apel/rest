@@ -90,4 +90,4 @@ Experimental REST API for APEL
 
 14. Start the loader with `service apeldbloader-cloud start`
 
-15. Navigate a web browser to "https://\<hostname\>/index/"
+15. Navigate a web browser to "https://<hostname>/api/v1/cloud/record/summary/"
