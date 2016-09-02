@@ -6,7 +6,7 @@ Providers can publish accounting records to the endpoint:
 
 .../api/v1/cloud/record
 
-To do this, Providers must be running OpenStack or OpenNubula and install the appropriate collectors. Links to these can be found at https://indigo-dc.gitbooks.io/indigo-datacloud-releases/content/indigo1/accounting1.html under 'List of Artifacts'.
+To do this, Providers must be running OpenStack or OpenNebula and install the appropriate collectors. Links to these can be found at https://indigo-dc.gitbooks.io/indigo-datacloud-releases/content/indigo1/accounting1.html under 'List of Artifacts'.
 
 ### Expected Responses
 * 202: The data has been successfully saved for future loading and summarising.
