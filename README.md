@@ -15,6 +15,11 @@ Accepted records are summarised twice daily. These summaries can be accessed wit
 
 It is currently expected that only the QoS/SLA tool will interact with these summaries.
 
+### Features of First Release (Version 1.0.0-1)
+
+- Accept APEL-Cloud v0.2 usage records via POST requests to the REST end point `.../api/v1/cloud/record`
+- Provide access to summaries via GET requests to REST end point `.../api/v1/cloud/record/summary`
+
 ## Running the docker image on Centos 7 and Ubuntu 14.04
 We recommend using the docker image to run the Accounting server and REST interface. As such, having Docker installed is a prerequisite.
 
