@@ -15,9 +15,9 @@ There are, therefore, four YMAL files.
 
 ## Exposed ports
 
-80   - used by the APEL server service, by the Apache server
+80   - used by the APEL server service, by the Apache server and forwarded to the APEL server.
 
-443  - used by the APEL server service, by the Apache server (for HTTPS)
+443  - used by the APEL server service, by the Apache server (for HTTPS) and forwarded to the APEL server.
 
 3306 - used by the APEL server service and the MySQL service
 
@@ -25,7 +25,7 @@ There are, therefore, four YMAL files.
 
 To do this, you must first install `kubectl` (See https://coreos.com/kubernetes/docs/latest/configure-kubectl.html for a guide how to do this)
 
-1. List the "pods", you are looking for something of the form `accounting-server-rc-XXXXX`
+1. List the "pods". You are looking for something of the form `accounting-server-rc-XXXXX`
 
    `kubectl -s kubernetes_ip --user="kubectl" --token="auth_token" --insecure-skip-tls-verify=true get pods --namespace=kube-system`
 
