@@ -23,7 +23,7 @@ gpgkey=http://repository.egi.eu/sw/production/cas/1/GPG-KEY-EUGridPMA-RPM-3' >> 
 # install at (for scheduling the IGTF update after start up)
 # install IGTF trust bundle
 # install APEL requirements
-RUN yum -y install wget unzip python-pip python-devel mysql mysql-devel gcc httpd httpd-devel mod_wsgi mod_ssl vixie-cron at ca-policy-egi-core MySQL-python python-iso8601 python-ldap
+RUN yum -y install wget unzip python-pip python-devel mysql mysql-devel gcc httpd httpd-devel mod_wsgi mod_ssl vixie-cron at ca-policy-egi-core python-iso8601 python-ldap
 
 # get APEL codebase
 RUN wget https://github.com/apel/apel/releases/download/1.5.1-1/apel-lib-1.5.1-1.el6.noarch.rpm
@@ -35,10 +35,10 @@ RUN rpm -i apel-lib-1.5.1-1.el6.noarch.rpm --nodeps
 RUN rpm -i apel-server-1.5.1-1.el6.noarch.rpm --nodeps
 
 # get APEL REST interface
-RUN wget https://github.com/apel/rest/archive/dev.zip -O apel_rest.zip
+RUN wget https://github.com/indigo-dc/Accounting/archive/1.1.0-1.zip -O apel_rest.zip
 
 # unzip APEL REST interface and mv to apel_rest dir
-RUN unzip apel_rest.zip && mv rest-dev apel_rest
+RUN unzip apel_rest.zip && mv Accounting-1.1.0-1 apel_rest
 
 # remove APEL REST zip
 RUN rm apel_rest.zip
