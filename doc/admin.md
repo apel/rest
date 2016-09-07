@@ -6,7 +6,7 @@ YAML files have been provided for deployment on Kubernetes in the `yaml` directo
 
 They are split by whether they pertain to the APEL Server or to the persistant MySQL database. These are then further divided into files for the service itself and the service's replication controller, which is responsible for keeping the service containers running.
 
-There are, therefore, four YMAL files.
+There are, therefore, four YAML files.
 
 * `yaml/accounting-mysql-rc.yaml`       - This configures the replication controller for the MySQL service
 * `yaml/accounting-mysql-service.yaml`  - This is the MySQL service
@@ -65,6 +65,6 @@ You should now have terminal access to the Accounting Server.
 
 ## Authorize new WP5 components to view Summaries
 
-* In `yaml/accounting-server-rc.yaml`, add the IAM registered ID corresponding to the service in the env variable `ALLOWED_FOR_GET`. It should be of form below, quotes included. Python needs to be able to interpret this variable as a list of strings, the outer quotes prevent kubernetes interpreting it as something meaningful in YAML. The accounting-server-rc on kubernetes will have to be restarted for that to take effect. This can be done by deleting the accounting-server-service pod. 
+* In `yaml/accounting-server-rc.yaml`, add the IAM registered ID corresponding to the service in the env variable `ALLOWED_FOR_GET`. It should be of form below, quotes included. Python needs to be able to interpret this variable as a list of strings, the outer quotes prevent kubernetes interpreting it as something meaningful in YAML. The accounting-server-rc on kubernetes will have to be restarted for that to take effect. This can be done by deleting the accounting-server-service pod.
 
 `"['XXXXXXXXXXXX','XXXXXXXXXXXXXXXX']".`

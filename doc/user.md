@@ -39,5 +39,5 @@ For Example:
 * 200: Your request was succesfully met.
 * 400: No key=value pair provided for from.
 * 401: Your service's OAuth token was not provided by the request, or was not successfully extracted by the server.
-* 403: Your service's OAuth token was extracted by the server, but the IAM does not recognise it. 
+* 403: Your service's OAuth token was extracted by the server, but the IAM does not recognise it.
 * 500: An unknown error has a occured.
