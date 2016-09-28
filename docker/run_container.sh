@@ -95,7 +95,7 @@ then
 fi
 
 IMAGE_NAME=$1
-echo "This script will deploy the containers for INDIGO-DataCloud Accounting, using $IMAGE_NAME"
+echo "This script will deploy the containers for INDIGO-DataCloud Accounting"
 echo "Deploying $IMAGE_NAME with run_container.sh ($VERSION)"
 
 # If -p y, or if -p was ommited
