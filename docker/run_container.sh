@@ -1,4 +1,6 @@
 #!/bin/bash
+set -eu
+
 # This script corresponds to the following  version
 VERSION="1.1.0-1"
 
@@ -19,6 +21,9 @@ if [ $# -ne 1 ] && [ $# -ne 3 ]
 then
     usage
 fi
+
+# Set defaults for options
+PULL="y"
 
 # Process options
 while getopts "hp:" OPT; do
@@ -41,12 +46,6 @@ while getopts "hp:" OPT; do
     esac
 done
 
-# Set defaults
-if [ -z $PULL]
-then
-    PULL="y"
-fi
-
 shift "$((OPTIND-1))" # Shift off the options and optional.
 
 # Set arguements
@@ -56,8 +55,8 @@ then
 fi
 
 IMAGE_NAME=$1
-echo "This script will deploy the containers for INDIGO-DataCloud Accounting, using $IMAGE_NAME."
-echo "Deploying $IMAGE_NAME with run_container.sh ($VERSION)."
+echo "This script will deploy the containers for INDIGO-DataCloud Accounting, using $IMAGE_NAME"
+echo "Deploying $IMAGE_NAME with run_container.sh ($VERSION)"
 
 # If -p y, or if -p was ommited
 if [ "$PULL" == "y" ]
@@ -68,7 +67,7 @@ else
     echo "Using local image: $IMAGE_NAME"
 fi
 
-echo "Deploying Database"
+echo "Deploying MySQL Container"
 
 # The database root password.
 # NEEDS POPULATING
@@ -99,7 +98,7 @@ docker exec apel-mysql mysql -u root -p$MYSQL_ROOT_PASSWORD apel_rest -e "`cat s
 
 echo "Done"
 
-echo "Deploying APEL Server"
+echo "Deploying APEL Server Container"
 
 # A (python) list of IAM service IDs allowed to submit GET requests.
 # This bash variable needs to be interpreted by python as a list of strings
