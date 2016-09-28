@@ -1,15 +1,70 @@
 #!/bin/bash
-echo "This script will deploy the containers for INDIGO-DataCloud Accounting."
+# This script corresponds to the following  version
+VERSION="1.1.0-1"
 
-if [ $# -ne 1 ]
+function usage {
+    echo "Version: $VERSION"
+    echo "USAGE:"
+    echo "./run_container.sh [ -p (y)|n ] IMAGE_NAME"
+    echo ""
+    echo "    -p y: the script will pull the image from a registry."
+    echo "       n: the script will omit the docker pull command,"
+    echo "          used to run an instance of a local image."
+    echo "    -h:   Displays the message."
+    exit
+}
+
+# Check arguement/option number is 1 or 3
+if [ $# -ne 1 ] && [ $# -ne 3 ]
 then
-    echo "ERROR: Must supply APEL REST Image name as first arguement."
-    exit -1
+    usage
 fi
 
-apel_rest_image=$1
+# Process options
+while getopts "hp:" OPT; do
+    case $OPT in
+       h) # Display the usage message
+           usage
+       ;;
+       p) # Pull the docker image or use locally
+           if [ "$OPTARG" == "y" ] || [ "$OPTARG" == "n" ]
+           then
+               PULL=$OPTARG
+           else
+               echo "Invalid -p arguement: $OPTARG"
+               usage
+           fi
+       ;;
+       ?)
+           usage
+       ;;
+    esac
+done
 
-docker pull $apel_rest_image
+# Set defaults
+if [ -z $PULL]
+then
+    PULL="y"
+fi
+
+shift "$((OPTIND-1))" # Shift off the options and optional.
+
+# Set arguements
+IMAGE_NAME=$1
+if [ -z $IMAGE_NAME ]
+then
+    echo "No image provided."
+    usage
+fi
+
+echo "This script will deploy the containers for INDIGO-DataCloud Accounting, using $IMAGE_NAME."
+echo "Deploying $IMAGE_NAME with run_container.sh ($VERSION)."
+
+# If -p y, or if -p was ommited
+if [ "$PULL" == "y" ]
+then
+    docker pull $apel_rest_image
+fi
 
 echo "Configuring Database"
 
