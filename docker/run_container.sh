@@ -50,28 +50,41 @@ fi
 shift "$((OPTIND-1))" # Shift off the options and optional.
 
 # Set arguements
-IMAGE_NAME=$1
-if [ -z $IMAGE_NAME ]
+if [ $# -ne 1 ]
 then
-    echo "No image provided."
     usage
 fi
 
+IMAGE_NAME=$1
 echo "This script will deploy the containers for INDIGO-DataCloud Accounting, using $IMAGE_NAME."
 echo "Deploying $IMAGE_NAME with run_container.sh ($VERSION)."
 
 # If -p y, or if -p was ommited
 if [ "$PULL" == "y" ]
 then
-    docker pull $apel_rest_image
+    echo "Pulling image: $IMAGE_NAME"
+    docker pull $IMAGE_NAME
+else
+    echo "Using local image: $IMAGE_NAME"
 fi
 
-echo "Configuring Database"
+echo "Deploying Database"
 
+# The database root password.
+# NEEDS POPULATING
 MYSQL_ROOT_PASSWORD=
-MYSQL_DATABASE="apel_rest"
+
+# Create an APEL user
+# Do not change
 MYSQL_USER="apel"
+
+# The password for the APEL user.
+# Can be overidden
 MYSQL_PASSWORD="${MYSQL_ROOT_PASSWORD}APEL"
+
+# The name of the database used to store accounting data  
+# Can be overidden
+MYSQL_DATABASE="apel_rest"
 
 docker run -v /var/lib/mysql --name apel-mysql -p 3306:3306 -e "MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD" -e "MYSQL_DATABASE=$MYSQL_DATABASE" -e "MYSQL_USER=$MYSQL_USER" -e "MYSQL_PASSWORD=$MYSQL_PASSWORD" -d mysql:5.6
 
@@ -86,14 +99,27 @@ docker exec apel-mysql mysql -u root -p$MYSQL_ROOT_PASSWORD apel_rest -e "`cat s
 
 echo "Done"
 
-echo "Configuring APEL Server"
+echo "Deploying APEL Server"
 
+# A (python) list of IAM service IDs allowed to submit GET requests.
+# This bash variable needs to be interpreted by python as a list of strings
+# i.e. [\'ac2f23e0-8103-4581-8014-e0e82c486e36\']
+# NEEDS POPULATING
 ALLOWED_FOR_GET=
+
+# An IAM ID corresponding to this instance, used to validate tokens.
+# NEEDS POPULATING
 SERVER_IAM_ID=
+
+# An IAM secret corresponding to this instance, used to validate tokens.
+# NEEDS POPULATING
 SERVER_IAM_SECRET=
+
+# The Django server requires its own "secret".
+# NEDDS POPULATING
 DJANGO_SECRET_KEY=
 
-docker run -d --link apel-mysql:mysql -p 80:80 -p 443:443 -e "MYSQL_PASSWORD=$MYSQL_PASSWORD" -e "ALLOWED_FOR_GET=$ALLOWED_FOR_GET" -e "SERVER_IAM_ID=$SERVER_IAM_ID" -e "SERVER_IAM_SECRET=$SERVER_IAM_SECRET" -e "DJANGO_SECRET_KEY=$DJANGO_SECRET_KEY" $apel_rest_image
+docker run -d --link apel-mysql:mysql -p 80:80 -p 443:443 -e "MYSQL_PASSWORD=$MYSQL_PASSWORD" -e "ALLOWED_FOR_GET=$ALLOWED_FOR_GET" -e "SERVER_IAM_ID=$SERVER_IAM_ID" -e "SERVER_IAM_SECRET=$SERVER_IAM_SECRET" -e "DJANGO_SECRET_KEY=$DJANGO_SECRET_KEY" $IMAGE_NAME
 
 # this allows the APEL REST interface to configure
 sleep 60
