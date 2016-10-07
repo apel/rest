@@ -57,47 +57,16 @@ class CloudRecordSummaryView(APIView):
         """
         logger = logging.getLogger(__name__)
 
-        try:
-            client_token = self._request_to_token(request)
-        except KeyError:
-            logger.error("No AUTHORIZATION header provided, "
-                         "authentication failed.")
-            return Response(status=401)
-        except IndexError:
-            logger.error("AUTHORIZATION header provided, "
-                         "but not of expected form.")
-            logger.error(request.META['HTTP_AUTHORIZATION'])
+        client_token = self._request_to_token(request)
+        if client_token is None:
             return Response(status=401)
 
-        logger.info("%s Authenticated", client_token)
-
-        try:
-            client_id = self._token_to_id(client_token)
-        except urllib2.HTTPError, e:
-            logger.error('HTTPError = ' + str(e.code))
-            logger.error('Could not Authenticate.')
+        client_id = self._token_to_id(client_token)
+        if client_id is None:
             return Response(status=401)
-        except urllib2.URLError, e:
-            logger.error('URLError = ' + str(e.reason))
-            logger.error('Could not Authenticate.')
-            return Response(status=401)
-        except httplib.HTTPException:
-            logger.error('HTTPException')
-            logger.error('Could not Authenticate.')
-            return Response(status=401)
-        except KeyError:
-            logger.error("No client id in IAM response, "
-                         "likely token has expired")
-            return Response(status=401)
-
-        logger.debug("Token identifed as %s", client_id)
 
         if not self._is_client_authorized(client_id):
-            logger.error("%s does not have permission to view summaries",
-                         client_id)
             return Response(status=403)
-
-        logger.info("%s Authorized.", client_id)
 
         # parse query parameters
         (group_name,
@@ -174,6 +143,7 @@ class CloudRecordSummaryView(APIView):
 
     def _parse_query_parameters(self, request):
         """Parse expected query parameters from the given HTTP request."""
+        logger = logging.getLogger(__name__)
         group_name = request.GET.get('group', '')
         if group_name is "":
             group_name = None
@@ -189,6 +159,13 @@ class CloudRecordSummaryView(APIView):
         end_date = request.GET.get('to', '')
         if end_date is "":
             end_date = datetime.datetime.now()
+
+        # Log query parameters
+        logger.debug("Query Parameters")
+        logger.debug("Group name = %s", group_name)
+        logger.debug("Service name = %s", service_name)
+        logger.debug("Start date = %s", start_date)
+        logger.debug("End date = %s", end_date)
 
         return (group_name, service_name, start_date, end_date)
 
@@ -230,14 +207,25 @@ class CloudRecordSummaryView(APIView):
         return results
 
     def _request_to_token(self, request):
-        # get the token
+        """Get the token from the request."""
+        logger = logging.getLogger(__name__)
         try:
             token = request.META['HTTP_AUTHORIZATION'].split()[1]
-        except (KeyError, IndexError) as e:
-            raise e
+        except KeyError:
+            logger.error("No AUTHORIZATION header provided, "
+                         "authentication failed.")
+            return None
+        except IndexError:
+            logger.error("AUTHORIZATION header provided, "
+                         "but not of expected form.")
+            logger.error(request.META['HTTP_AUTHORIZATION'])
+            return None
+        logger.info("Authenticated: %s...", token[:15])
+        logger.debug("Full token: %s", token)
         return token
 
     def _token_to_id(self, token):
+        """Convert a token to a IAM ID (external dependency)."""
         logger = logging.getLogger(__name__)
         try:
             auth_request = urllib2.Request(
@@ -258,12 +246,17 @@ class CloudRecordSummaryView(APIView):
                 urllib2.URLError,
                 httplib.HTTPException,
                 KeyError) as e:
-            logger.error(e)
+            logger.error("%s: %s", type(e), str(e))
             return None
-
+        logger.info("Token identifed as %s...", client_id[:15])
+        logger.debug("Full CLIENT_ID: %s", client_id)
         return client_id
 
     def _is_client_authorized(self, client_id):
-        if client_id is None:
+        logger = logging.getLogger(__name__)
+        if client_id is None or client_id not in settings.ALLOWED_FOR_GET:
+            logger.error("%s does not have permission to view summaries",
+                         client_id)
             return False
-        return client_id in settings.ALLOWED_FOR_GET
+        logger.info("Authorizing %s...", client_id[:15])
+        return True
