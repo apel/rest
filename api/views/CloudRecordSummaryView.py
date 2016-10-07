@@ -232,10 +232,9 @@ class CloudRecordSummaryView(APIView):
             server_id = settings.SERVER_IAM_ID
             server_secret = settings.SERVER_IAM_SECRET
 
-            encode_string = ('%s:%s' % (server_id,
-                                        server_secret)).replace('\n', '')
+            encode_string = '%s:%s' % (server_id, server_secret)
 
-            base64string = base64.encodestring(encode_string)
+            base64string = base64.encodestring(encode_string).replace('\n', '')
 
             auth_request.add_header("Authorization", "Basic %s" % base64string)
             auth_result = urllib2.urlopen(auth_request)
