@@ -36,7 +36,7 @@ class CloudRecordSummaryTest(TestCase):
                                     HTTP_AUTHORIZATION="Bearer TestToken")
 
         # Check the expected response code has been received.
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 401)
 
 
     def test_cloud_record_summary_get_400(self):
@@ -205,11 +205,10 @@ class CloudRecordSummaryTest(TestCase):
 
     def test_request_to_token_fail(self):
         """Test the response of a tokenless request."""
-        test_cloud_view = CloudRecordSummaryView()
-        factory = APIRequestFactory()
-        request = factory.get('/api/v1/cloud/record/summary?from=FromDate')
+        test_client = Client()
+        response = test_client.get('/api/v1/cloud/record/summary?from=FromDate')
 
-        self.assertRaises(KeyError, test_cloud_view._request_to_token, request)
+        self.assertEqual(response.status_code, 401)
 
     def test_is_client_authorized(self):
         """Test a example client is authorised."""
