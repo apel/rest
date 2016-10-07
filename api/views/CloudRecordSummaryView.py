@@ -7,10 +7,8 @@ import httplib
 import json
 import logging
 import MySQLdb
-import os
 import urllib2
 
-from dirq.queue import Queue, QueueError
 from rest_framework.pagination import PaginationSerializer
 from django.conf import settings
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -24,7 +22,7 @@ class CloudRecordSummaryView(APIView):
 
     Usage:
 
-    .../api/v1/cloud/record/summary?Group=<group_name>&from=<date_from>&to=<date_to>
+    .../api/v1/cloud/record/summary?group=<group_name>&from=<date_from>&to=<date_to>
 
     Will return the summary for group_name at all services,
     between date_from and date_to as daily summaries
@@ -42,7 +40,7 @@ class CloudRecordSummaryView(APIView):
         """
         Retrieve Cloud Accounting Summaries.
 
-        .../api/v1/cloud/record/summary?Group=<group_name>&from=<date_from>&to=<date_to>
+        .../api/v1/cloud/record/summary?group=<group_name>&from=<date_from>&to=<date_to>
 
         Will return the summary for group_name at all services,
         between date_from and date_to as daily summaries
@@ -228,15 +226,17 @@ class CloudRecordSummaryView(APIView):
         """Convert a token to a IAM ID (external dependency)."""
         logger = logging.getLogger(__name__)
         try:
-            auth_request = urllib2.Request(
-                           'https://iam-test.indigo-datacloud.eu/introspect',
-                           data='token=%s' % token)
+            iam_url = 'https://iam-test.indigo-datacloud.eu/introspect'
+            auth_request = urllib2.Request(iam_url, data='token=%s' % token)
 
             server_id = settings.SERVER_IAM_ID
             server_secret = settings.SERVER_IAM_SECRET
 
-            base64string = base64.encodestring(
-                    '%s:%s' % (server_id, server_secret)).replace('\n', '')
+            encode_string = ('%s:%s' % (server_id,
+                                        server_secret)).replace('\n', '')
+
+            base64string = base64.encodestring(encode_string)
+
             auth_request.add_header("Authorization", "Basic %s" % base64string)
             auth_result = urllib2.urlopen(auth_request)
 
@@ -245,14 +245,19 @@ class CloudRecordSummaryView(APIView):
         except (urllib2.HTTPError,
                 urllib2.URLError,
                 httplib.HTTPException,
-                KeyError) as e:
-            logger.error("%s: %s", type(e), str(e))
+                KeyError) as error:
+            logger.error("%s: %s", type(error), str(error))
             return None
         logger.info("Token identifed as %s...", client_id[:15])
         logger.debug("Full CLIENT_ID: %s", client_id)
         return client_id
 
     def _is_client_authorized(self, client_id):
+        """
+        Return true iff client_id can access summaries.
+
+        i.e. client_id is not None and is in settings.ALLOWED_FOR_GET.
+        """
         logger = logging.getLogger(__name__)
         if client_id is None or client_id not in settings.ALLOWED_FOR_GET:
             logger.error("%s does not have permission to view summaries",
