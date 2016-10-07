@@ -19,8 +19,11 @@ class CloudRecordSummaryTest(TestCase):
         logging.disable(logging.CRITICAL)
 
     def test_cloud_record_summary_get_IAM_fail(self):
-        # Test what happens if we fail to contact the IAM,
-        # i.e, _token_to_id returns None
+        """
+        Test what happens if we fail to contact the IAM.
+
+        i.e, _token_to_id returns None
+        """
         CloudRecordSummaryView._token_to_id = Mock(return_value=None)
 
         with self.settings(ALLOWED_FOR_GET='TestService',
@@ -29,15 +32,13 @@ class CloudRecordSummaryTest(TestCase):
                                            "Month",
                                            "Year"]):
             test_client = Client()
-            response = test_client.get(
-                                    '/api/v1/cloud/record/summary?'
-                                    'group=TestGroup&'
-                                    'from=20000101&to=20191231',
-                                    HTTP_AUTHORIZATION="Bearer TestToken")
+            response = test_client.get('/api/v1/cloud/record/summary?'
+                                       'group=TestGroup&'
+                                       'from=20000101&to=20191231',
+                                       HTTP_AUTHORIZATION="Bearer TestToken")
 
         # Check the expected response code has been received.
         self.assertEqual(response.status_code, 401)
-
 
     def test_cloud_record_summary_get_400(self):
         """Test a GET request without the from field."""
@@ -50,10 +51,9 @@ class CloudRecordSummaryTest(TestCase):
                                            "Month",
                                            "Year"]):
             test_client = Client()
-            response = test_client.get(
-                                    '/api/v1/cloud/record/summary?'
-                                    'group=TestGroup',
-                                    HTTP_AUTHORIZATION="Bearer TestToken")
+            response = test_client.get('/api/v1/cloud/record/summary?'
+                                       'group=TestGroup',
+                                       HTTP_AUTHORIZATION="Bearer TestToken")
 
         # Check the expected response code has been received.
         self.assertEqual(response.status_code, 400)
@@ -69,11 +69,10 @@ class CloudRecordSummaryTest(TestCase):
                                            "Month",
                                            "Year"]):
             test_client = Client()
-            response = test_client.get(
-                                    '/api/v1/cloud/record/summary?'
-                                    'group=TestGroup&'
-                                    'from=20000101&to=20191231',
-                                    HTTP_AUTHORIZATION="Bearer TestToken")
+            response = test_client.get('/api/v1/cloud/record/summary?'
+                                       'group=TestGroup&'
+                                       'from=20000101&to=20191231',
+                                       HTTP_AUTHORIZATION="Bearer TestToken")
 
         # Check the expected response code has been received.
         self.assertEqual(response.status_code, 403)
@@ -82,20 +81,18 @@ class CloudRecordSummaryTest(TestCase):
         """Test a unauthenticated GET request."""
         test_client = Client()
         # Test without the HTTP_AUTHORIZATION header
-        response = test_client.get(
-                                '/api/v1/cloud/record/summary?'
-                                'group=TestGroup&'
-                                'from=20000101&to=20191231')
+        response = test_client.get('/api/v1/cloud/record/summary?'
+                                   'group=TestGroup&'
+                                   'from=20000101&to=20191231')
 
         # Check the expected response code has been received.
         self.assertEqual(response.status_code, 401)
 
         # Test with a malformed HTTP_AUTHORIZATION header
-        response = test_client.get(
-                                '/api/v1/cloud/record/summary?'
-                                'group=TestGroup&'
-                                'from=20000101&to=20191231',
-                                HTTP_AUTHORIZATION='TestToken')
+        response = test_client.get('/api/v1/cloud/record/summary?'
+                                   'group=TestGroup&'
+                                   'from=20000101&to=20191231',
+                                   HTTP_AUTHORIZATION='TestToken')
 
         # Check the expected response code has been received.
         self.assertEqual(response.status_code, 401)
@@ -118,11 +115,10 @@ class CloudRecordSummaryTest(TestCase):
                                            "Month",
                                            "Year"]):
             test_client = Client()
-            response = test_client.get(
-                                    '/api/v1/cloud/record/summary?'
-                                    'group=TestGroup&'
-                                    'from=20000101&to=20191231',
-                                    HTTP_AUTHORIZATION="Bearer TestToken")
+            response = test_client.get('/api/v1/cloud/record/summary?'
+                                       'group=TestGroup&'
+                                       'from=20000101&to=20191231',
+                                       HTTP_AUTHORIZATION="Bearer TestToken")
 
         # Check the expected response code has been received.
         self.assertEqual(response.status_code, 200)
@@ -206,7 +202,8 @@ class CloudRecordSummaryTest(TestCase):
     def test_request_to_token_fail(self):
         """Test the response of a tokenless request."""
         test_client = Client()
-        response = test_client.get('/api/v1/cloud/record/summary?from=FromDate')
+        get_url = '/api/v1/cloud/record/summary?from=FromDate'
+        response = test_client.get(get_url)
 
         self.assertEqual(response.status_code, 401)
 
