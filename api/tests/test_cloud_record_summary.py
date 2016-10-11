@@ -23,7 +23,10 @@ class CloudRecordSummaryTest(TestCase):
         Test what happens if we fail to contact the IAM.
 
         i.e, _token_to_id returns None
+
+        IAM = Identity and Access Management
         """
+        # Used in the underlying GET method
         CloudRecordSummaryView._token_to_id = Mock(return_value=None)
 
         with self.settings(ALLOWED_FOR_GET='TestService',
@@ -59,7 +62,7 @@ class CloudRecordSummaryTest(TestCase):
         self.assertEqual(response.status_code, 400)
 
     def test_cloud_record_summary_get_403(self):
-        """Test a unauthorized GET request."""
+        """Test an unauthorized GET request."""
         # Mock the functionality of the IAM
         CloudRecordSummaryView._token_to_id = Mock(return_value="FakeService")
 
@@ -78,7 +81,7 @@ class CloudRecordSummaryTest(TestCase):
         self.assertEqual(response.status_code, 403)
 
     def test_cloud_record_summary_get_401(self):
-        """Test a unauthenticated GET request."""
+        """Test an unauthenticated GET request."""
         test_client = Client()
         # Test without the HTTP_AUTHORIZATION header
         response = test_client.get('/api/v1/cloud/record/summary?'
