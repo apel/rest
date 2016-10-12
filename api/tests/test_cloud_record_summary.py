@@ -26,7 +26,9 @@ class CloudRecordSummaryTest(TestCase):
 
         IAM = Identity and Access Management
         """
+        # Mock the functionality of the IAM
         # Used in the underlying GET method
+        # Simulates a failure to translate a token to an ID
         CloudRecordSummaryView._token_to_id = Mock(return_value=None)
 
         with self.settings(ALLOWED_FOR_GET='TestService',
@@ -46,6 +48,8 @@ class CloudRecordSummaryTest(TestCase):
     def test_cloud_record_summary_get_400(self):
         """Test a GET request without the from field."""
         # Mock the functionality of the IAM
+        # Simulates the translation of a token to an ID
+        # Used in the underlying GET method
         CloudRecordSummaryView._token_to_id = Mock(return_value="TestService")
 
         with self.settings(ALLOWED_FOR_GET='TestService',
@@ -64,6 +68,8 @@ class CloudRecordSummaryTest(TestCase):
     def test_cloud_record_summary_get_403(self):
         """Test an unauthorized GET request."""
         # Mock the functionality of the IAM
+        # Simulates the translation of a token to an unauthorized ID
+        # Used in the underlying GET method
         CloudRecordSummaryView._token_to_id = Mock(return_value="FakeService")
 
         with self.settings(ALLOWED_FOR_GET='TestService',
