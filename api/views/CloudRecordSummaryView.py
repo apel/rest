@@ -253,7 +253,7 @@ class CloudRecordSummaryView(APIView):
 
     def _is_client_authorized(self, client_id):
         """
-        Return true iff client_id can access summaries.
+        Return true if and only if client_id can access summaries.
 
         i.e. client_id is not None and is in settings.ALLOWED_FOR_GET.
         """
