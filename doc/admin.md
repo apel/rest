@@ -61,7 +61,7 @@ You should now have terminal access to the Accounting Server.
 
 * `/etc/cron.d/cloudsummariser` : Cron job that runs `run_cloud_summariser.sh`
 
-* `/usr/bin/run_cloud_summariser.sh` : Stops the loader servic, summarises the database and restarts the loader
+* `/usr/bin/run_cloud_summariser.sh` : Stops the loader service, summarises the database and restarts the loader
 
 ## Register the service as a protected resource with the Indigo Identity Access Management (IAM)
 
