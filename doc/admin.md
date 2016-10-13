@@ -63,6 +63,16 @@ You should now have terminal access to the Accounting Server.
 
 * `/usr/bin/run_cloud_summariser.sh` : Stops the loader servic, summarises the database and restarts the loader
 
+## Register the service as a protected resource with the Indigo Identity Access Management (IAM)
+
+1. On the IAM homepage, click "Self Service Protected Resource Registration"
+
+2. On the "Main" tab, give this resource an appropriate Client Name
+
+3. Click Save.
+
+4. Store the ClientID, Client Secret and Registration Access Token, as the ID and Secret will need to be put in `apel_rest/settings.py` and the token will be needed to make further modifications to this registration.
+
 ## Authorize new WP5 components to view Summaries
 
 * In `yaml/accounting-server-rc.yaml`, add the IAM registered ID corresponding to the service in the env variable `ALLOWED_FOR_GET`. It should be of form below, quotes included. Python needs to be able to interpret this variable as a list of strings, the outer quotes prevent kubernetes interpreting it as something meaningful in YAML. The accounting-server-rc on kubernetes will have to be restarted for that to take effect. This can be done by deleting the accounting-server-service pod.
