@@ -129,9 +129,6 @@ class CloudRecordSummaryTest(TestCase):
                                        'from=20000101&to=20191231',
                                        HTTP_AUTHORIZATION="Bearer TestToken")
 
-        # Check the expected response code has been received.
-        self.assertEqual(response.status_code, 200)
-
         expected_response = ('{'
                              '"count":2,'
                              '"next":null,'
@@ -147,11 +144,15 @@ class CloudRecordSummaryTest(TestCase):
                              '"Day":31,'
                              '"Month":7}]}')
 
-        # Check the response received is as expected.
-        self.assertEqual(response.content, expected_response)
-        # Clean up after test.
-        self._clear_database(database)
-        database.close()
+        try:
+            # Check the expected response code has been received.
+            self.assertEqual(response.status_code, 200)
+            # Check the response received is as expected.
+            self.assertEqual(response.content, expected_response)
+            # Clean up after test.
+        finally:
+            self._clear_database(database)
+            database.close()
 
     def test_parse_query_parameters(self):
         """Test the parsing of query parameters."""
