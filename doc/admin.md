@@ -65,13 +65,13 @@ You should now have terminal access to the Accounting Server.
 
 ## Register the service as a protected resource with the Indigo Identity Access Management (IAM)
 
-1. On the IAM homepage, click "Self Service Protected Resource Registration"
+1. On the IAM homepage, click "Self Service Protected Resource Registration".
 
-2. On the "Main" tab, give this resource an appropriate Client Name
+2. On the "Main" tab, give this resource an appropriate Client Name.
 
 3. Click Save.
 
-4. Store the ClientID, Client Secret and Registration Access Token, as the ID and Secret will need to be put in `apel_rest/settings.py` and the token will be needed to make further modifications to this registration.
+4. Store the ClientID, Client Secret, and Registration Access Token; as the ID and Secret will need to be put in `apel_rest/settings.py`, and the token will be needed to make further modifications to this registration.
 
 ## Authorize new WP5 components to view Summaries
 
