@@ -15,11 +15,11 @@ There are, therefore, four YAML files.
 
 ## Exposed ports
 
-80   - used by the APEL server service, by the Apache server and forwarded to the APEL server.
+80 - all traffic to this port is forwarded to port 443 by the Apache server.
 
-443  - used by the APEL server service, by the Apache server (for HTTPS) and forwarded to the APEL server.
+443 - the Apache server forwards (HTTPS) traffic to the APEL server, which returns a Django view for recognised URL patterns.
 
-3306 - used by the APEL server service and the MySQL service
+3306 - used by the APEL server service and the MySQL service to communicate with each other
 
 ## Interacting with Running Docker Containers on Kubernetes
 
