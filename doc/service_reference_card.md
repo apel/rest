@@ -1,4 +1,4 @@
-# Service Reference Card Template
+# Service Reference Card
 
 * Daemons running
   * httpd
