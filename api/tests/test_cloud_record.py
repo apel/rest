@@ -30,12 +30,13 @@ class CloudRecordTest(TestCase):
         """
         with self.settings(QPATH=QPATH_TEST):
             test_client = Client()
+            example_dn = "/C=XX/O=XX/OU=XX/L=XX/CN=cloud.recas.ba.infn.it" 
             response = test_client.post(
                                     "/api/v1/cloud/record",
                                     MESSAGE,
                                     content_type="text/plain",
                                     HTTP_EMPA_ID="Test Process",
-                                    SSL_CLIENT_S_DN="cloud.recas.ba.infn.it")
+                                    SSL_CLIENT_S_DN=example_dn)
 
             # check the expected response code has been received
             self.assertEqual(response.status_code, 202)
