@@ -98,8 +98,12 @@ class CloudRecordView(APIView):
 ###############################################################################
 
     def _signer_is_valid(self, signer):
-        """Return True is signer is listed as a Indigo Provider."""
+        """Return True is signer's host is listed as a Indigo Provider."""
         logger = logging.getLogger(__name__)
+
+        # Get the hostname from the DN
+        signer_split = signer.split("=")
+        signer_host = signer_split[len(signer_split)-1]
 
         site_list = urllib2.Request(
             'http://indigo.cloud.plgrid.pl/cmdb/service/list')
@@ -113,7 +117,7 @@ class CloudRecordView(APIView):
 
         for site_num, site_name in enumerate(site_json['rows']):
             try:
-                if signer in site_json['rows'][site_num]['value']['hostname']:
+                if signer_host in site_json['rows'][site_num]['value']['hostname']:
                     return True
             except KeyError:
                 pass
