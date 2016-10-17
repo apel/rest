@@ -79,7 +79,7 @@ You should now have terminal access to the Accounting Server.
 
 `"['XXXXXXXXXXXX','XXXXXXXXXXXXXXXX']".`
 
-## How to update an already deployed service from 1.1.0 to 1.2.0
+## How to update an already deployed service to 1.2.0 (from <1.2.0)
 1. Run `docker exec -it apel_server_container_id bash` to open a interactive shell from within the docker image.
 
 2. Disable the summariser cron job, `/etc/cron.d/cloudsummariser`, and if running, wait for the summariser to stop.
