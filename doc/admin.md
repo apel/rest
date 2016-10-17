@@ -80,12 +80,12 @@ You should now have terminal access to the Accounting Server.
 `"['XXXXXXXXXXXX','XXXXXXXXXXXXXXXX']".`
 
 ## How to update an already deployed service to 1.2.0 (from <1.2.0)
-1. Run `docker exec -it apel_server_container_id bash` to open a interactive shell from within the docker image.
+1. Run `docker exec -it apel_server_container_id bash` to open an interactive shell from within the docker image.
 
 2. Disable the summariser cron job, `/etc/cron.d/cloudsummariser`, and if running, wait for the summariser to stop.
 
-3. Stop the apache server with `service httpd stop`
+3. Stop the apache server with `service httpd stop`.
 
-4. Ensure all messages have been loader, i.e. `/var/spool/apel/cloud/incoming/` contains no unloaded messages
+4. Ensure all messages have been loaded, i.e. `/var/spool/apel/cloud/incoming/` contains no unloaded messages.
 
-5. Because this update does not alter any interactions between the container and other services/components/containers the old Accounting container can now simple be deleted and the new version launched in it's place.
+5. Because this update does not alter any interactions between the container and other services/components/containers, the old Accounting container can now simply be deleted and the new version launched in it's place.
