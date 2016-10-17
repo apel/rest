@@ -1,17 +1,12 @@
 """This file contains the CloudRecordView class."""
 
-import ConfigParser
-import datetime
 import json
 import logging
-import MySQLdb
 import os
 import urllib2
 
 from dirq.queue import Queue, QueueError
-from rest_framework.pagination import PaginationSerializer
 from django.conf import settings
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -97,13 +92,13 @@ class CloudRecordView(APIView):
 #                                                                             #
 ###############################################################################
 
-    def _signer_is_valid(self, signer):
+    def _signer_is_valid(self, signer_dn):
         """Return True is signer's host is listed as a Indigo Provider."""
         logger = logging.getLogger(__name__)
 
         # Get the hostname from the DN
-        signer_split = signer.split("=")
-        signer_host = signer_split[len(signer_split)-1]
+        signer_split = signer_dn.split("=")
+        signer = signer_split[len(signer_split)-1]
 
         site_list = urllib2.Request(
             'http://indigo.cloud.plgrid.pl/cmdb/service/list')
@@ -115,9 +110,9 @@ class CloudRecordView(APIView):
             logger.error("List of providers could not be retrieved.")
             return False
 
-        for site_num, site_name in enumerate(site_json['rows']):
+        for site_num, _ in enumerate(site_json['rows']):
             try:
-                if signer_host in site_json['rows'][site_num]['value']['hostname']:
+                if signer in site_json['rows'][site_num]['value']['hostname']:
                     return True
             except KeyError:
                 pass
