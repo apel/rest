@@ -28,7 +28,7 @@ SERVER_IAM_SECRET=
 DJANGO_SECRET_KEY=
 
 # The database root password.
-# NEEDS POPULATING if and only iff deploying database containers
+# NEEDS POPULATING if and only if deploying database containers
 MYSQL_ROOT_PASSWORD=
 
 #################################################
@@ -115,7 +115,7 @@ then
     docker run -v /var/lib/mysql --name apel-mysql -p 3306:3306 -e "MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD" -e "MYSQL_DATABASE=apel_rest" -e "MYSQL_USER=apel" -e "MYSQL_PASSWORD=$MYSQL_PASSWORD" -d mysql:5.6
 
     #wait for apel-mysql to configure
-    sleep 30
+    sleep 60
 
     # Create schema
     docker exec apel-mysql mysql -u root -p$MYSQL_ROOT_PASSWORD apel_rest -e "`cat schemas/cloud.sql`"

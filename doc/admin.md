@@ -78,3 +78,14 @@ You should now have terminal access to the Accounting Server.
 * In `yaml/accounting-server-rc.yaml`, add the IAM registered ID corresponding to the service in the env variable `ALLOWED_FOR_GET`. It should be of form below, quotes included. Python needs to be able to interpret this variable as a list of strings, the outer quotes prevent kubernetes interpreting it as something meaningful in YAML. The accounting-server-rc on kubernetes will have to be restarted for that to take effect. This can be done by deleting the accounting-server-service pod.
 
 `"['XXXXXXXXXXXX','XXXXXXXXXXXXXXXX']".`
+
+## How to update an already deployed service to 1.2.0 (from <1.2.0)
+1. Run `docker exec -it apel_server_container_id bash` to open an interactive shell from within the docker image.
+
+2. Disable the summariser cron job, `/etc/cron.d/cloudsummariser`, and if running, wait for the summariser to stop.
+
+3. Stop the apache server with `service httpd stop`.
+
+4. Ensure all messages have been loaded, i.e. `/var/spool/apel/cloud/incoming/` contains no unloaded messages.
+
+5. Because this update does not alter any interactions between the container and other services/components/containers, the old Accounting container can now simply be deleted and the new version launched in it's place.
