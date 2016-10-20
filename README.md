@@ -15,7 +15,7 @@ Accepted records are summarised twice daily. These summaries can be accessed wit
 
 It is currently expected that only the QoS/SLA tool will interact with these summaries.
 
-### Features of First Release (Version 1.0.0-1)
+### Features of Version 1.2.1-1
 
 - Accept APEL-Cloud v0.2 usage records via POST requests to the REST endpoint `.../api/v1/cloud/record`
 - Provide access to summaries via GET requests to REST endpoint `.../api/v1/cloud/record/summary`

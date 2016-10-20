@@ -35,10 +35,10 @@ RUN rpm -i apel-lib-1.5.1-1.el6.noarch.rpm --nodeps
 RUN rpm -i apel-server-1.5.1-1.el6.noarch.rpm --nodeps
 
 # get APEL REST interface
-RUN wget https://github.com/indigo-dc/Accounting/archive/1.2.0-1.zip -O apel_rest.zip
+RUN wget https://github.com/indigo-dc/Accounting/archive/1.2.1-1.zip -O apel_rest.zip
 
 # unzip APEL REST interface and mv to apel_rest dir
-RUN unzip apel_rest.zip && mv Accounting-1.2.0-1 apel_rest
+RUN unzip apel_rest.zip && mv Accounting-1.2.1-1 apel_rest
 
 # remove APEL REST zip
 RUN rm apel_rest.zip
