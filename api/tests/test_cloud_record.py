@@ -28,23 +28,23 @@ class CloudRecordTest(TestCase):
 #                                        HTTP_EMPA_ID="Test Process",
 #                                        SSL_CLIENT_S_DN=example_dn)
 
-            # check the expected response code has been received
+#            # check the expected response code has been received
 #            self.assertEqual(response.status_code, 202)
 
-            # get save messages under QPATH_TEST
+#            # get save messages under QPATH_TEST
 #            messages = self._saved_messages('%s*/*/*/body' % QPATH_TEST)
 
-            # check one and only one message body saved
+#            # check one and only one message body saved
 #            self.assertEqual(len(messages), 1)
 
-            # get message content
-            # can unpack sequence because we have asserted length 1
+#            # get message content
+#            # can unpack sequence because we have asserted length 1
 #            [message] = messages
 #            message_file = open(message)
 #            message_content = message_file.read()
 #            message_file.close()
 
-            # check saved message content
+#            # check saved message content
 #            self.assertEqual(MESSAGE, message_content)
 #            self._delete_messages(QPATH_TEST)
 
