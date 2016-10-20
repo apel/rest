@@ -1,7 +1,4 @@
-"""
-This module tests GET and POST requests.
-to the Cloud Sumamry Record endpoint.
-"""
+"""This module tests POST requests to the Cloud Record endpoint."""
 
 import glob
 import logging
@@ -9,33 +6,27 @@ import os
 import shutil
 
 from django.test import Client, TestCase
-from rest_framework.request import Request
-from rest_framework.test import APIRequestFactory
 
 QPATH_TEST = '/tmp/django-test/'
 
 
 class CloudRecordTest(TestCase):
-    """
-    Tests POST requests to the Cloud Record endpoint.
-    """
+    """Tests POST requests to the Cloud Record endpoint."""
+
     def setUp(self):
         """Disable logging.INFO from appearing in test output."""
         logging.disable(logging.INFO)
 
     def test_cloud_record_post(self):
-        """
-        Test a POST call for content equality and a 202 return code,
-        with a test cloud message.
-        """
+        """Test a POST call for content equality and a 202 return code."""
         with self.settings(QPATH=QPATH_TEST):
             test_client = Client()
-            response = test_client.post(
-                                    "/api/v1/cloud/record",
-                                    MESSAGE,
-                                    content_type="text/plain",
-                                    HTTP_EMPA_ID="Test Process",
-                                    SSL_CLIENT_S_DN="cloud.recas.ba.infn.it")
+            example_dn = "/C=XX/O=XX/OU=XX/L=XX/CN=cloud.recas.ba.infn.it"
+            response = test_client.post("/api/v1/cloud/record",
+                                        MESSAGE,
+                                        content_type="text/plain",
+                                        HTTP_EMPA_ID="Test Process",
+                                        SSL_CLIENT_S_DN=example_dn)
 
             # check the expected response code has been received
             self.assertEqual(response.status_code, 202)
@@ -70,10 +61,7 @@ class CloudRecordTest(TestCase):
             shutil.rmtree(message_path)
 
     def _saved_messages(self, message_path):
-        """
-        Return a list of file locations,
-        corresponding to messages under message_path.
-        """
+        """Return a list of messages under message_path."""
         return glob.glob(message_path)
 
 MESSAGE = """APEL-cloud-message: v0.2
