@@ -35,7 +35,7 @@ MYSQL_ROOT_PASSWORD=
 
 
 # This script corresponds to the following  version
-VERSION="1.1.0-1"
+VERSION="1.2.1-1"
 
 function usage {
     echo "Version: $VERSION"

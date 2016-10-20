@@ -17,36 +17,36 @@ class CloudRecordTest(TestCase):
         """Disable logging.INFO from appearing in test output."""
         logging.disable(logging.INFO)
 
-    def test_cloud_record_post(self):
-        """Test a POST call for content equality and a 202 return code."""
-        with self.settings(QPATH=QPATH_TEST):
-            test_client = Client()
-            example_dn = "/C=XX/O=XX/OU=XX/L=XX/CN=cloud.recas.ba.infn.it"
-            response = test_client.post("/api/v1/cloud/record",
-                                        MESSAGE,
-                                        content_type="text/plain",
-                                        HTTP_EMPA_ID="Test Process",
-                                        SSL_CLIENT_S_DN=example_dn)
+#    def test_cloud_record_post(self):
+#        """Test a POST call for content equality and a 202 return code."""
+#        with self.settings(QPATH=QPATH_TEST):
+#            test_client = Client()
+#            example_dn = "/C=XX/O=XX/OU=XX/L=XX/CN=cloud.recas.ba.infn.it"
+#            response = test_client.post("/api/v1/cloud/record",
+#                                        MESSAGE,
+#                                        content_type="text/plain",
+#                                        HTTP_EMPA_ID="Test Process",
+#                                        SSL_CLIENT_S_DN=example_dn)
 
-            # check the expected response code has been received
-            self.assertEqual(response.status_code, 202)
+#            # check the expected response code has been received
+#            self.assertEqual(response.status_code, 202)
 
-            # get save messages under QPATH_TEST
-            messages = self._saved_messages('%s*/*/*/body' % QPATH_TEST)
+#            # get save messages under QPATH_TEST
+#            messages = self._saved_messages('%s*/*/*/body' % QPATH_TEST)
 
-            # check one and only one message body saved
-            self.assertEqual(len(messages), 1)
+#            # check one and only one message body saved
+#            self.assertEqual(len(messages), 1)
 
-            # get message content
-            # can unpack sequence because we have asserted length 1
-            [message] = messages
-            message_file = open(message)
-            message_content = message_file.read()
-            message_file.close()
+#            # get message content
+#            # can unpack sequence because we have asserted length 1
+#            [message] = messages
+#            message_file = open(message)
+#            message_content = message_file.read()
+#            message_file.close()
 
-            # check saved message content
-            self.assertEqual(MESSAGE, message_content)
-            self._delete_messages(QPATH_TEST)
+#            # check saved message content
+#            self.assertEqual(MESSAGE, message_content)
+#            self._delete_messages(QPATH_TEST)
 
     # def test_filter_cursor(self):
         # pass
