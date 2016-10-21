@@ -165,4 +165,4 @@ RETURN_HEADERS = ["VOGroup",
 # this doesnt do anything, probably because of using older Django
 URL_FORMAT_OVERRIDE = None
 
-PROVIDERS_URL="http://indigo.cloud.plgrid.pl/cmdb/service/list"
+PROVIDERS_URL = "http://indigo.cloud.plgrid.pl/cmdb/service/list"
