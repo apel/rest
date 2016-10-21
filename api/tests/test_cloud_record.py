@@ -43,37 +43,34 @@ class CloudRecordTest(TestCase):
 
     def test_cloud_record_post_403(self):
         """Test unknown provider POST request returns a 403 code."""
-        with self.settings(QPATH=QPATH_TEST):
-            # Mock the functionality of the provider list
-            # Used in the underlying POST handling method
-            # Allows only allowed_host.test to POST
-            CloudRecordView._get_provider_list = Mock(return_value=PROVIDERS)
+        # Mock the functionality of the provider list
+        # Used in the underlying POST handling method
+        # Allows only allowed_host.test to POST
+        CloudRecordView._get_provider_list = Mock(return_value=PROVIDERS)
 
-            test_client = Client()
-            example_dn = "/C=XX/O=XX/OU=XX/L=XX/CN=prohibited_host.test"
-            response = test_client.post(
-                                    "/api/v1/cloud/record",
+        test_client = Client()
+        example_dn = "/C=XX/O=XX/OU=XX/L=XX/CN=prohibited_host.test"
+        response = test_client.post("/api/v1/cloud/record",
                                     MESSAGE,
                                     content_type="text/plain",
                                     HTTP_EMPA_ID="Test Process",
                                     SSL_CLIENT_S_DN=example_dn)
 
-            # check the expected response code has been received
-            self.assertEqual(response.status_code, 403)
+        # check the expected response code has been received
+        self.assertEqual(response.status_code, 403)
 
     def test_cloud_record_post_401(self):
         """Test certificate-less POST request returns a 401 code."""
-        with self.settings(QPATH=QPATH_TEST):
-            test_client = Client()
-            # No SSL_CLIENT_S_DN in POST to
-            # simulate a certificate-less request
-            response = test_client.post("/api/v1/cloud/record",
-                                        MESSAGE,
-                                        content_type="text/plain",
-                                        HTTP_EMPA_ID="Test Process")
+        test_client = Client()
+        # No SSL_CLIENT_S_DN in POST to
+        # simulate a certificate-less request
+        response = test_client.post("/api/v1/cloud/record",
+                                    MESSAGE,
+                                    content_type="text/plain",
+                                    HTTP_EMPA_ID="Test Process")
 
-            # check the expected response code has been received
-            self.assertEqual(response.status_code, 401)
+        # check the expected response code has been received
+        self.assertEqual(response.status_code, 401)
 
     def test_cloud_record_post_202(self):
         """Test POST request for content equality and a 202 return code."""
