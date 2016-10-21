@@ -96,13 +96,14 @@ class CloudRecordView(APIView):
         """Return a list of Indigo Providers."""
         logger = logging.getLogger(__name__)
 
-        provider_list_request = urllib2.Request(settings.PROVIDERS_URL)
-        provider_list_response = urllib2.urlopen(provider_list_request)
-
         try:
+            provider_list_request = urllib2.Request(settings.PROVIDERS_URL)
+            provider_list_response = urllib2.urlopen(provider_list_request)
             return json.loads(provider_list_response.read())
-        except ValueError:
+
+        except (ValueError, urllib2.HTTPError) as error:
             logger.error("List of providers could not be retrieved.")
+            logger.error("%s: %s", type(error), str(error))
             return {}
 
     def _signer_is_valid(self, signer_dn):
