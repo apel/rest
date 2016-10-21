@@ -23,10 +23,28 @@ class CloudRecordTest(TestCase):
         """Prevent logging from appearing in test output."""
         logging.disable(logging.CRITICAL)
 
+    def test_cloud_record_post_provider_fail(self):
+        """Test what happens if we fail to retrieve the providers."""
+        # Mock the functionality of the provider list
+        # Used in the underlying POST handling method
+        # Shouldn't allow any POSTs,
+        # i.e. we have failed to retrieve the providers list
+        CloudRecordView._get_provider_list = Mock(return_value={})
+
+        test_client = Client()
+        example_dn = "/C=XX/O=XX/OU=XX/L=XX/CN=allowed_host.test"
+        response = test_client.post("/api/v1/cloud/record",
+                                    MESSAGE,
+                                    content_type="text/plain",
+                                    HTTP_EMPA_ID="Test Process",
+                                    SSL_CLIENT_S_DN=example_dn)
+
+        self.assertEqual(response.status_code, 403)
+
     def test_cloud_record_post_403(self):
         """Test unknown provider POST request returns a 403 code."""
         with self.settings(QPATH=QPATH_TEST):
-            # Mock the functionality of the provider url
+            # Mock the functionality of the provider list
             # Used in the underlying POST handling method
             # Allows only allowed_host.test to POST
             CloudRecordView._get_provider_list = Mock(return_value=PROVIDERS)
@@ -60,7 +78,7 @@ class CloudRecordTest(TestCase):
     def test_cloud_record_post_202(self):
         """Test POST request for content equality and a 202 return code."""
         with self.settings(QPATH=QPATH_TEST):
-            # Mock the functionality of the provider url
+            # Mock the functionality of the provider list
             # Used in the underlying POST handling method
             # Allows only allowed_host.test to POST
             CloudRecordView._get_provider_list = Mock(return_value=PROVIDERS)
