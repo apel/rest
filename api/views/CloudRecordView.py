@@ -115,12 +115,12 @@ class CloudRecordView(APIView):
 
         providers = self._get_provider_list()
 
-        for site_num, _ in enumerate(providers['rows']):
-            try:
+        try:
+            for site_num, _ in enumerate(providers['rows']):
                 if signer in providers['rows'][site_num]['value']['hostname']:
                     return True
-            except KeyError:
-                pass
+        except KeyError:
+            pass
 
         # If we have not returned while in for loop
         # then site must be invalid
