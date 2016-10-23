@@ -3,4 +3,5 @@
 * [About Indigo Component](README.md)
 * [Developer guide](doc/developer.md)
 * [Deployment and Administration guide](doc/admin.md)
+* [service Reference Card](doc/service_reference_card.md)
 * [User guide](doc/user.md)
