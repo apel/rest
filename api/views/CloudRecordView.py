@@ -93,7 +93,7 @@ class CloudRecordView(APIView):
 ###############################################################################
 
     def _get_provider_list(self):
-        """Return a list of Indigo Providers."""
+        """Return a list of Resource Providers."""
         logger = logging.getLogger(__name__)
 
         try:
@@ -103,11 +103,11 @@ class CloudRecordView(APIView):
 
         except (ValueError, urllib2.HTTPError) as error:
             logger.error("List of providers could not be retrieved.")
-            logger.error("%s: %s", type(error), str(error))
+            logger.error("%s: %s", type(error), error)
             return {}
 
     def _signer_is_valid(self, signer_dn):
-        """Return True is signer's host is listed as a Indigo Provider."""
+        """Return True if signer's host is listed as a Resource Provider."""
         logger = logging.getLogger(__name__)
 
         # Get the hostname from the DN
@@ -121,7 +121,7 @@ class CloudRecordView(APIView):
                 if signer in providers['rows'][site_num]['value']['hostname']:
                     return True
         except KeyError:
-            pass
+            logging.error('Could not parse list of providers.')
 
         # If we have not returned while in for loop
         # then site must be invalid
