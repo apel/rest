@@ -92,30 +92,36 @@ class CloudRecordView(APIView):
 #                                                                             #
 ###############################################################################
 
+    def _get_provider_list(self):
+        """Return a list of Resource Providers."""
+        logger = logging.getLogger(__name__)
+
+        try:
+            provider_list_request = urllib2.Request(settings.PROVIDERS_URL)
+            provider_list_response = urllib2.urlopen(provider_list_request)
+            return json.loads(provider_list_response.read())
+
+        except (ValueError, urllib2.HTTPError) as error:
+            logger.error("List of providers could not be retrieved.")
+            logger.error("%s: %s", type(error), error)
+            return {}
+
     def _signer_is_valid(self, signer_dn):
-        """Return True is signer's host is listed as a Indigo Provider."""
+        """Return True if signer's host is listed as a Resource Provider."""
         logger = logging.getLogger(__name__)
 
         # Get the hostname from the DN
         signer_split = signer_dn.split("=")
         signer = signer_split[len(signer_split)-1]
 
-        site_list = urllib2.Request(
-            'http://indigo.cloud.plgrid.pl/cmdb/service/list')
-        site_list = urllib2.urlopen(site_list)
+        providers = self._get_provider_list()
 
         try:
-            site_json = json.loads(site_list.read())
-        except ValueError:
-            logger.error("List of providers could not be retrieved.")
-            return False
-
-        for site_num, _ in enumerate(site_json['rows']):
-            try:
-                if signer in site_json['rows'][site_num]['value']['hostname']:
+            for site_num, _ in enumerate(providers['rows']):
+                if signer in providers['rows'][site_num]['value']['hostname']:
                     return True
-            except KeyError:
-                pass
+        except KeyError:
+            logging.error('Could not parse list of providers.')
 
         # If we have not returned while in for loop
         # then site must be invalid

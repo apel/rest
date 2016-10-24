@@ -6,6 +6,12 @@ import os
 import shutil
 
 from django.test import Client, TestCase
+from mock import Mock
+from rest_framework.request import Request
+from rest_framework.test import APIRequestFactory
+
+from api.views.CloudRecordView import CloudRecordView
+
 
 QPATH_TEST = '/tmp/django-test/'
 
@@ -14,42 +20,93 @@ class CloudRecordTest(TestCase):
     """Tests POST requests to the Cloud Record endpoint."""
 
     def setUp(self):
-        """Disable logging.INFO from appearing in test output."""
-        logging.disable(logging.INFO)
+        """Prevent logging from appearing in test output."""
+        logging.disable(logging.CRITICAL)
 
-#    def test_cloud_record_post(self):
-#        """Test a POST call for content equality and a 202 return code."""
-#        with self.settings(QPATH=QPATH_TEST):
-#            test_client = Client()
-#            example_dn = "/C=XX/O=XX/OU=XX/L=XX/CN=cloud.recas.ba.infn.it"
-#            response = test_client.post("/api/v1/cloud/record",
-#                                        MESSAGE,
-#                                        content_type="text/plain",
-#                                        HTTP_EMPA_ID="Test Process",
-#                                        SSL_CLIENT_S_DN=example_dn)
+    def test_cloud_record_post_provider_fail(self):
+        """Test what happens if we fail to retrieve the providers."""
+        # Mock the functionality of the provider list
+        # Used in the underlying POST handling method
+        # Shouldn't allow any POSTs,
+        # i.e. we have failed to retrieve the providers list
+        CloudRecordView._get_provider_list = Mock(return_value={})
 
-#            # check the expected response code has been received
-#            self.assertEqual(response.status_code, 202)
+        test_client = Client()
+        example_dn = "/C=XX/O=XX/OU=XX/L=XX/CN=allowed_host.test"
+        response = test_client.post("/api/v1/cloud/record",
+                                    MESSAGE,
+                                    content_type="text/plain",
+                                    HTTP_EMPA_ID="Test Process",
+                                    SSL_CLIENT_S_DN=example_dn)
 
-#            # get save messages under QPATH_TEST
-#            messages = self._saved_messages('%s*/*/*/body' % QPATH_TEST)
+        self.assertEqual(response.status_code, 403)
 
-#            # check one and only one message body saved
-#            self.assertEqual(len(messages), 1)
+    def test_cloud_record_post_403(self):
+        """Test unknown provider POST request returns a 403 code."""
+        # Mock the functionality of the provider list
+        # Used in the underlying POST handling method
+        # Allows only allowed_host.test to POST
+        CloudRecordView._get_provider_list = Mock(return_value=PROVIDERS)
 
-#            # get message content
-#            # can unpack sequence because we have asserted length 1
-#            [message] = messages
-#            message_file = open(message)
-#            message_content = message_file.read()
-#            message_file.close()
+        test_client = Client()
+        example_dn = "/C=XX/O=XX/OU=XX/L=XX/CN=prohibited_host.test"
+        response = test_client.post("/api/v1/cloud/record",
+                                    MESSAGE,
+                                    content_type="text/plain",
+                                    HTTP_EMPA_ID="Test Process",
+                                    SSL_CLIENT_S_DN=example_dn)
 
-#            # check saved message content
-#            self.assertEqual(MESSAGE, message_content)
-#            self._delete_messages(QPATH_TEST)
+        # check the expected response code has been received
+        self.assertEqual(response.status_code, 403)
 
-    # def test_filter_cursor(self):
-        # pass
+    def test_cloud_record_post_401(self):
+        """Test certificate-less POST request returns a 401 code."""
+        test_client = Client()
+        # No SSL_CLIENT_S_DN in POST to
+        # simulate a certificate-less request
+        response = test_client.post("/api/v1/cloud/record",
+                                    MESSAGE,
+                                    content_type="text/plain",
+                                    HTTP_EMPA_ID="Test Process")
+
+        # check the expected response code has been received
+        self.assertEqual(response.status_code, 401)
+
+    def test_cloud_record_post_202(self):
+        """Test POST request for content equality and a 202 return code."""
+        with self.settings(QPATH=QPATH_TEST):
+            # Mock the functionality of the provider list
+            # Used in the underlying POST handling method
+            # Allows only allowed_host.test to POST
+            CloudRecordView._get_provider_list = Mock(return_value=PROVIDERS)
+
+            test_client = Client()
+            example_dn = "/C=XX/O=XX/OU=XX/L=XX/CN=allowed_host.test"
+            response = test_client.post("/api/v1/cloud/record",
+                                        MESSAGE,
+                                        content_type="text/plain",
+                                        HTTP_EMPA_ID="Test Process",
+                                        SSL_CLIENT_S_DN=example_dn)
+
+            # check the expected response code has been received
+            self.assertEqual(response.status_code, 202)
+
+            # get save messages under QPATH_TEST
+            messages = self._saved_messages('%s*/*/*/body' % QPATH_TEST)
+
+            # check one and only one message body saved
+            self.assertEqual(len(messages), 1)
+
+            # get message content
+            # can unpack sequence because we have asserted length 1
+            [message] = messages
+            message_file = open(message)
+            message_content = message_file.read()
+            message_file.close()
+
+            # check saved message content
+            self.assertEqual(MESSAGE, message_content)
+            self._delete_messages(QPATH_TEST)
 
     def tearDown(self):
         """Delete any messages under QPATH and re-enable logging.INFO."""
@@ -63,6 +120,17 @@ class CloudRecordTest(TestCase):
     def _saved_messages(self, message_path):
         """Return a list of messages under message_path."""
         return glob.glob(message_path)
+
+PROVIDERS = {'total_rows': 735,
+             'offset': 695,
+             'rows': [
+                 {'id': '1',
+                  'key': ['service'],
+                  'value':{
+                      'sitename': 'TEST',
+                      'provider_id': 'TEST',
+                      'hostname': 'allowed_host.test',
+                      'type': 'cloud'}}]}
 
 MESSAGE = """APEL-cloud-message: v0.2
 VMUUID: TestVM1 2013-02-25 17:37:27+00:00
