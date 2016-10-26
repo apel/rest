@@ -113,6 +113,14 @@ class CloudRecordView(APIView):
         signer_split = signer_dn.split("=")
         signer = signer_split[len(signer_split)-1]
 
+        if signer in settings.BANNED_FROM_POST:
+            self.logger.info("Host %s is banned.", signer)
+            return False
+
+        if signer in settings.ALLOWED_FOR_POST:
+            self.logger.info("Host %s has special access.", signer)
+            return True
+
         providers = self._get_provider_list()
 
         try:
@@ -130,8 +138,8 @@ class CloudRecordView(APIView):
             except KeyError:
                 # A KeyError is thrown if a hostname is not defined.
                 # Log that a single site could not be parsed
-                logging.warning('Could not parse site JSON.')
-                logging.debug(site_json)
+                self.logger.warning('Could not parse site JSON.')
+                self.logger.debug(site_json)
                 # Continue looping through provider list, looking
                 # for a match in the remaining site JSON
 
