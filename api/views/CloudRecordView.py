@@ -115,14 +115,27 @@ class CloudRecordView(APIView):
 
         providers = self._get_provider_list()
 
+        # If this fails, it is likely the provider
+        # list is not of expected format.
         try:
-            for site_num, _ in enumerate(providers['rows']):
-                if signer in providers['rows'][site_num]['value']['hostname']:
-                    return True
+            enumerated_providers = enumerate(providers['rows'])
         except KeyError:
-            self.logger.error('Could not parse list of providers.')
+            self.logger.error('Could not parse provider JSON.')
+            return False
 
-        # If we have not returned while in for loop
-        # then site must be invalid
+        for _, site_json in enumerated_providers:
+            try:
+                if signer in site_json['value']['hostname']:
+                    return True
+            except KeyError:
+                # If this warning appears, a entry on the
+                # provider list doesn't have a hostname key.
+                # Will continue looping through provider list as
+                # a single hostless entry might not be an problem.
+                logging.warning('Could not parse site JSON.')
+                logging.debug(site_json)
+
+        # If we have not returned while in the above
+        # for loop then site must be invalid
         self.logger.info('Site is not found on list of providers')
         return False
