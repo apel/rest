@@ -25,13 +25,15 @@ We recommend using the docker image to run the Accounting server and REST interf
 
 See [Ubuntu 14.04 Instructions](https://docs.docker.com/engine/installation/linux/ubuntulinux/) or [Centos 7 Instructions](https://docs.docker.com/engine/installation/linux/centos/) for details of how to install Docker.
 
-1. Download the run_container.sh script corresponding to the release, see [here](https://github.com/indigo-dc/Accounting/releases) for a list of releases and corresponding docker image tag.
+1. Download the run_container.sh script corresponding to the release, see [here](https://github.com/indigo-dc/Accounting/releases) for a list of releases and corresponding docker image tag. This script launches the APEL Server container and can (by default) set up an instance of the database needed to store the accounting data. This database itself is within a docker container.
 
-2. Populate the following variables in `docker/run_container.sh`
+2. Register the service as a protected resource with the Indigo Identity Access Management (IAM). See [here](doc/admin.md#register-the-service-as-a-protected-resource-with-the-indigo-identity-access-management-iam) for instructions.
+
+3. Populate the following variables in `docker/run_container.sh`
    ```
-   MYSQL_ROOT_PASSWORD: The database root password.
+   MYSQL_ROOT_PASSWORD: The APEL server will use this to communicate with the database. If run_container.sh is deploying the database (which by default it will be) the database root password is set to this.
 
-   MYSQL_PASSWORD: The password for the APEL user.
+   MYSQL_PASSWORD: The APEL server will use this to communicate with the database. If run_container.sh is deploying the database (which by default it will be) the APEL user password is set to this.
 
    ALLOWED_FOR_GET: A (python) list of IAM service IDs allowed to submit GET requests. This bash variable needs to be interpreted by python as a list of strings (i.e. [\'ac2f23e0-8103-4581-8014-e0e82c486e36\'])
 
@@ -43,8 +45,8 @@ See [Ubuntu 14.04 Instructions](https://docs.docker.com/engine/installation/linu
    DJANGO_SECRET_KEY: The Django server requires its own "secret".
    ```
 
-3. Run `./run_container.sh indigo-dc/Accounting:X.X.X-X`
+4. Run `./run_container.sh indigo-dc/Accounting:X.X.X-X`
 
-4. Before the server will start, a certificate needs to be added to the container. This can be done by either modifying `./run_container.sh` to load the docker image with a certificate mounted into it, or by interacting with the image after start up with `docker exec -it <docker_id> bash`.
+5. Before the server will start, a certificate needs to be added to the container. This can be done by either modifying `./run_container.sh` to load the docker image with a certificate mounted into it, or by interacting with the image after start up with `docker exec -it <docker_id> bash`.
 
-5. Navigate a web browser to `https://\<hostname\>/index/`
+6. Navigate a web browser to `https://\<hostname\>/index/`
