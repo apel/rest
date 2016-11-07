@@ -31,11 +31,17 @@ See [Ubuntu 14.04 Instructions](https://docs.docker.com/engine/installation/linu
 
 3. Populate the following variables in `docker/run_container.sh`
    ```
-   MYSQL_ROOT_PASSWORD: The APEL server will use this to communicate with the database. If run_container.sh is deploying the database (which by default it will be) the database root password is set to this.
+   MYSQL_ROOT_PASSWORD: The APEL server will use this to communicate with the database. If run_container.sh
+                        is deploying the database (which by default it will be) the database root password
+                        is set to this.
 
-   MYSQL_PASSWORD: The APEL server will use this to communicate with the database. If run_container.sh is deploying the database (which by default it will be) the APEL user password is set to this.
+   MYSQL_PASSWORD: The APEL server will use this to communicate with the database. If run_container.sh
+                   is deploying the database (which by default it will be) the APEL user password
+                   is set to this.
 
-   ALLOWED_FOR_GET: A (python) list of IAM service IDs allowed to submit GET requests. This bash variable needs to be interpreted by python as a list of strings (i.e. [\'ac2f23e0-8103-4581-8014-e0e82c486e36\'])
+   ALLOWED_FOR_GET: A (python) list of IAM service IDs allowed to submit GET requests. This bash variable
+                    needs to be interpreted by python as a list of strings
+                    (i.e. [\'ac2f23e0-8103-4581-8014-e0e82c486e36\'])
 
 
    SERVER_IAM_ID: An IAM ID corresponding to this instance, used to validate tokens.
