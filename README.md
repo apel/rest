@@ -50,7 +50,7 @@ See [Ubuntu 14.04 Instructions](https://docs.docker.com/engine/installation/linu
    DJANGO_SECRET_KEY: The Django server requires its own "secret".
    ```
 
-4. Run `./run_container.sh indigo-dc/Accounting:X.X.X-X`
+4. Run `./run_container.sh indigodatacloud/accounting:X.X.X-X`
 
 5. Before the server will start, a certificate needs to be added to the container. This can be done by either modifying `./run_container.sh` to load the docker image with a certificate mounted into it, or by interacting with the image after start up with `docker exec -it <docker_id> bash`.
 
