@@ -43,7 +43,6 @@ See [Ubuntu 14.04 Instructions](https://docs.docker.com/engine/installation/linu
                     needs to be interpreted by python as a list of strings
                     (i.e. [\'ac2f23e0-8103-4581-8014-e0e82c486e36\'])
 
-
    SERVER_IAM_ID: An IAM ID corresponding to this instance, used to validate tokens.
 
    SERVER_IAM_SECRET: An IAM secret corresponding to this instance, used to validate tokens.
