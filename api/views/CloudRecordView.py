@@ -20,6 +20,11 @@ class CloudRecordView(APIView):
     Will save Cloud Accounting Records for later loading.
     """
 
+    def __init__(self):
+        """Set up class level logging."""
+        self.logger = logging.getLogger(__name__)
+        super(CloudRecordView, self).__init__()
+
     def post(self, request, format=None):
         """
         Submit Cloud Accounting Records.
@@ -33,17 +38,17 @@ class CloudRecordView(APIView):
         except KeyError:
             empaid = 'noid'
 
-        logging.info("Received message. ID = %s", empaid)
+        self.logger.info("Received message. ID = %s", empaid)
 
         try:
             signer = request.META['SSL_CLIENT_S_DN']
         except KeyError:
-            logging.error("No DN supplied in header")
+            self.logger.error("No DN supplied in header")
             return Response(status=401)
 
         # authorise DNs here
         if not self._signer_is_valid(signer):
-            logging.error("%s not a valid provider", signer)
+            self.logger.error("%s not a valid provider", signer)
             return Response(status=403)
 
         if "_content" in request.POST.dict():
@@ -56,10 +61,10 @@ class CloudRecordView(APIView):
             # hence use request.body as message
             body = request.body
 
-        logging.debug("Message body received: %s", body)
+        self.logger.debug("Message body received: %s", body)
 
         for header in request.META:
-            logging.debug("%s: %s", header, request.META[header])
+            self.logger.debug("%s: %s", header, request.META[header])
 
         # taken from ssm2
         QSCHEMA = {'body': 'string',
@@ -74,12 +79,12 @@ class CloudRecordView(APIView):
                             'signer': signer,
                             'empaid': empaid})
         except QueueError as err:
-            logging.error("Could not save %s/%s: %s", inqpath, name, err)
+            self.logger.error("Could not save %s/%s: %s", inqpath, name, err)
 
             response = "Data could not be saved to disk, please try again."
             return Response(response, status=500)
 
-        logging.info("Message saved to in queue as %s/%s", inqpath, name)
+        self.logger.info("Message saved to in queue as %s/%s", inqpath, name)
 
         response = "Data successfully saved for future loading."
         return Response(response, status=202)
@@ -98,8 +103,8 @@ class CloudRecordView(APIView):
             return json.loads(provider_list_response.read())
 
         except (ValueError, urllib2.HTTPError) as error:
-            logging.error("List of providers could not be retrieved.")
-            logging.error("%s: %s", type(error), error)
+            self.logger.error("List of providers could not be retrieved.")
+            self.logger.error("%s: %s", type(error), error)
             return {}
 
     def _signer_is_valid(self, signer_dn):
@@ -115,9 +120,9 @@ class CloudRecordView(APIView):
                 if signer in providers['rows'][site_num]['value']['hostname']:
                     return True
         except KeyError:
-            logging.error('Could not parse list of providers.')
+            self.logger.error('Could not parse list of providers.')
 
         # If we have not returned while in for loop
         # then site must be invalid
-        logging.info('Site is not found on list of providers')
+        self.logger.info('Site is not found on list of providers')
         return False

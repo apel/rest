@@ -93,6 +93,9 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'formatters': {
+        'verbose': {
+            'format': '%(levelname)s [%(name)s:%(lineno)s]: %(message)s'
+        },
         'simple': {
             'format': '%(levelname)s: %(message)s'
         },
@@ -108,11 +111,12 @@ LOGGING = {
             'handlers': ['console'],
             'propagate': True,
             'level': 'INFO',
-         },
-    },
-    'root': {
-        'handlers': ['console'],
-        'level': 'INFO',
+        },
+        'api': {
+            'handlers': ['console'],
+            'propagate': False,
+            'level': 'INFO',
+        },
     },
 }
 
