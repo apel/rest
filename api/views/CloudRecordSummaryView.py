@@ -36,6 +36,11 @@ class CloudRecordSummaryView(APIView):
     Will give summary for whole infrastructure from <data> to now
     """
 
+    def __init__(self):
+        """Set up class level logging."""
+        self.logger = logging.getLogger(__name__)
+        super(CloudRecordSummaryView, self).__init__()
+
     def get(self, request, format=None):
         """
         Retrieve Cloud Accounting Summaries.
@@ -53,8 +58,6 @@ class CloudRecordSummaryView(APIView):
         .../api/v1/cloud/record/summary?from=<date_from>
         Will give summary for whole infrastructure from <data> to now
         """
-        logger = logging.getLogger(__name__)
-
         client_token = self._request_to_token(request)
         if client_token is None:
             return Response(status=401)
@@ -87,10 +90,10 @@ class CloudRecordSummaryView(APIView):
             db_username = dbcp.get('db', 'username')
             db_password = dbcp.get('db', 'password')
         except (ConfigParser.Error, ValueError, IOError) as err:
-            logger.warning('Error in configuration file %s: %s',
-                           settings.CLOUD_DB_CONF,
-                           str(err))
-            logger.warning('Using default configuration.')
+            self.logger.warning('Error in configuration file %s: %s',
+                                settings.CLOUD_DB_CONF,
+                                err)
+            self.logger.warning('Using default configuration.')
 
             db_hostname = 'localhost'
             db_name = 'apel_rest'
@@ -104,8 +107,8 @@ class CloudRecordSummaryView(APIView):
                                        db_password,
                                        db_name)
         except MySQLdb.OperationalError:
-            logger.error("Could not connect to %s at %s using %s, %s",
-                         db_name, db_hostname, db_username, db_password)
+            self.logger.error("Could not connect to %s at %s using %s, %s",
+                              db_name, db_hostname, db_username, db_password)
             return Response(status=500)
 
         cursor = database.cursor()
@@ -141,7 +144,6 @@ class CloudRecordSummaryView(APIView):
 
     def _parse_query_parameters(self, request):
         """Parse expected query parameters from the given HTTP request."""
-        logger = logging.getLogger(__name__)
         group_name = request.GET.get('group', '')
         if group_name is "":
             group_name = None
@@ -159,11 +161,11 @@ class CloudRecordSummaryView(APIView):
             end_date = datetime.datetime.now()
 
         # Log query parameters
-        logger.debug("Query Parameters")
-        logger.debug("Group name = %s", group_name)
-        logger.debug("Service name = %s", service_name)
-        logger.debug("Start date = %s", start_date)
-        logger.debug("End date = %s", end_date)
+        self.logger.debug("Query Parameters")
+        self.logger.debug("Group name = %s", group_name)
+        self.logger.debug("Service name = %s", service_name)
+        self.logger.debug("Start date = %s", start_date)
+        self.logger.debug("End date = %s", end_date)
 
         return (group_name, service_name, start_date, end_date)
 
@@ -206,25 +208,23 @@ class CloudRecordSummaryView(APIView):
 
     def _request_to_token(self, request):
         """Get the token from the request."""
-        logger = logging.getLogger(__name__)
         try:
             token = request.META['HTTP_AUTHORIZATION'].split()[1]
         except KeyError:
-            logger.error("No AUTHORIZATION header provided, "
-                         "authentication failed.")
+            self.logger.error("No AUTHORIZATION header provided, "
+                              "authentication failed.")
             return None
         except IndexError:
-            logger.error("AUTHORIZATION header provided, "
-                         "but not of expected form.")
-            logger.error(request.META['HTTP_AUTHORIZATION'])
+            self.logger.error("AUTHORIZATION header provided, "
+                              "but not of expected form.")
+            self.logger.error(request.META['HTTP_AUTHORIZATION'])
             return None
-        logger.info("Authenticated: %s...", token[:15])
-        logger.debug("Full token: %s", token)
+        self.logger.info("Authenticated: %s...", token[:15])
+        self.logger.debug("Full token: %s", token)
         return token
 
     def _token_to_id(self, token):
         """Convert a token to a IAM ID (external dependency)."""
-        logger = logging.getLogger(__name__)
         try:
             iam_url = 'https://iam-test.indigo-datacloud.eu/introspect'
             auth_request = urllib2.Request(iam_url, data='token=%s' % token)
@@ -245,10 +245,10 @@ class CloudRecordSummaryView(APIView):
                 urllib2.URLError,
                 httplib.HTTPException,
                 KeyError) as error:
-            logger.error("%s: %s", type(error), str(error))
+            self.logger.error("%s: %s", type(error), str(error))
             return None
-        logger.info("Token identifed as %s...", client_id[:15])
-        logger.debug("Full CLIENT_ID: %s", client_id)
+        self.logger.info("Token identifed as %s...", client_id[:15])
+        self.logger.debug("Full CLIENT_ID: %s", client_id)
         return client_id
 
     def _is_client_authorized(self, client_id):
@@ -257,10 +257,9 @@ class CloudRecordSummaryView(APIView):
 
         i.e. client_id is not None and is in settings.ALLOWED_FOR_GET.
         """
-        logger = logging.getLogger(__name__)
         if client_id is None or client_id not in settings.ALLOWED_FOR_GET:
-            logger.error("%s does not have permission to view summaries",
-                         client_id)
+            self.logger.error("%s does not have permission to view summaries",
+                              client_id)
             return False
-        logger.info("Authorizing %s...", client_id[:15])
+        self.logger.info("Authorizing %s...", client_id[:15])
         return True

@@ -94,37 +94,30 @@ LOGGING = {
     'disable_existing_loggers': False,
     'formatters': {
         'verbose': {
-            'format': ("[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s]: "
-                       " %(message)s"),
-            'datefmt': "%d/%b/%Y %H:%M:%S"
+            'format': '%(levelname)s [%(name)s:%(lineno)s]: %(message)s'
         },
         'simple': {
             'format': '%(levelname)s: %(message)s'
         },
     },
     'handlers': {
-        # 'file': {
-        #     'class': 'logging.FileHandler',
-        #     'filename': './apel_rest.log',
-        #     'formatter': 'verbose'
-        # },
         'console': {
             'class': 'logging.StreamHandler',
             'formatter': 'simple'
         },
     },
     'loggers': {
-        'django': {
+        'django': {  # This logger is needed to catch django errors
             'handlers': ['console'],
             'propagate': True,
             'level': 'INFO',
         },
         'api': {
             'handlers': ['console'],
+            'propagate': False,
             'level': 'INFO',
-            # 'level': 'DEBUG',
         },
-    }
+    },
 }
 
 # XML stuff

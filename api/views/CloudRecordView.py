@@ -20,6 +20,11 @@ class CloudRecordView(APIView):
     Will save Cloud Accounting Records for later loading.
     """
 
+    def __init__(self):
+        """Set up class level logging."""
+        self.logger = logging.getLogger(__name__)
+        super(CloudRecordView, self).__init__()
+
     def post(self, request, format=None):
         """
         Submit Cloud Accounting Records.
@@ -28,24 +33,22 @@ class CloudRecordView(APIView):
 
         Will save Cloud Accounting Records for later loading.
         """
-        logger = logging.getLogger(__name__)
-
         try:
             empaid = request.META['HTTP_EMPA_ID']
         except KeyError:
             empaid = 'noid'
 
-        logger.info("Received message. ID = %s", empaid)
+        self.logger.info("Received message. ID = %s", empaid)
 
         try:
             signer = request.META['SSL_CLIENT_S_DN']
         except KeyError:
-            logger.error("No DN supplied in header")
+            self.logger.error("No DN supplied in header")
             return Response(status=401)
 
         # authorise DNs here
         if not self._signer_is_valid(signer):
-            logger.error("%s not a valid provider", signer)
+            self.logger.error("%s not a valid provider", signer)
             return Response(status=403)
 
         if "_content" in request.POST.dict():
@@ -58,10 +61,10 @@ class CloudRecordView(APIView):
             # hence use request.body as message
             body = request.body
 
-        logger.debug("Message body received: %s", body)
+        self.logger.debug("Message body received: %s", body)
 
         for header in request.META:
-            logger.debug("%s: %s", header, request.META[header])
+            self.logger.debug("%s: %s", header, request.META[header])
 
         # taken from ssm2
         QSCHEMA = {'body': 'string',
@@ -76,12 +79,12 @@ class CloudRecordView(APIView):
                             'signer': signer,
                             'empaid': empaid})
         except QueueError as err:
-            logger.error("Could not save %s/%s: %s", inqpath, name, err)
+            self.logger.error("Could not save %s/%s: %s", inqpath, name, err)
 
             response = "Data could not be saved to disk, please try again."
             return Response(response, status=500)
 
-        logger.info("Message saved to in queue as %s/%s", inqpath, name)
+        self.logger.info("Message saved to in queue as %s/%s", inqpath, name)
 
         response = "Data successfully saved for future loading."
         return Response(response, status=202)
@@ -94,22 +97,18 @@ class CloudRecordView(APIView):
 
     def _get_provider_list(self):
         """Return a list of Resource Providers."""
-        logger = logging.getLogger(__name__)
-
         try:
             provider_list_request = urllib2.Request(settings.PROVIDERS_URL)
             provider_list_response = urllib2.urlopen(provider_list_request)
             return json.loads(provider_list_response.read())
 
         except (ValueError, urllib2.HTTPError) as error:
-            logger.error("List of providers could not be retrieved.")
-            logger.error("%s: %s", type(error), error)
+            self.logger.error("List of providers could not be retrieved.")
+            self.logger.error("%s: %s", type(error), error)
             return {}
 
     def _signer_is_valid(self, signer_dn):
         """Return True if signer's host is listed as a Resource Provider."""
-        logger = logging.getLogger(__name__)
-
         # Get the hostname from the DN
         signer_split = signer_dn.split("=")
         signer = signer_split[len(signer_split)-1]
@@ -121,9 +120,9 @@ class CloudRecordView(APIView):
                 if signer in providers['rows'][site_num]['value']['hostname']:
                     return True
         except KeyError:
-            logging.error('Could not parse list of providers.')
+            self.logger.error('Could not parse list of providers.')
 
         # If we have not returned while in for loop
         # then site must be invalid
-        logger.info('Site is not found on list of providers')
+        self.logger.info('Site is not found on list of providers')
         return False
