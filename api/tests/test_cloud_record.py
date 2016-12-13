@@ -127,6 +127,12 @@ PROVIDERS = {'total_rows': 735,
                  {'id': '1',
                   'key': ['service'],
                   'value':{
+                      'sitename': 'TEST2',
+                      'provider_id': 'TEST2',
+                      'type': 'cloud'}},
+                 {'id': '2',
+                  'key': ['service'],
+                  'value':{
                       'sitename': 'TEST',
                       'provider_id': 'TEST',
                       'hostname': 'allowed_host.test',
