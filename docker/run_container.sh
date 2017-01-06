@@ -122,7 +122,7 @@ then
 
     # Partition tables
     docker exec apel-mysql mysql -u root -p$MYSQL_ROOT_PASSWORD apel_rest -e "`cat schemas/cloud-extra.sql`"
-    echo "Done"
+    echo "MySQL Container deployed"
 fi
 
 echo "Deploying APEL Server Container"
@@ -132,4 +132,5 @@ docker run -d --link apel-mysql:mysql -p 80:80 -p 443:443 -e "MYSQL_PASSWORD=$MY
 
 # this allows the APEL REST interface to configure
 sleep 60
-echo "Done!"
+echo "APEL Server Container deployed"
+echo "Deployment complete!"
