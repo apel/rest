@@ -13,7 +13,7 @@ urlpatterns = patterns('',
                        # url(r'^blog/', include('blog.urls')),
 
                        url(r'^admin/',
-                           include(admin.site.urls,)),
+                           include(admin.site.urls)),
 
                        url(r'^api/v1/cloud/record$',
                            CloudRecordView.as_view(),
