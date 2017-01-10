@@ -39,12 +39,12 @@ class CloudRecordSummaryTest(TestCase):
                                            "Year"]):
 
             test_client = Client()
-            get_url = ''.join((reverse('CloudRecordSummaryView'),
-                               '?group=TestGroup',
-                               '&from=20000101',
-                               '&to=20191231'))
+            url = ''.join((reverse('CloudRecordSummaryView'),
+                           '?group=TestGroup',
+                           '&from=20000101',
+                           '&to=20191231'))
 
-            response = test_client.get(get_url,
+            response = test_client.get(url,
                                        HTTP_AUTHORIZATION="Bearer TestToken")
 
         # Check the expected response code has been received.
@@ -63,9 +63,9 @@ class CloudRecordSummaryTest(TestCase):
                                            "Month",
                                            "Year"]):
             test_client = Client()
-            get_url = ''.join((reverse('CloudRecordSummaryView'),
-                               '?group=TestGroup'))
-            response = test_client.get(get_url,
+            url = ''.join((reverse('CloudRecordSummaryView'),
+                          '?group=TestGroup'))
+            response = test_client.get(url,
                                        HTTP_AUTHORIZATION="Bearer TestToken")
 
         # Check the expected response code has been received.
@@ -84,12 +84,12 @@ class CloudRecordSummaryTest(TestCase):
                                            "Month",
                                            "Year"]):
             test_client = Client()
-            get_url = ''.join((reverse('CloudRecordSummaryView'),
-                               '?group=TestGroup',
-                               '&from=20000101',
-                               '&to=20191231'))
+            url = ''.join((reverse('CloudRecordSummaryView'),
+                           '?group=TestGroup',
+                           '&from=20000101',
+                           '&to=20191231'))
 
-            response = test_client.get(get_url,
+            response = test_client.get(url,
                                        HTTP_AUTHORIZATION="Bearer TestToken")
 
         # Check the expected response code has been received.
@@ -99,12 +99,12 @@ class CloudRecordSummaryTest(TestCase):
         """Test an unauthenticated GET request."""
         test_client = Client()
         # Test without the HTTP_AUTHORIZATION header
-        get_url = ''.join((reverse('CloudRecordSummaryView'),
-                           '?group=TestGroup',
-                           '&from=20000101',
-                           '&to=20191231'))
+        url = ''.join((reverse('CloudRecordSummaryView'),
+                       '?group=TestGroup',
+                       '&from=20000101',
+                       '&to=20191231'))
 
-        response = test_client.get(get_url)
+        response = test_client.get(url)
 
         # Check the expected response code has been received.
         self.assertEqual(response.status_code, 401)
@@ -137,12 +137,12 @@ class CloudRecordSummaryTest(TestCase):
                                            "Month",
                                            "Year"]):
             test_client = Client()
-            get_url = ''.join((reverse('CloudRecordSummaryView'),
-                               '?group=TestGroup',
-                               '&from=20000101',
-                               '&to=20191231'))
+            url = ''.join((reverse('CloudRecordSummaryView'),
+                           '?group=TestGroup',
+                           '&from=20000101',
+                           '&to=20191231'))
 
-            response = test_client.get(get_url,
+            response = test_client.get(url,
                                        HTTP_AUTHORIZATION="Bearer TestToken")
 
         expected_response = ('{'
