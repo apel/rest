@@ -5,13 +5,13 @@ import logging
 import os
 import shutil
 
+from django.core.urlresolvers import reverse
 from django.test import Client, TestCase
 from mock import Mock
 from rest_framework.request import Request
 from rest_framework.test import APIRequestFactory
 
 from api.views.CloudRecordView import CloudRecordView
-
 
 QPATH_TEST = '/tmp/django-test/'
 
@@ -33,7 +33,7 @@ class CloudRecordTest(TestCase):
 
         test_client = Client()
         example_dn = "/C=XX/O=XX/OU=XX/L=XX/CN=allowed_host.test"
-        response = test_client.post("/api/v1/cloud/record",
+        response = test_client.post(reverse('CloudRecordView'),
                                     MESSAGE,
                                     content_type="text/plain",
                                     HTTP_EMPA_ID="Test Process",
@@ -50,7 +50,9 @@ class CloudRecordTest(TestCase):
 
         test_client = Client()
         example_dn = "/C=XX/O=XX/OU=XX/L=XX/CN=prohibited_host.test"
-        response = test_client.post("/api/v1/cloud/record",
+        url = reverse('CloudRecordView')
+
+        response = test_client.post(url,
                                     MESSAGE,
                                     content_type="text/plain",
                                     HTTP_EMPA_ID="Test Process",
@@ -64,7 +66,9 @@ class CloudRecordTest(TestCase):
         test_client = Client()
         # No SSL_CLIENT_S_DN in POST to
         # simulate a certificate-less request
-        response = test_client.post("/api/v1/cloud/record",
+        url = reverse('CloudRecordView')     
+
+        response = test_client.post(url,
                                     MESSAGE,
                                     content_type="text/plain",
                                     HTTP_EMPA_ID="Test Process")
@@ -82,7 +86,9 @@ class CloudRecordTest(TestCase):
 
             test_client = Client()
             example_dn = "/C=XX/O=XX/OU=XX/L=XX/CN=allowed_host.test"
-            response = test_client.post("/api/v1/cloud/record",
+            url = reverse('CloudRecordView')
+
+            response = test_client.post(url,
                                         MESSAGE,
                                         content_type="text/plain",
                                         HTTP_EMPA_ID="Test Process",
