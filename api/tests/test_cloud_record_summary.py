@@ -111,11 +111,6 @@ class CloudRecordSummaryTest(TestCase):
         self.assertEqual(response.status_code, 401)
 
         # Test with a malformed HTTP_AUTHORIZATION header
-        url = ''.join((reverse('CloudRecordSummaryView'),
-                       '?group=TestGroup',
-                       '&from=20000101',
-                       '&to=20191231'))
-
         response = test_client.get(url,
                                    HTTP_AUTHORIZATION='TestToken')
 
