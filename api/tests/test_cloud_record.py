@@ -50,7 +50,9 @@ class CloudRecordTest(TestCase):
 
         test_client = Client()
         example_dn = "/C=XX/O=XX/OU=XX/L=XX/CN=prohibited_host.test"
-        response = test_client.post(reverse('CloudRecordView'),
+        url = reverse('CloudRecordView')
+
+        response = test_client.post(url,
                                     MESSAGE,
                                     content_type="text/plain",
                                     HTTP_EMPA_ID="Test Process",
@@ -64,7 +66,9 @@ class CloudRecordTest(TestCase):
         test_client = Client()
         # No SSL_CLIENT_S_DN in POST to
         # simulate a certificate-less request
-        response = test_client.post(reverse('CloudRecordView'),
+        url = reverse('CloudRecordView')     
+
+        response = test_client.post(url,
                                     MESSAGE,
                                     content_type="text/plain",
                                     HTTP_EMPA_ID="Test Process")
@@ -82,7 +86,9 @@ class CloudRecordTest(TestCase):
 
             test_client = Client()
             example_dn = "/C=XX/O=XX/OU=XX/L=XX/CN=allowed_host.test"
-            response = test_client.post(reverse('CloudRecordView'),
+            url = reverse('CloudRecordView')
+
+            response = test_client.post(url,
                                         MESSAGE,
                                         content_type="text/plain",
                                         HTTP_EMPA_ID="Test Process",

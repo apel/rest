@@ -64,7 +64,8 @@ class CloudRecordSummaryTest(TestCase):
                                            "Year"]):
             test_client = Client()
             url = ''.join((reverse('CloudRecordSummaryView'),
-                          '?group=TestGroup'))
+                           '?group=TestGroup'))
+
             response = test_client.get(url,
                                        HTTP_AUTHORIZATION="Bearer TestToken")
 
@@ -110,10 +111,12 @@ class CloudRecordSummaryTest(TestCase):
         self.assertEqual(response.status_code, 401)
 
         # Test with a malformed HTTP_AUTHORIZATION header
-        response = test_client.get(''.join((reverse('CloudRecordSummaryView'),
-                                            '?group=TestGroup',
-                                            '&from=20000101',
-                                            '&to=20191231')),
+        url = ''.join((reverse('CloudRecordSummaryView'),
+                       '?group=TestGroup',
+                       '&from=20000101',
+                       '&to=20191231'))
+
+        response = test_client.get(url,
                                    HTTP_AUTHORIZATION='TestToken')
 
         # Check the expected response code has been received.
@@ -175,19 +178,23 @@ class CloudRecordSummaryTest(TestCase):
         # test a get with group, summary, start and end
         test_cloud_view = CloudRecordSummaryView()
         factory = APIRequestFactory()
-        request = factory.get(''.join((reverse('CloudRecordSummaryView'),
-                                       '?group=Group1',
-                                       '&service=Service1',
-                                       '&from=FromDate',
-                                       '&to=ToDate')), {})
+        url = ''.join((reverse('CloudRecordSummaryView'),
+                       '?group=Group1',
+                       '&service=Service1',
+                       '&from=FromDate',
+                       '&to=ToDate'))
+
+        request = factory.get(url)
 
         parsed_responses = test_cloud_view._parse_query_parameters(request)
         self.assertEqual(parsed_responses,
                          ("Group1", "Service1", "FromDate", "ToDate"))
 
         # test a get with just an end date
-        request = factory.get(''.join((reverse('CloudRecordSummaryView'),
-                              '?to=ToDate')), {})
+        url = ''.join((reverse('CloudRecordSummaryView'),
+                       '?to=ToDate'))
+
+        request = factory.get(url)
         parsed_responses = test_cloud_view._parse_query_parameters(request)
         self.assertEqual(parsed_responses,
                          (None, None, None, "ToDate"))
@@ -208,14 +215,18 @@ class CloudRecordSummaryTest(TestCase):
         factory = APIRequestFactory()
 
         # test when page number is not a number
-        request = factory.get(''.join((reverse('CloudRecordSummaryView'),
-                              '?page=a')))
+        url = ''.join((reverse('CloudRecordSummaryView'),
+                       '?page=a'))
+
+        request = factory.get(url)
         content = test_cloud_view._paginate_result(request, [])
         self.assertEqual(content, expected_content)
 
         # test when page number is out of bounds
-        request = factory.get(''.join((reverse('CloudRecordSummaryView'),
-                              '?page=9999')))
+        url = ''.join((reverse('CloudRecordSummaryView'),
+                       '?page=9999'))
+
+        request = factory.get(url)
         content = test_cloud_view._paginate_result(request, [])
         self.assertEqual(content, expected_content)
 
@@ -223,9 +234,10 @@ class CloudRecordSummaryTest(TestCase):
         """Test a token can be extracted from request."""
         test_cloud_view = CloudRecordSummaryView()
         factory = APIRequestFactory()
-        request = factory.get(''.join((reverse('CloudRecordSummaryView'),
-                              '?from=FromDate')),
-                              HTTP_AUTHORIZATION='Bearer ThisIsAToken')
+        url = ''.join((reverse('CloudRecordSummaryView'),
+                       '?from=FromDate'))
+
+        request = factory.get(url, HTTP_AUTHORIZATION='Bearer ThisIsAToken')
 
         token = test_cloud_view._request_to_token(request)
         self.assertEqual(token, 'ThisIsAToken')
@@ -233,8 +245,11 @@ class CloudRecordSummaryTest(TestCase):
     def test_request_to_token_fail(self):
         """Test the response of a tokenless request."""
         test_client = Client()
-        response = test_client.get(''.join((reverse('CloudRecordSummaryView'),
-                                   '?from=FromDate')))
+
+        url = ''.join((reverse('CloudRecordSummaryView'),
+                       '?from=FromDate'))
+
+        response = test_client.get(url)
 
         self.assertEqual(response.status_code, 401)
 
