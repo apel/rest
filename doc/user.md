@@ -42,7 +42,7 @@ For Example:
 * 403: Your service's OAuth token was extracted by the server, but the IAM does not recognise it.
 * 500: An unknown error has a occured.
 
-### Example Returned Results
+### Example Response Body
 ```
 {
     "count": 2, 
