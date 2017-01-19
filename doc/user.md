@@ -28,10 +28,10 @@ For Example:
 
 ### Supported key=value pairs
 
-* `group`: The group with Indigo DataCloud.
+* `group`: The group within Indigo DataCloud.
 * `service`: The site that provided the resource.
 * `to`: Display summaries for dates (YYYYMMDD) up until this value.
-* `from`: Display summaries for dates (YYYYMMDD) up after this value.
+* `from`: Display summaries for dates (YYYYMMDD) after this value.
 
 `from` is the only compulsary option, failure to include it will result in a 400 response.
 
