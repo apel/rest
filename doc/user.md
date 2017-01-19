@@ -30,8 +30,8 @@ For Example:
 
 * `group`: The group within Indigo DataCloud.
 * `service`: The site that provided the resource.
-* `to`: Display summaries for dates (YYYYMMDD) up until this value.
-* `from`: Display summaries for dates (YYYYMMDD) after this value.
+* `to`: Display summaries for dates (YYYYMMDD) up until this value, but exclusive of it.
+* `from`: Display summaries for dates (YYYYMMDD) after this value, but exclusive of it.
 
 `from` is the only compulsary option, failure to include it will result in a 400 response.
 
