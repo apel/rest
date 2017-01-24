@@ -226,8 +226,8 @@ class CloudRecordSummaryView(APIView):
     def _token_to_id(self, token):
         """Convert a token to a IAM ID (external dependency)."""
         try:
-            iam_url = 'https://iam-test.indigo-datacloud.eu/introspect'
-            auth_request = urllib2.Request(iam_url, data='token=%s' % token)
+            auth_request = urllib2.Request(settings.IAM_URL,
+                                           data='token=%s' % token)
 
             server_id = settings.SERVER_IAM_ID
             server_secret = settings.SERVER_IAM_SECRET

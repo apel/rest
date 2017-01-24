@@ -158,4 +158,8 @@ RETURN_HEADERS = ["VOGroup",
 # this doesnt do anything, probably because of using older Django
 URL_FORMAT_OVERRIDE = None
 
+# Points to the JSON list of Resource Providers
 PROVIDERS_URL = "http://indigo.cloud.plgrid.pl/cmdb/service/list"
+
+# The introspect URL for the IAM repsonsible for token based authN/authZ
+IAM_URL = "https://iam-test.indigo-datacloud.eu/introspect"
