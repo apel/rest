@@ -51,6 +51,11 @@ service atd start
 # start the loader service
 service apeldbloader-cloud start
 
+# fetch the crl first
+fetch-crl
+# then start the periodic fetch-url
+service fetch-crl-cron start
+
 # Make cloud spool dir owned by apache
 chown apache -R /var/spool/apel/cloud/
 
