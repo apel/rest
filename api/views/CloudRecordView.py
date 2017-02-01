@@ -113,7 +113,7 @@ class CloudRecordView(APIView):
         signer_split = signer_dn.split("=")
         signer = signer_split[len(signer_split)-1]
 
-        if signer in settings.BANNED_FROM_POST:
+        if signer_dn in settings.BANNED_FROM_POST:
             self.logger.info("Host %s is banned.", signer)
             return False
 
@@ -139,7 +139,7 @@ class CloudRecordView(APIView):
                 # Continue looping through provider list, looking
                 # for a match in the remaining site JSON
 
-        if signer in settings.ALLOWED_FOR_POST:
+        if signer_dn in settings.ALLOWED_FOR_POST:
             self.logger.info("Host %s has special access.", signer)
             return True
 
