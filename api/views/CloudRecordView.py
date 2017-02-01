@@ -117,10 +117,6 @@ class CloudRecordView(APIView):
             self.logger.info("Host %s is banned.", signer)
             return False
 
-        if signer in settings.ALLOWED_FOR_POST:
-            self.logger.info("Host %s has special access.", signer)
-            return True
-
         providers = self._get_provider_list()
 
         try:
@@ -143,7 +139,11 @@ class CloudRecordView(APIView):
                 # Continue looping through provider list, looking
                 # for a match in the remaining site JSON
 
-        # If we have not returned while in the above
-        # for loop then site must be invalid
+        if signer in settings.ALLOWED_FOR_POST:
+            self.logger.info("Host %s has special access.", signer)
+            return True
+
+        # If we have not returned already
+        # then site must be invalid
         self.logger.info('Site is not found on list of providers')
         return False
