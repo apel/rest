@@ -39,6 +39,11 @@ SERVER_IAM_SECRET=\"$SERVER_IAM_SECRET\"
 
 sed -i "s/Put a secret here/$DJANGO_SECRET_KEY/g" /var/www/html/apel_rest/settings.py
 
+# fetch the crl first
+fetch-crl
+# then start the periodic fetch-url
+service fetch-crl-cron start
+
 # start apache
 service httpd start
 
@@ -50,11 +55,6 @@ service atd start
 
 # start the loader service
 service apeldbloader-cloud start
-
-# fetch the crl first
-fetch-crl
-# then start the periodic fetch-url
-service fetch-crl-cron start
 
 # Make cloud spool dir owned by apache
 chown apache -R /var/spool/apel/cloud/
