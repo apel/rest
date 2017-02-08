@@ -45,7 +45,7 @@
   
   * How to block/ban a user
     * To ban users accessing summaries, remove them from `ALLOWED_FOR_GET` in `/var/www/html/apel_rest/settings.py`.
-    * To ban users sending job records, add their HostDN to `BANNED_FROM_POST in `/var/www/html/apel_rest/settings.py`.
+    * To ban users sending job records, add their HostDN to `BANNED_FROM_POST` in `/var/www/html/apel_rest/settings.py`.
  
   * Network Usage
     * Managed by the Kubernetes cluster.
