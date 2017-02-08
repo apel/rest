@@ -54,7 +54,7 @@ class CloudRecordTest(TestCase):
         For that, see test_cloud_record_post_202()
         """
         example_dn = "/C=XX/O=XX/OU=XX/L=XX/CN=special_host.test"
-        with self.settings(ALLOWED_FOR_POST=[example_dn],
+        with self.settings(ALLOWED_TO_POST=[example_dn],
                            QPATH=QPATH_TEST):
 
             # Mock the functionality of the provider list

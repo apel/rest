@@ -166,6 +166,7 @@ PROVIDERS_URL = "http://indigo.cloud.plgrid.pl/cmdb/service/list"
 # The introspect URL for the IAM repsonsible for token based authN/authZ
 IAM_URL = "https://iam-test.indigo-datacloud.eu/introspect"
 
-# Use these variables to revoke/grant POST rights
-ALLOWED_FOR_POST = []
+# Use these variables to revoke/grant POST rights.
+# Remember these variables require a web server reset to take effect.
+ALLOWED_TO_POST = []
 BANNED_FROM_POST = []

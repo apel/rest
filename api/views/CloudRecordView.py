@@ -139,7 +139,7 @@ class CloudRecordView(APIView):
                 # Continue looping through provider list, looking
                 # for a match in the remaining site JSON
 
-        if signer_dn in settings.ALLOWED_FOR_POST:
+        if signer_dn in settings.ALLOWED_TO_POST:
             self.logger.info("Host %s has special access.", signer)
             return True
 
