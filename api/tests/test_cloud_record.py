@@ -24,11 +24,7 @@ class CloudRecordTest(TestCase):
         logging.disable(logging.CRITICAL)
 
     def test_cloud_record_post_provider_banned(self):
-        """
-        Test a banned provider cannot POST.
-
-        Even if they are on the provider list.
-        """
+        """Test that a banned provider on the provider list cannot POST."""
         example_dn = "/C=XX/O=XX/OU=XX/L=XX/CN=allowed_host.test"
         with self.settings(BANNED_FROM_POST=[example_dn]):
 
@@ -47,10 +43,10 @@ class CloudRecordTest(TestCase):
 
     def test_cloud_record_post_provider_special(self):
         """
-        Test a provider ganted POST rights can, indeed, POST.
+        Test that a provider granted POST rights can, indeed, POST.
 
         Even if they aren't on the provider list.
-        This test DOES NOT check the saved message is correct.
+        This test DOES NOT check that the saved message is correct.
         For that, see test_cloud_record_post_202()
         """
         example_dn = "/C=XX/O=XX/OU=XX/L=XX/CN=special_host.test"
