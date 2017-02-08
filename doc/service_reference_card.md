@@ -45,7 +45,8 @@
   
   * How to block/ban a user
     * To ban users accessing summaries, remove them from `ALLOWED_FOR_GET` in `/var/www/html/apel_rest/settings.py`.
-    * To ban users sending job records, add their HostDN to `BANNED_FROM_POST` in `/var/www/html/apel_rest/settings.py`.
+    * To ban users sending job records, perhaps because a provider in the Indigo provider list is negatively effecting
+      the quality of the service for users by bulk reppublishing, add their HostDN to `BANNED_FROM_POST` in `/var/www/html/apel_rest/settings.py`.
     * Users can also be granted POST rights, by adding their HostDN to `ALLOWED_TO_POST` in `/var/www/html/apel_rest/settings.py`.
     * Any changes to `/var/www/html/apel_rest/settings.py` require a `service httpd restart` to take effect.
  
