@@ -1,6 +1,8 @@
 """
 Django settings for apel_rest project.
 
+Any changes will require restarting the httpd server.
+
 For more information on this file, see
 https://docs.djangoproject.com/en/1.6/topics/settings/
 
