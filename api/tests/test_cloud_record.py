@@ -65,7 +65,6 @@ class CloudRecordTest(TestCase):
                                         SSL_CLIENT_S_DN=example_dn)
 
             self.assertEqual(response.status_code, 202)
-            self._delete_messages(QPATH_TEST)
 
     def test_cloud_record_post_provider_fail(self):
         """Test what happens if we fail to retrieve the providers."""
@@ -156,10 +155,10 @@ class CloudRecordTest(TestCase):
 
             # check saved message content
             self.assertEqual(MESSAGE, message_content)
-            self._delete_messages(QPATH_TEST)
 
     def tearDown(self):
         """Delete any messages under QPATH and re-enable logging.INFO."""
+        self._delete_messages(QPATH_TEST)
         logging.disable(logging.NOTSET)
 
     def _delete_messages(self, message_path):
