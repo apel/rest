@@ -167,6 +167,6 @@ PROVIDERS_URL = "http://indigo.cloud.plgrid.pl/cmdb/service/list"
 IAM_URL = "https://iam-test.indigo-datacloud.eu/introspect"
 
 # Use these variables to revoke/grant POST rights.
-# Remember these variables require a web server reset to take effect.
+# Remember these variables require a web server restart to take effect.
 ALLOWED_TO_POST = []
 BANNED_FROM_POST = []
