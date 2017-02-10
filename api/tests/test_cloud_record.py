@@ -23,6 +23,49 @@ class CloudRecordTest(TestCase):
         """Prevent logging from appearing in test output."""
         logging.disable(logging.CRITICAL)
 
+    def test_cloud_record_post_provider_banned(self):
+        """Test that a banned provider on the provider list cannot POST."""
+        example_dn = "/C=XX/O=XX/OU=XX/L=XX/CN=allowed_host.test"
+        with self.settings(BANNED_FROM_POST=[example_dn]):
+
+            # Mock the functionality of the provider list
+            # Used in the underlying POST handling method
+            CloudRecordView._get_provider_list = Mock(return_value=PROVIDERS)
+
+            test_client = Client()
+            response = test_client.post(reverse('CloudRecordView'),
+                                        MESSAGE,
+                                        content_type="text/plain",
+                                        HTTP_EMPA_ID="Test Process",
+                                        SSL_CLIENT_S_DN=example_dn)
+
+            self.assertEqual(response.status_code, 403)
+
+    def test_cloud_record_post_provider_special(self):
+        """
+        Test that a provider granted POST rights can, indeed, POST.
+
+        Even if they aren't on the provider list.
+        This test DOES NOT check that the saved message is correct.
+        For that, see test_cloud_record_post_202()
+        """
+        example_dn = "/C=XX/O=XX/OU=XX/L=XX/CN=special_host.test"
+        with self.settings(ALLOWED_TO_POST=[example_dn],
+                           QPATH=QPATH_TEST):
+
+            # Mock the functionality of the provider list
+            # Used in the underlying POST handling method
+            CloudRecordView._get_provider_list = Mock(return_value=PROVIDERS)
+
+            test_client = Client()
+            response = test_client.post(reverse('CloudRecordView'),
+                                        MESSAGE,
+                                        content_type="text/plain",
+                                        HTTP_EMPA_ID="Test Process",
+                                        SSL_CLIENT_S_DN=example_dn)
+
+            self.assertEqual(response.status_code, 202)
+
     def test_cloud_record_post_provider_fail(self):
         """Test what happens if we fail to retrieve the providers."""
         # Mock the functionality of the provider list
@@ -66,7 +109,7 @@ class CloudRecordTest(TestCase):
         test_client = Client()
         # No SSL_CLIENT_S_DN in POST to
         # simulate a certificate-less request
-        url = reverse('CloudRecordView')     
+        url = reverse('CloudRecordView')
 
         response = test_client.post(url,
                                     MESSAGE,
@@ -112,10 +155,10 @@ class CloudRecordTest(TestCase):
 
             # check saved message content
             self.assertEqual(MESSAGE, message_content)
-            self._delete_messages(QPATH_TEST)
 
     def tearDown(self):
         """Delete any messages under QPATH and re-enable logging.INFO."""
+        self._delete_messages(QPATH_TEST)
         logging.disable(logging.NOTSET)
 
     def _delete_messages(self, message_path):

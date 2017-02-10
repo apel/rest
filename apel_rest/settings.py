@@ -1,6 +1,8 @@
 """
 Django settings for apel_rest project.
 
+Any changes will require restarting the httpd server.
+
 For more information on this file, see
 https://docs.djangoproject.com/en/1.6/topics/settings/
 
@@ -163,3 +165,8 @@ PROVIDERS_URL = "http://indigo.cloud.plgrid.pl/cmdb/service/list"
 
 # The introspect URL for the IAM repsonsible for token based authN/authZ
 IAM_URL = "https://iam-test.indigo-datacloud.eu/introspect"
+
+# Use these variables to revoke/grant POST rights.
+# Remember these variables require a web server restart to take effect.
+ALLOWED_TO_POST = []
+BANNED_FROM_POST = []
