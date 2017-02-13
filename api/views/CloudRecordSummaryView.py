@@ -73,7 +73,8 @@ class CloudRecordSummaryView(APIView):
         (group_name,
          service_name,
          start_date,
-         end_date) = self._parse_query_parameters(request)
+         end_date,
+         global_user_name) = self._parse_query_parameters(request)
 
         if start_date is None:
             # querying without a from is not supported
@@ -113,7 +114,14 @@ class CloudRecordSummaryView(APIView):
 
         cursor = database.cursor(MySQLdb.cursors.DictCursor)
 
-        if group_name is not None:
+        if global_user_name is not None:
+            cursor.execute('select * from VCloudSummaries '
+                           'where GlobalUserName = %s '
+                           'and EarliestStartTime > %s '
+                           'and LatestStartTime < %s',
+                           [global_user_name, start_date, end_date])
+
+        elif group_name is not None:
             cursor.execute('select * from VCloudSummaries '
                            'where VOGroup = %s '
                            'and EarliestStartTime > %s '
@@ -160,14 +168,20 @@ class CloudRecordSummaryView(APIView):
         if end_date is "":
             end_date = datetime.datetime.now()
 
+        global_user_name = request.GET.get('user', '')
+        if global_user_name is "":
+            global_user_name = None
+
         # Log query parameters
         self.logger.debug("Query Parameters")
         self.logger.debug("Group name = %s", group_name)
         self.logger.debug("Service name = %s", service_name)
         self.logger.debug("Start date = %s", start_date)
         self.logger.debug("End date = %s", end_date)
+        self.logger.debug("Global Username = %s", global_user_name)
 
-        return (group_name, service_name, start_date, end_date)
+        return (group_name, service_name, start_date,
+                end_date, global_user_name)
 
     def _paginate_result(self, request, result):
         """Paginate result based on the request and apel_rest settings."""
