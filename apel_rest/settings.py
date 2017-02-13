@@ -154,7 +154,8 @@ RETURN_HEADERS = ["VOGroup",
                   "LatestStartTime",
                   "Day",
                   "Month",
-                  "Year"]
+                  "Year",
+                  "GlobalUserName"]
 
 # this should hide the GET?format button
 # this doesnt do anything, probably because of using older Django
