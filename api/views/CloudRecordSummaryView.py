@@ -22,6 +22,11 @@ class CloudRecordSummaryView(APIView):
 
     Usage:
 
+    .../api/v1/cloud/record/summary?user=<global_user_name>&from=<date_from>&to=<date_to>
+
+    Will return the summary for global_user_name at all services,
+    between date_from and date_to as daily summaries
+
     .../api/v1/cloud/record/summary?group=<group_name>&from=<date_from>&to=<date_to>
 
     Will return the summary for group_name at all services,
@@ -44,6 +49,11 @@ class CloudRecordSummaryView(APIView):
     def get(self, request, format=None):
         """
         Retrieve Cloud Accounting Summaries.
+
+        .../api/v1/cloud/record/summary?user=<global_user_name>&from=<date_from>&to=<date_to>
+
+        Will return the summary for global_user_name at all services,
+        between date_from and date_to as daily summaries
 
         .../api/v1/cloud/record/summary?group=<group_name>&from=<date_from>&to=<date_to>
 

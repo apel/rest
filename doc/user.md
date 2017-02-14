@@ -30,6 +30,7 @@ For Example:
 
 * `group`: The group within Indigo DataCloud.
 * `service`: The site that provided the resource.
+* `user`: The global user name of the resource submitter.
 * `to`: Display summaries for dates (YYYYMMDD) up until this value, but exclusive of it.
 * `from`: Display summaries for dates (YYYYMMDD) after this value, but exclusive of it.
 
@@ -57,6 +58,7 @@ For Example:
             "SiteName": "Test-Site", 
             "LatestStartTime": "2013-02-25T17:37:27", 
             "EarliestStartTime": "2013-02-25T17:37:27", 
+            "GlobalUserName": "TestDN",
             "Day": 26, 
             "Month": 2
         }, 
@@ -68,6 +70,7 @@ For Example:
             "SiteName": "Test-Site", 
             "LatestStartTime": "2013-02-25T17:37:27", 
             "EarliestStartTime": "2013-02-25T17:37:27", 
+            "GlobalUserName": "TestDN",
             "Day": 27, 
             "Month": 2
         }
