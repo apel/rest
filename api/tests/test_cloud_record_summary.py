@@ -284,7 +284,6 @@ class CloudRecordSummaryTest(TestCase):
         expected_result = [{'SiteName': 'TEST',
                             'Day': 30}]
 
-        # Check the result is as expected.
         self.assertEqual(result, expected_result)
 
     def tearDown(self):

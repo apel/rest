@@ -193,17 +193,27 @@ class CloudRecordSummaryView(APIView):
         return serializer.data
 
     def _filter_cursor(self, cursor):
-        """Filter database results based on settings.RETURN_HEADERS."""
-        results_list = []  # Return list.
-        for record in cursor.fetchall():  # record refers to one days summary
-            # Construct a new summary with only the values we care about.
+        """
+        Filter database results based on settings.RETURN_HEADERS.
+
+        Allows for configuration of what summary fields
+        the REST interface returns on GET requests.
+        """
+        results_list = []
+        # Use results_list to store individual summaries to before returning.
+        for record in cursor.fetchall():
+            # record refers to one day's summary
             result = {}
+            # result is used to construct a new, filtered, summary with
+            # only the values listed in settings.RETURN_HEADERS.
             for key, value in record.iteritems():
-                # If the key is int settings.RETURN_HEADERS, add it
-                # to the new Dictionary.
                 if key in settings.RETURN_HEADERS:
+                    # keys listed in settings.RETURN_HEADERS represent
+                    # summary fields the REST interface has been configured
+                    # to return. As such we need to add that field to the
+                    # new summary we are constructing
                     result.update({key: value})
-            # Append new Dictionary to return list.
+
             results_list.append(result)
 
         return results_list
