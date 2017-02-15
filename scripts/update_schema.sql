@@ -1,5 +1,6 @@
--- This script will set any null timestamps get set to now
--- and then explicitly set timestamps to update
+-- This script will set any null UpdateTimes to now
+-- and then explicitly set the UpdateTimes of 
+-- future rows to update
 
 UPDATE CloudRecords SET UpdateTime = CURRENT_TIMESTAMP WHERE UpdateTime IS NULL;
 ALTER TABLE CloudRecords MODIFY COLUMN UpdateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
