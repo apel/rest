@@ -268,24 +268,22 @@ class CloudRecordSummaryTest(TestCase):
         """Test the filtering of a query object based on settings."""
         test_cloud_view = CloudRecordSummaryView()
 
-        # this approximates a cursor object
-        # in future, a cursor dict may be better
-        # to use in _filter_cursor
-        cursor_headers = [['SiteName'], ['Day'], ['Month'], ['Year']]
-        cursor_data = [[['SiteName', 'Test'],
-                        ['Day', 01],
-                        ['Month', 02],
-                        ['Year', 2000]]]
+        # A list of test summaries.
+        test_data = [{'Day': 30,
+                      'Month': 7,
+                      'Year': 2016,
+                      'SiteName': 'TEST'}]
 
         cursor = Mock()
-        cursor.description = cursor_headers
-        cursor.fetchall = Mock(return_value=cursor_data)
+        # Get the mock cursor object return the test_data.
+        cursor.fetchall = Mock(return_value=test_data)
 
         with self.settings(RETURN_HEADERS=['SiteName', 'Day']):
             result = test_cloud_view._filter_cursor(cursor)
 
-        expected_result = [{'SiteName': ['SiteName', 'Test'],
-                            'Day': ['Day', 1]}]
+        expected_result = [{'SiteName': 'TEST',
+                            'Day': 30}]
+
         self.assertEqual(result, expected_result)
 
     def tearDown(self):

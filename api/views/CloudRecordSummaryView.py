@@ -111,7 +111,7 @@ class CloudRecordSummaryView(APIView):
                               db_name, db_hostname, db_username, db_password)
             return Response(status=500)
 
-        cursor = database.cursor()
+        cursor = database.cursor(MySQLdb.cursors.DictCursor)
 
         if group_name is not None:
             cursor.execute('select * from VCloudSummaries '
@@ -193,18 +193,30 @@ class CloudRecordSummaryView(APIView):
         return serializer.data
 
     def _filter_cursor(self, cursor):
-        """Filter database results based on setting.RETURN_HEADERS."""
-        columns = cursor.description
-        results = []
-        for value in cursor.fetchall():
-            result = {}
-            for index, column in enumerate(value):
-                header = columns[index][0]
-                if header in settings.RETURN_HEADERS:
-                    result.update({header: column})
-            results.append(result)
+        """
+        Filter database results based on settings.RETURN_HEADERS.
 
-        return results
+        Allows for configuration of what summary fields
+        the REST interface returns on GET requests.
+        """
+        results_list = []
+        # Use results_list to store individual summaries to before returning.
+        for record in cursor.fetchall():
+            # record refers to one day's summary
+            result = {}
+            # result is used to construct a new, filtered, summary with
+            # only the values listed in settings.RETURN_HEADERS.
+            for key, value in record.iteritems():
+                if key in settings.RETURN_HEADERS:
+                    # keys listed in settings.RETURN_HEADERS represent
+                    # summary fields the REST interface has been configured
+                    # to return. As such we need to add that field to the
+                    # new summary we are constructing
+                    result.update({key: value})
+
+            results_list.append(result)
+
+        return results_list
 
     def _request_to_token(self, request):
         """Get the token from the request."""
