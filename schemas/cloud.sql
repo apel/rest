@@ -115,6 +115,7 @@ CREATE TABLE CloudSummaries (
   LatestStartTime DATETIME,
   WallDuration BIGINT,
   CpuDuration BIGINT,
+  CpuCount INT,
 
   NetworkInbound BIGINT,
   NetworkOutbound BIGINT,
@@ -140,17 +141,17 @@ CREATE PROCEDURE ReplaceCloudSummaryRecord(
   vo VARCHAR(255), voGroup VARCHAR(255), voRole VARCHAR(255), status VARCHAR(255),
   cloudType VARCHAR(255), imageId VARCHAR(255), 
   earliestStartTime DATETIME, latestStartTime DATETIME, 
-  wallDuration BIGINT, cpuDuration BIGINT, 
+  wallDuration BIGINT, cpuDuration BIGINT, cpuCount INT,
   networkInbound BIGINT, networkOutbound BIGINT, publicIPCount BIGINT, memory BIGINT, 
   disk BIGINT, benchmarkType VARCHAR(50), benchmark DECIMAL(10,3), numberOfVMs BIGINT,
   publisherDN VARCHAR(255))
 BEGIN
     REPLACE INTO CloudSummaries(SiteID, CloudComputeServiceID, Day, Month, Year, GlobalUserNameID, VOID, VOGroupID, VORoleID, Status, CloudType, ImageId, EarliestStartTime, LatestStartTime, 
-        WallDuration, CpuDuration, NetworkInbound, NetworkOutbound, PublicIPCount, Memory, Disk, BenchmarkType, Benchmark, NumberOfVMs,  PublisherDNID)
+        WallDuration, CpuDuration, CpuCount, NetworkInbound, NetworkOutbound, PublicIPCount, Memory, Disk, BenchmarkType, Benchmark, NumberOfVMs,  PublisherDNID)
       VALUES (
         SiteLookup(site), CloudComputeServiceLookup(cloudComputeService), day, month, year, DNLookup(globalUserName), VOLookup(vo),
         VOGroupLookup(voGroup), VORoleLookup(voRole), status, cloudType, imageId, earliestStartTime, latestStartTime, 
-        wallDuration, cpuDuration, networkInbound, networkOutbound, publicIPCount, memory,
+        wallDuration, cpuDuration, cpuCount, networkInbound, networkOutbound, publicIPCount, memory,
         disk, benchmarkType, benchmark, numberOfVMs, DNLookup(publisherDN)
         );
 END //
@@ -223,6 +224,7 @@ SELECT
 	ThisRecord.StartTime as StartTime,
 	COALESCE(ThisRecord.WallDuration - IFNULL(PrevRecord.WallDuration, 0.00)) AS ComputedWallDuration,
 	COALESCE(ThisRecord.CpuDuration - IFNULL(PrevRecord.CpuDuration, 0.00)) AS ComputedCpuDuration,
+	ThisRecord.CpuCount as CpuCount,
 	COALESCE(ThisRecord.NetworkInbound - IFNULL(PrevRecord.NetworkInbound, 0.00)) AS ComputedNetworkInbound,
 	COALESCE(ThisRecord.NetworkOutbound - IFNULL(PrevRecord.NetworkOutbound, 0.00)) AS ComputedNetworkOutbound,
 	ThisRecord.PublicIPCount as PublicIPCount,
@@ -242,9 +244,11 @@ ON 	(ThisRecord.VMUUID = PrevRecord.VMUUID and
 					AND MeasurementTime < ThisRecord.MeasurementTime)
 	);
 
-    REPLACE INTO CloudSummaries(SiteID, CloudComputeServiceID, Day, Month, Year, GlobalUserNameID, VOID,
-        VOGroupID, VORoleID, Status, CloudType, ImageId, EarliestStartTime, LatestStartTime, WallDuration, CpuDuration, NetworkInbound,
-        NetworkOutbound, PublicIPCount, Memory, Disk, BenchmarkType, Benchmark, NumberOfVMs, PublisherDNID)
+    REPLACE INTO CloudSummaries(SiteID, CloudComputeServiceID, Day, Month, Year,
+        GlobalUserNameID, VOID, VOGroupID, VORoleID, Status, CloudType, ImageId,
+        EarliestStartTime, LatestStartTime, WallDuration, CpuDuration, CpuCount,
+        NetworkInbound, NetworkOutbound, PublicIPCount, Memory, Disk,
+        BenchmarkType, Benchmark, NumberOfVMs, PublisherDNID)
     SELECT SiteID,
     CloudComputeServiceID,
     Day, Month, Year,
@@ -253,6 +257,7 @@ ON 	(ThisRecord.VMUUID = PrevRecord.VMUUID and
     MAX(StartTime),
     SUM(ComputedWallDuration),
     SUM(ComputedCpuDuration),
+    CpuCount,
     SUM(ComputedNetworkInbound),
     SUM(ComputedNetworkOutbound),
     SUM(PublicIPCount),
@@ -263,7 +268,9 @@ ON 	(ThisRecord.VMUUID = PrevRecord.VMUUID and
     COUNT(*),
     'summariser'
     FROM TVMUsagePerDay
-    GROUP BY SiteID, CloudComputeServiceID, Day, Month, Year, GlobalUserNameID, VOID, VOGroupID, VORoleID, Status, CloudType, ImageId, BenchmarkType, Benchmark
+    GROUP BY SiteID, CloudComputeServiceID, Day, Month, Year, GlobalUserNameID, VOID,
+        VOGroupID, VORoleID, Status, CloudType, ImageId, CpuCount,
+        BenchmarkType, Benchmark
     ORDER BY NULL;
 END //
 DELIMITER ;
@@ -477,7 +484,7 @@ CREATE VIEW VCloudSummaries AS
            userdn.name GlobalUserName, vo.name VO, 
            vogroup.name VOGroup, vorole.name VORole,
            Status, CloudType, ImageId, EarliestStartTime, LatestStartTime,
-           WallDuration, CpuDuration, NetworkInbound, NetworkOutbound, PublicIPCount, Memory, Disk, BenchmarkType, Benchmark,  
+           WallDuration, CpuDuration, CpuCount, NetworkInbound, NetworkOutbound, PublicIPCount, Memory, Disk, BenchmarkType, Benchmark,  
            NumberOfVMs
     FROM CloudSummaries, Sites site, CloudComputeServices cloudComputeService, DNs userdn, VOs vo, VOGroups vogroup, VORoles vorole WHERE
         SiteID = site.id
