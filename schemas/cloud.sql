@@ -6,7 +6,7 @@ CREATE TABLE CloudRecords (
 
   VMUUID VARCHAR(255) NOT NULL, 
   SiteID INT NOT NULL,                -- Foreign key
-  CloudComputeServiceID INT,          -- Foreign key
+  CloudComputeServiceID INT NOT NULL, -- Foreign key
 
   MachineName VARCHAR(255), 
 
@@ -96,7 +96,7 @@ CREATE TABLE CloudSummaries (
   UpdateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
   SiteID INT NOT NULL, -- Foreign key
-  CloudComputeServiceID INT, -- Foreign key
+  CloudComputeServiceID INT NOT NULL, -- Foreign key
 
   Day INT NOT NULL,
   Month INT NOT NULL,
