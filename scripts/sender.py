@@ -6,17 +6,16 @@ If run as a python script, this module will
 send messages to the REST endpoint defined in main().
 """
 
-import ssl
 
-from dirq.QueueSimple import QueueSimple
-
-import os
-import socket
-import time
-import logging
 import httplib
 import json
+import logging
+import ssl
+import socket
 import sys
+import time
+
+from dirq.QueueSimple import QueueSimple
 
 log = logging.getLogger(__name__)
 
@@ -101,17 +100,15 @@ def main():
     """Configure a Sender and send Records to an APEL REST interface."""
     # The web address of the accounting server you wish to send to
     # i.e accounting.indigio-datacloud.eu
-    dest =
+    dest = 
     # The directory to read saved accounting messages to
-    qpath =
+    qpath = 
     # The location of this machines private key
-    key =
+    key = 
     # The location of this machines X.509 certifcate
-    cert =
+    cert = 
 
     sender = Sender(dest, qpath, cert, key)
-
-    sender._outq.add('BOOP')
 
     sender.send_all()
 
