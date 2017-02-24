@@ -20,7 +20,7 @@ from dirq.QueueSimple import QueueSimple
 log = logging.getLogger(__name__)
 
 
-class Sender():
+class Sender(object):
     """A simple class for sending Accounting Records to a REST endpoint."""
 
     def __init__(self, dest, qpath, cert, key):
