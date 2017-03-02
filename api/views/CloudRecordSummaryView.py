@@ -25,20 +25,20 @@ class CloudRecordSummaryView(APIView):
     .../api/v1/cloud/record/summary?user=<global_user_name>&from=<date_from>&to=<date_to>
 
     Will return the summary for global_user_name at all services,
-    between date_from and date_to as daily summaries
+    between date_from and date_to (exclusive) as daily summaries
 
     .../api/v1/cloud/record/summary?group=<group_name>&from=<date_from>&to=<date_to>
 
     Will return the summary for group_name at all services,
-    between date_from and date_to as daily summaries
+    between date_from and date_to (exclusive) as daily summaries
 
     .../api/v1/cloud/record/summary?service=<service_name>&from=<date_from>&to=<date_to>
 
     Will return the summary for service_name at all groups,
-    between date_from and date_to as daily summaries
+    between date_from and date_to (exclusive) as daily summaries
 
     .../api/v1/cloud/record/summary?from=<date_from>
-    Will give summary for whole infrastructure from <data> to now
+    Will give summary for whole infrastructure from date_from (exclusive) to now
     """
 
     def __init__(self):
@@ -53,20 +53,20 @@ class CloudRecordSummaryView(APIView):
         .../api/v1/cloud/record/summary?user=<global_user_name>&from=<date_from>&to=<date_to>
 
         Will return the summary for global_user_name at all services,
-        between date_from and date_to as daily summaries
+        between date_from and date_to (exclusive) as daily summaries
 
         .../api/v1/cloud/record/summary?group=<group_name>&from=<date_from>&to=<date_to>
 
         Will return the summary for group_name at all services,
-        between date_from and date_to as daily summaries
+        between date_from and date_to (exclusive) as daily summaries
 
         .../api/v1/cloud/record/summary?service=<service_name>&from=<date_from>&to=<date_to>
 
         Will return the summary for service_name at all groups,
-        between date_from and date_to as daily summaries
+        between date_from and date_to (exclusive) as daily summaries
 
         .../api/v1/cloud/record/summary?from=<date_from>
-        Will give summary for whole infrastructure from <data> to now
+        Will give summary for whole infrastructure from date_from (exclusive) to now
         """
         client_token = self._request_to_token(request)
         if client_token is None:
