@@ -27,14 +27,17 @@ RUN yum -y install python-pip python-devel mysql mysql-devel gcc httpd httpd-dev
 # Copy APEL REST files to apache root
 COPY . /var/www/html/
 
+# Set the work diirectory to /var/www/html
+WORKDIR /var/www/html
+
 # Install APEL REST requirements
-RUN pip install -r /var/www/html/requirements.txt
+RUN pip install -r requirements.txt
 
 # Copy APEL REST conf files to apache conf
-RUN cp /var/www/html/conf/apel_rest_api.conf /etc/httpd/conf.d/apel_rest_api.conf
+RUN cp conf/apel_rest_api.conf /etc/httpd/conf.d/apel_rest_api.conf
 
 # Copy SSL conf files to apache conf
-RUN cp /var/www/html/conf/ssl.conf /etc/httpd/conf.d/ssl.conf
+RUN cp conf/ssl.conf /etc/httpd/conf.d/ssl.conf
 
 # Make a directory for the certificates
 RUN mkdir /etc/httpd/ssl/
@@ -49,10 +52,10 @@ RUN mkdir -p /var/spool/apel/cloud/
 RUN chown apache -R /var/spool/apel/cloud/
 
 # Generate static files
-RUN cd /var/www/html/ && echo "yes" | python manage.py collectstatic 
+RUN echo "yes" | python manage.py collectstatic 
 
 # Expose apache and SSL ports
 EXPOSE 80
 EXPOSE 443
 
-ENTRYPOINT /var/www/html/docker/run_on_entry.sh
+ENTRYPOINT docker/run_on_entry.sh
