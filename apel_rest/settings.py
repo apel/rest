@@ -18,9 +18,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'Put a secret here'
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
@@ -161,13 +158,15 @@ RETURN_HEADERS = ["VOGroup",
 # this doesnt do anything, probably because of using older Django
 URL_FORMAT_OVERRIDE = None
 
-# Points to the JSON list of Resource Providers
-PROVIDERS_URL = "http://indigo.cloud.plgrid.pl/cmdb/service/list"
+# These variables replaced on entry into the docker container
+SECRET_KEY='not_a_secure_secret'
 
-# The introspect URL for the IAM repsonsible for token based authN/authZ
-IAM_URL = "https://iam-test.indigo-datacloud.eu/introspect"
+PROVIDERS_URL = 'provider_url'
 
-# Use these variables to revoke/grant POST rights.
-# Remember these variables require a web server restart to take effect.
-ALLOWED_TO_POST = []
-BANNED_FROM_POST = []
+IAM_URL = 'iam_url'
+SERVER_IAM_ID = 'server_iam_id'
+SERVER_IAM_SECRET = 'server_iam_secret'
+
+ALLOWED_TO_POST = ['allowed_to_post']
+BANNED_FROM_POST = ['banned_from_post']
+ALLOWED_FOR_GET = ['allowed_for_get']
