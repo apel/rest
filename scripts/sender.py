@@ -68,7 +68,7 @@ class Sender(object):
 
         while attempt_number < 3:
             try:
-                attempt_number = attempt_number + 1
+                attempt_number += 1
 
                 conn = httplib.HTTPSConnection(self._dest,
                                                cert_file=self._cert,
