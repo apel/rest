@@ -15,7 +15,6 @@ enabled=1\n\
 gpgcheck=1\n\
 gpgkey=http://repository.egi.eu/sw/production/cas/1/GPG-KEY-EUGridPMA-RPM-3' >> /etc/yum.repos.d/EGI-trustanchors.repo
 
-# install tools needed to get files from GitHub
 # install python tools
 # install mysql
 # install apache
@@ -23,22 +22,13 @@ gpgkey=http://repository.egi.eu/sw/production/cas/1/GPG-KEY-EUGridPMA-RPM-3' >> 
 # install at (for scheduling the IGTF update after start up)
 # install IGTF trust bundle
 # install fetch-crl
-RUN yum -y install wget unzip python-pip python-devel mysql mysql-devel gcc httpd httpd-devel mod_wsgi mod_ssl vixie-cron at ca-policy-egi-core fetch-crl
+RUN yum -y install python-pip python-devel mysql mysql-devel gcc httpd httpd-devel mod_wsgi mod_ssl vixie-cron at ca-policy-egi-core fetch-crl
 
-# get APEL REST interface
-RUN wget https://github.com/indigo-dc/Accounting/archive/1.3.2-1.zip -O apel_rest.zip
-
-# unzip APEL REST interface and mv to apel_rest dir
-RUN unzip apel_rest.zip && mv Accounting-1.3.2-1 apel_rest
-
-# remove APEL REST zip
-RUN rm apel_rest.zip
+# Copy APEL REST files to apache root
+COPY . /var/www/html/
 
 # install APEL REST requirements
-RUN cd apel_rest && pip install -r requirements.txt
-
-# copy APEL REST files to apache root
-RUN cp -r apel_rest/* /var/www/html/
+RUN pip install -r /var/www/html/requirements.txt
 
 # copy APEL REST conf files to apache conf
 RUN cp /var/www/html/conf/apel_rest_api.conf /etc/httpd/conf.d/apel_rest_api.conf
@@ -65,4 +55,4 @@ RUN cd /var/www/html/ && echo "yes" | python manage.py collectstatic
 EXPOSE 80
 EXPOSE 443
 
-ENTRYPOINT /apel_rest/docker/run_on_entry.sh
+ENTRYPOINT /var/www/html/docker/run_on_entry.sh
