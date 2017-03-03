@@ -170,20 +170,22 @@ class CloudRecordSummaryTest(TestCase):
 
     def test_parse_query_parameters(self):
         """Test the parsing of query parameters."""
-        # test a get with group, summary, start and end
+        # test a get with group, summary, start, end and user
         test_cloud_view = CloudRecordSummaryView()
         factory = APIRequestFactory()
         url = ''.join((reverse('CloudRecordSummaryView'),
                        '?group=Group1',
                        '&service=Service1',
                        '&from=FromDate',
-                       '&to=ToDate'))
+                       '&to=ToDate',
+                       '&user=UserA'))
 
         request = factory.get(url)
 
         parsed_responses = test_cloud_view._parse_query_parameters(request)
         self.assertEqual(parsed_responses,
-                         ("Group1", "Service1", "FromDate", "ToDate"))
+                         ("Group1", "Service1", "FromDate",
+                          "ToDate", "UserA"))
 
         # test a get with just an end date
         url = ''.join((reverse('CloudRecordSummaryView'),
@@ -192,7 +194,8 @@ class CloudRecordSummaryTest(TestCase):
         request = factory.get(url)
         parsed_responses = test_cloud_view._parse_query_parameters(request)
         self.assertEqual(parsed_responses,
-                         (None, None, None, "ToDate"))
+                         (None, None, None,
+                          "ToDate", None))
 
     def test_paginate_result(self):
         """Test an empty result is paginated correctly."""

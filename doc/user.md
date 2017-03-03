@@ -30,14 +30,17 @@ For Example:
 
 * `group`: The group within Indigo DataCloud.
 * `service`: The site that provided the resource.
+* `user`: The global user name of the resource submitter.
 * `to`: Display summaries for dates (YYYYMMDD) up until this value, but exclusive of it.
 * `from`: Display summaries for dates (YYYYMMDD) after this value, but exclusive of it.
 
 `from` is the only compulsary option, failure to include it will result in a 400 response.
 
+Currently, only one of `user`, `group` or `service` can be set in the same query. Combining more than one will result in a 400 response.
+
 ### Expected Status Codes
 * 200: Your request was succesfully met.
-* 400: No key=value pair provided for from.
+* 400: No key=value pair provided for `from`, or more than one of `user`, `group` or `service` is set.
 * 401: Your service's OAuth token was not provided by the request, or was not successfully extracted by the server.
 * 403: Your service's OAuth token was extracted by the server, but the IAM does not recognise it.
 * 500: An unknown error has a occured.
@@ -57,6 +60,7 @@ For Example:
             "SiteName": "Test-Site", 
             "LatestStartTime": "2013-02-25T17:37:27", 
             "EarliestStartTime": "2013-02-25T17:37:27", 
+            "GlobalUserName": "TestDN",
             "Day": 26, 
             "Month": 2
         }, 
@@ -68,6 +72,7 @@ For Example:
             "SiteName": "Test-Site", 
             "LatestStartTime": "2013-02-25T17:37:27", 
             "EarliestStartTime": "2013-02-25T17:37:27", 
+            "GlobalUserName": "TestDN",
             "Day": 27, 
             "Month": 2
         }

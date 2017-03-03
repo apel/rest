@@ -22,18 +22,25 @@ class CloudRecordSummaryView(APIView):
 
     Usage:
 
+    .../api/v1/cloud/record/summary?user=<global_user_name>&from=<date_from>&to=<date_to>
+
+    Will return the summary for global_user_name at all services,
+    between date_from and date_to (exclusive) as daily summaries
+
     .../api/v1/cloud/record/summary?group=<group_name>&from=<date_from>&to=<date_to>
 
     Will return the summary for group_name at all services,
-    between date_from and date_to as daily summaries
+    between date_from and date_to (exclusive) as daily summaries
 
     .../api/v1/cloud/record/summary?service=<service_name>&from=<date_from>&to=<date_to>
 
     Will return the summary for service_name at all groups,
-    between date_from and date_to as daily summaries
+    between date_from and date_to (exclusive) as daily summaries
 
     .../api/v1/cloud/record/summary?from=<date_from>
-    Will give summary for whole infrastructure from <data> to now
+
+    Will give summary for whole infrastructure from date_from
+    (exclusive) to now
     """
 
     def __init__(self):
@@ -45,18 +52,25 @@ class CloudRecordSummaryView(APIView):
         """
         Retrieve Cloud Accounting Summaries.
 
+        .../api/v1/cloud/record/summary?user=<global_user_name>&from=<date_from>&to=<date_to>
+
+        Will return the summary for global_user_name at all services,
+        between date_from and date_to (exclusive) as daily summaries
+
         .../api/v1/cloud/record/summary?group=<group_name>&from=<date_from>&to=<date_to>
 
         Will return the summary for group_name at all services,
-        between date_from and date_to as daily summaries
+        between date_from and date_to (exclusive) as daily summaries
 
         .../api/v1/cloud/record/summary?service=<service_name>&from=<date_from>&to=<date_to>
 
         Will return the summary for service_name at all groups,
-        between date_from and date_to as daily summaries
+        between date_from and date_to (exclusive) as daily summaries
 
         .../api/v1/cloud/record/summary?from=<date_from>
-        Will give summary for whole infrastructure from <data> to now
+
+        Will give summary for whole infrastructure from
+        date_from (exclusive) to now
         """
         client_token = self._request_to_token(request)
         if client_token is None:
@@ -73,11 +87,25 @@ class CloudRecordSummaryView(APIView):
         (group_name,
          service_name,
          start_date,
-         end_date) = self._parse_query_parameters(request)
+         end_date,
+         global_user_name) = self._parse_query_parameters(request)
+
+        # Check that at most one of group_name, service_name
+        # and global_user_name is set as having more than
+        # one defined is currently ambiguous while retrieval
+        # against only one parameter per GET request is supported.
+        parameters_to_check = (group_name, service_name, global_user_name)
+        set_count = sum([1 for para in parameters_to_check if para is None])
+        if set_count <= 1:
+            self.logger.error("User, Group and/or Service combined.")
+            self.logger.error("Rejecting request.")
+            return Response("Only one of User, Group and Service can be set.",
+                            status=400)
 
         if start_date is None:
             # querying without a from is not supported
-            return Response(status=400)
+            return Response("'from' must be set in GET requests.",
+                            status=400)
 
         # Read configuration from file
         try:
@@ -113,7 +141,14 @@ class CloudRecordSummaryView(APIView):
 
         cursor = database.cursor(MySQLdb.cursors.DictCursor)
 
-        if group_name is not None:
+        if global_user_name is not None:
+            cursor.execute('select * from VCloudSummaries '
+                           'where GlobalUserName = %s '
+                           'and EarliestStartTime > %s '
+                           'and LatestStartTime < %s',
+                           [global_user_name, start_date, end_date])
+
+        elif group_name is not None:
             cursor.execute('select * from VCloudSummaries '
                            'where VOGroup = %s '
                            'and EarliestStartTime > %s '
@@ -160,14 +195,20 @@ class CloudRecordSummaryView(APIView):
         if end_date is "":
             end_date = datetime.datetime.now()
 
+        global_user_name = request.GET.get('user', '')
+        if global_user_name is "":
+            global_user_name = None
+
         # Log query parameters
         self.logger.debug("Query Parameters")
         self.logger.debug("Group name = %s", group_name)
         self.logger.debug("Service name = %s", service_name)
         self.logger.debug("Start date = %s", start_date)
         self.logger.debug("End date = %s", end_date)
+        self.logger.debug("Global Username = %s", global_user_name)
 
-        return (group_name, service_name, start_date, end_date)
+        return (group_name, service_name, start_date,
+                end_date, global_user_name)
 
     def _paginate_result(self, request, result):
         """Paginate result based on the request and apel_rest settings."""
