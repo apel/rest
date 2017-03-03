@@ -100,11 +100,13 @@ class CloudRecordSummaryView(APIView):
         if set_count <= 1:
             self.logger.error("User, Group and/or Service combined.")
             self.logger.error("Rejecting request.")
-            return Response(status=400)
+            return Response("Only one of User, Group and Service can be set.",
+                            status=400)
 
         if start_date is None:
             # querying without a from is not supported
-            return Response(status=400)
+            return Response("'from' must be set in GET requests.",
+                            status=400)
 
         # Read configuration from file
         try:
