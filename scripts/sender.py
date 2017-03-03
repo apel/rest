@@ -103,7 +103,7 @@ def main():
     Configure a Sender and send Records to an APEL REST interface.
 
     Usage:
-    sender.py -d DESTINATION -q QUEUE -k KEY -c CERTIFICATE -v VERSION
+    sender.py -d DESTINATION -q QUEUE -k KEY -c CERTIFICATE [-v VERSION]
 
     Options:
     -h, --help        show this help message and exit
@@ -143,7 +143,7 @@ def main():
                                   "machine's X.509 certifcate. "
                                   "e.g. /etc/httpd/ssl/cert.file"))
 
-    arg_parser.add_argument("-v", "--version", type=str, required=True,
+    arg_parser.add_argument("-v", "--version", type=str, default="v1",
                             help=("Version of the APEL REST API Version, "
                                   "expected to be v1"))
 
