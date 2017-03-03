@@ -89,12 +89,12 @@ class Sender(object):
             except socket.gaierror as e:
                 log.info('socket.gaierror: %s, %s',
                          e.errno, e.strerror)
-                sys.exit()
+                sys.exit(1)
 
         # if here, attempt_number has been exceeded
         log.info('Could not connect to endpoint. Error: %s - %s',
                  response.status, response.reason)
-        sys.exit()
+        sys.exit(1)
 
 
 def main():
