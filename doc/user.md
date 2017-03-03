@@ -8,7 +8,7 @@ Providers can publish accounting records to the endpoint:
 
 To do this, Providers must be running OpenStack or OpenNebula and install the appropriate collectors. Links to these can be found at [List of Artifacts](https://indigo-dc.gitbooks.io/indigo-datacloud-releases/content/indigo1/accounting1.html)
 
-Records can be sent to the REST interface using this [script](scripts/sender.py). To do so, populate the variables in `main()` and run `python sender.py` after running the appropriate collector.
+Records can be sent to the REST interface using this [script](scripts/sender.py). Run `python sender.py -h` for a list of options that need to be set in order to send.
 
 ### Expected Responses
 * 202: The data has been successfully saved for future loading and summarising.
