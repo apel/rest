@@ -102,7 +102,7 @@ def main():
     # The web address of the accounting server you wish to send to
     # e.g. accounting.indigio-datacloud.eu
     dest = ''
-    # The directory to read saved accounting messages to
+    # The directory to read saved accounting messages from
     # e.g. /var/spool/apel/cloud
     qpath = ''
     # The location of this machines private key
