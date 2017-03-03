@@ -100,16 +100,16 @@ class Sender(object):
 def main():
     """Configure a Sender and send Records to an APEL REST interface."""
     # The web address of the accounting server you wish to send to
-    # i.e accounting.indigio-datacloud.eu
+    # e.g. accounting.indigio-datacloud.eu
     dest = ''
     # The directory to read saved accounting messages to
-    # i.e /var/spool/apel/cloud
+    # e.g. /var/spool/apel/cloud
     qpath = ''
     # The location of this machines private key
-    # i.e. /etc/httpd/ssl/key.file
+    # e.g. /etc/httpd/ssl/key.file
     key = ''
     # The location of this machines X.509 certifcate
-    # i.e. /etc/httpd/ssl/cert.file
+    # e.g. /etc/httpd/ssl/cert.file
     cert = ''
     # Version of the APEL REST API Version, expected to be v1
     version = 'v1'
