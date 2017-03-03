@@ -22,7 +22,7 @@ gpgkey=http://repository.egi.eu/sw/production/cas/1/GPG-KEY-EUGridPMA-RPM-3' >> 
 # install at (for scheduling the IGTF update after start up)
 # install IGTF trust bundle
 # install fetch-crl
-RUN yum -y install python-pip python-devel mysql mysql-devel gcc httpd httpd-devel mod_wsgi mod_ssl vixie-cron at ca-policy-egi-core fetch-crl
+RUN yum -y install python-pip python-devel mysql mysql-devel gcc httpd httpd-devel mod_wsgi mod_ssl cronie at ca-policy-egi-core fetch-crl
 
 # Copy APEL REST files to apache root
 COPY . /var/www/html/
