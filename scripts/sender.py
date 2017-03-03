@@ -60,7 +60,7 @@ class Sender(object):
 
     def _rest_send(self, verb, path, data, headers, expected_response_code):
         """
-        Send a HTTPS request to self._dest.
+        Send an HTTPS request to self._dest.
 
         Will attempt to repeat if expected_response is not returned.
         """
