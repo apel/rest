@@ -41,10 +41,10 @@ class Sender(object):
 
             text = self._outq.get(msgid)
 
-            url = '/api/%s/cloud/record' % self._api_version
+            path = '/api/%s/cloud/record' % self._api_version
             data = text
 
-            self._rest_connect('POST', url, data, {}, 202)
+            self._rest_connect('POST', path, data, {}, 202)
             log.info("Sent %s", msgid)
 
             time.sleep(0.1)
@@ -58,7 +58,7 @@ class Sender(object):
         except OSError, e:
             log.warn('OSError raised while purging message queue: %s', e)
 
-    def _rest_connect(self, verb, url, data, headers, expected_response_code):
+    def _rest_connect(self, verb, path, data, headers, expected_response_code):
         """
         Send a HTTPS request to self._dest.
 
@@ -75,7 +75,7 @@ class Sender(object):
                                                key_file=self._key,
                                                strict=False)
 
-                conn.request(verb, url, json.dumps(data), headers)
+                conn.request(verb, path, json.dumps(data), headers)
 
                 response = conn.getresponse()
 
