@@ -105,10 +105,10 @@ def main():
     # The directory to read saved accounting messages from
     # e.g. /var/spool/apel/cloud
     qpath = ''
-    # The location of this machines private key
+    # The location of this machine's private key
     # e.g. /etc/httpd/ssl/key.file
     key = ''
-    # The location of this machines X.509 certifcate
+    # The location of this machine's X.509 certifcate
     # e.g. /etc/httpd/ssl/cert.file
     cert = ''
     # Version of the APEL REST API Version, expected to be v1
