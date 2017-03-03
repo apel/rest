@@ -36,6 +36,8 @@ For Example:
 
 `from` is the only compulsary option, failure to include it will result in a 400 response.
 
+Currently, only one of `user`, `group` or `service` can be set in the same query. Combining more than one will result in a 400 response.
+
 ### Expected Status Codes
 * 200: Your request was succesfully met.
 * 400: No key=value pair provided for from.
