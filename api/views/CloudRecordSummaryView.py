@@ -38,7 +38,9 @@ class CloudRecordSummaryView(APIView):
     between date_from and date_to (exclusive) as daily summaries
 
     .../api/v1/cloud/record/summary?from=<date_from>
-    Will give summary for whole infrastructure from date_from (exclusive) to now
+
+    Will give summary for whole infrastructure from date_from
+    (exclusive) to now
     """
 
     def __init__(self):
@@ -66,7 +68,9 @@ class CloudRecordSummaryView(APIView):
         between date_from and date_to (exclusive) as daily summaries
 
         .../api/v1/cloud/record/summary?from=<date_from>
-        Will give summary for whole infrastructure from date_from (exclusive) to now
+
+        Will give summary for whole infrastructure from
+        date_from (exclusive) to now
         """
         client_token = self._request_to_token(request)
         if client_token is None:
