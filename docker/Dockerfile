@@ -23,17 +23,7 @@ gpgkey=http://repository.egi.eu/sw/production/cas/1/GPG-KEY-EUGridPMA-RPM-3' >> 
 # install at (for scheduling the IGTF update after start up)
 # install IGTF trust bundle
 # install fetch-crl
-# install APEL requirements
-RUN yum -y install wget unzip python-pip python-devel mysql mysql-devel gcc httpd httpd-devel mod_wsgi mod_ssl vixie-cron at ca-policy-egi-core python-iso8601 python-ldap fetch-crl
-
-# get APEL codebase
-RUN wget https://github.com/apel/apel/releases/download/1.6.0-1/apel-lib-1.6.0-1.el6.noarch.rpm
-RUN wget https://github.com/apel/apel/releases/download/1.6.0-1/apel-server-1.6.0-1.el6.noarch.rpm
-
-# Install APEL code base
-# use --nodeps because we dont need the ssm
-RUN rpm -i apel-lib-1.6.0-1.el6.noarch.rpm --nodeps
-RUN rpm -i apel-server-1.6.0-1.el6.noarch.rpm --nodeps
+RUN yum -y install wget unzip python-pip python-devel mysql mysql-devel gcc httpd httpd-devel mod_wsgi mod_ssl vixie-cron at ca-policy-egi-core fetch-crl
 
 # get APEL REST interface
 RUN wget https://github.com/indigo-dc/Accounting/archive/1.3.2-1.zip -O apel_rest.zip
@@ -56,26 +46,11 @@ RUN cp /var/www/html/conf/apel_rest_api.conf /etc/httpd/conf.d/apel_rest_api.con
 # copy SSL conf files to apache conf
 RUN cp /var/www/html/conf/ssl.conf /etc/httpd/conf.d/ssl.conf
 
-# copy the cloud loader conf
-RUN cp /var/www/html/conf/cloudloader.cfg /etc/apel/cloudloader.cfg
-
-# copy the cloud summariser conf
-RUN cp /var/www/html/conf/cloudsummariser.cfg /etc/apel/cloudsummariser.cfg
-
-# copy the cron job that runs the summariser
-RUN cp /var/www/html/scripts/cloudsummariser /etc/cron.d/cloudsummariser
-
-# copy the script the cron job runs
-RUN cp /var/www/html/scripts/run_cloud_summariser.sh /usr/bin/run_cloud_summariser.sh
-
-# register the dbloader-cloud as a service
-RUN cp /var/www/html/scripts/apeldbloader-cloud /etc/init.d/apeldbloader-cloud
-
 # make a directory for the certificates
 RUN mkdir /etc/httpd/ssl/
 
-# Make cloud log and run directory
-RUN mkdir /var/log/cloud &&  mkdir /var/run/cloud
+# Make apel config dir for db configs
+RUN mkdir /etc/apel
 
 # Make cloud spool dir
 RUN mkdir -p /var/spool/apel/cloud/
