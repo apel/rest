@@ -7,6 +7,7 @@ send messages to the REST endpoint defined in main().
 """
 
 
+import argparse
 import httplib
 import json
 import logging
@@ -98,23 +99,61 @@ class Sender(object):
 
 
 def main():
-    """Configure a Sender and send Records to an APEL REST interface."""
-    # The web address of the accounting server you wish to send to
-    # e.g. accounting.indigio-datacloud.eu
-    dest = ''
-    # The directory to read saved accounting messages from
-    # e.g. /var/spool/apel/cloud
-    qpath = ''
-    # The location of this machine's private key
-    # e.g. /etc/httpd/ssl/key.file
-    key = ''
-    # The location of this machine's X.509 certifcate
-    # e.g. /etc/httpd/ssl/cert.file
-    cert = ''
-    # Version of the APEL REST API Version, expected to be v1
-    version = 'v1'
+    """
+    Configure a Sender and send Records to an APEL REST interface.
 
-    sender = Sender(dest, qpath, cert, key, version)
+    Usage:
+    sender.py -d DESTINATION -q QUEUE -k KEY -c CERTIFICATE -v VERSION
+
+    Options:
+    -h, --help        show this help message and exit
+    -d DESTINATION, --destination DESTINATION
+                      The web address of the accounting server you wish to
+                      send to. e.g. accounting.indigio-datacloud.eu
+    -q QUEUE, --queue QUEUE
+                      The directory to read saved accounting messages from.
+                      e.g. /var/spool/apel/cloud
+    -k KEY, --key KEY
+                      The path to this machine's private key. e.g.
+                      /etc/httpd/ssl/key.file
+    -c CERTIFICATE, --certificate CERTIFICATE
+                      The location of this machine's X.509 certifcate. e.g.
+                      /etc/httpd/ssl/cert.file
+    -v VERSION, --version VERSION
+                      Version of the APEL REST API Version, expected to be
+                      v1
+    """
+    arg_parser = argparse.ArgumentParser()
+    arg_parser.add_argument("-d", "--destination", type=str, required=True,
+                            help=("The web address of the accounting "
+                                  "server you wish to send to. "
+                                  "e.g. accounting.indigio-datacloud.eu"))
+
+    arg_parser.add_argument("-q", "--queue", type=str, required=True,
+                            help=("The directory to read saved accounting "
+                                  " messages from. "
+                                  "e.g. /var/spool/apel/cloud"))
+
+    arg_parser.add_argument("-k", "--key", type=str, required=True,
+                            help=("The path to this machine's private key. "
+                                  "e.g. /etc/httpd/ssl/key.file"))
+
+    arg_parser.add_argument("-c", "--certificate", type=str, required=True,
+                            help=("The location of this "
+                                  "machine's X.509 certifcate. "
+                                  "e.g. /etc/httpd/ssl/cert.file"))
+
+    arg_parser.add_argument("-v", "--version", type=str, required=True,
+                            help=("Version of the APEL REST API Version, "
+                                  "expected to be v1"))
+
+    args = arg_parser.parse_args()
+
+    sender = Sender(args.destination,
+                    args.queue,
+                    args.certificate,
+                    args.key,
+                    args.version)
 
     sender.send_all()
 
