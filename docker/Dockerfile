@@ -55,6 +55,9 @@ RUN mkdir /etc/apel
 # Make cloud spool dir
 RUN mkdir -p /var/spool/apel/cloud/
 
+# Make cloud spool dir owned by apache
+RUN chown apache -R /var/spool/apel/cloud/
+
 # Generate static files
 RUN cd /var/www/html/ && echo "yes" | python manage.py collectstatic 
 
