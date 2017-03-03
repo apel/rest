@@ -86,6 +86,18 @@ class CloudRecordSummaryView(APIView):
          end_date,
          global_user_name) = self._parse_query_parameters(request)
 
+        # Check that at most one of group_name, service_name
+        # and global_user_name is set
+        parameters_to_check = (group_name, service_name, global_user_name)
+
+        # for each variable in parameters_to_check that
+        # is not none, increment set_count
+        set_count = sum([1 for para in parameters_to_check if para is None])
+        if set_count <= 1:
+            self.logger.error("User, Group and/or Service combined.")
+            self.logger.error("Rejecting request.")
+            return Response(status=400)
+
         if start_date is None:
             # querying without a from is not supported
             return Response(status=400)
