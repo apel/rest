@@ -23,12 +23,13 @@ log = logging.getLogger(__name__)
 class Sender(object):
     """A simple class for sending Accounting Records to a REST endpoint."""
 
-    def __init__(self, dest, qpath, cert, key):
+    def __init__(self, dest, qpath, cert, key, api_version):
         """Initialize a Sender."""
         self._cert = cert
         self._key = key
         self._outq = QueueSimple(qpath)
         self._dest = dest
+        self._api_version = api_version
 
     def send_all(self):
         """Send all the messages in the outgoing queue via REST."""
@@ -40,7 +41,7 @@ class Sender(object):
 
             text = self._outq.get(msgid)
 
-            url = '/api/v1/cloud/record'
+            url = '/api/%s/cloud/record' % self._api_version
             data = text
 
             self._rest_connect('POST', url, data, {}, 202)
@@ -110,8 +111,10 @@ def main():
     # The location of this machines X.509 certifcate
     # i.e. /etc/httpd/ssl/cert.file
     cert = ''
+    # Version of the APEL REST API Version, expected to be v1
+    version = 'v1'
 
-    sender = Sender(dest, qpath, cert, key)
+    sender = Sender(dest, qpath, cert, key, version)
 
     sender.send_all()
 
