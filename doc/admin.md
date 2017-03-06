@@ -79,7 +79,7 @@ You should now have terminal access to the Accounting Server.
 
 4. Store the ClientID, Client Secret, and Registration Access Token; as the ID and Secret will need to be put in `yaml/accounting-rest-interface-rc.yaml`, and the token will be needed to make further modifications to this registration.
 
-## Authorize new WP5 components to view Summaries
+## Authorize new PaaS (Platform as a Service) Platform components to view Summaries
 
 * In `yaml/accounting-rest-interface-rc.yaml`, add the IAM registered ID corresponding to the service in the env variable `ALLOWED_FOR_GET`. It should be of form below, quotes included. Python needs to be able to interpret this variable as a list of strings, the outer quotes prevent kubernetes interpreting it as something meaningful in YAML. The accounting-rest-interface-rc on kubernetes will have to be restarted for that to take effect. This can be done by deleting the accounting-rest-interface-service pod.
 
