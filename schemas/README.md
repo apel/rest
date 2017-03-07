@@ -1,5 +1,5 @@
 # Schema Naming Conventions
-The schema files here are pre-fixed with a numeral to insure their alphanumeric order is the same order that the schema files should be applied to a fresh MySQL installation / container. 
+The schema files here are pre-fixed with a numeral to ensure their alphanumeric order is the same order that the schema files should be applied to a fresh MySQL installation / container. 
 
 This is due to the way the APEL database is deployed as a docker container.
 
