@@ -4,8 +4,7 @@
 -- Then, this script applies the APEL 1.6
 -- schema upgrade, adding CloudComputeServiceID,
 -- PublicIPCount, BenchmarkType and Benchmark fields
--- to the records and summaries (PublicIPCount
--- is currently not added to summaries)
+-- to the records and summaries
 
 UPDATE CloudRecords SET UpdateTime = CURRENT_TIMESTAMP WHERE UpdateTime IS NULL;
 ALTER TABLE CloudRecords MODIFY COLUMN UpdateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
@@ -38,12 +37,11 @@ ALTER TABLE CloudRecords
 
 Existing rows get same values as for CloudRecords
 
-PublicIPCount is not currently used in summaries
 */
 ALTER TABLE CloudSummaries
   ADD CloudComputeServiceID INT NOT NULL AFTER SiteID,
   ADD CpuCount INT AFTER CpuDuration,
-  -- ADD PublicIPCount BIGINT AFTER NetworkOutbound,
+  ADD PublicIPCount BIGINT AFTER NetworkOutbound,
   ADD BenchmarkType VARCHAR(50) NOT NULL AFTER Disk,
   ADD Benchmark DECIMAL(10,3) NOT NULL AFTER BenchmarkType;
 
@@ -102,7 +100,7 @@ CREATE VIEW VCloudSummaries AS
     SELECT UpdateTime, site.name SiteName, cloudComputeService.name CloudComputeService, Day, Month, Year,
            userdn.name GlobalUserName, vo.name VO, vogroup.name VOGroup, vorole.name VORole, Status,
            CloudType, ImageId, EarliestStartTime, LatestStartTime, WallDuration, CpuDuration,
-           CpuCount, NetworkInbound, NetworkOutbound, Memory, Disk, BenchmarkType, Benchmark,  
+           CpuCount, NetworkInbound, NetworkOutbound, PublicIPCount, Memory, Disk, BenchmarkType, Benchmark,  
            NumberOfVMs
     FROM CloudSummaries, Sites site, CloudComputeServices cloudComputeService, DNs userdn, VOs vo, VOGroups vogroup, VORoles vorole WHERE
         SiteID = site.id
@@ -172,19 +170,19 @@ CREATE PROCEDURE ReplaceCloudSummaryRecord(
   cloudType VARCHAR(255), imageId VARCHAR(255), 
   earliestStartTime DATETIME, latestStartTime DATETIME, 
   wallDuration BIGINT, cpuDuration BIGINT, cpuCount INT,
-  networkInbound BIGINT, networkOutbound BIGINT, memory BIGINT,
+  networkInbound BIGINT, networkOutbound BIGINT, publicIPCount BIGINT, memory BIGINT,
   disk BIGINT, benchmarkType VARCHAR(50), benchmark DECIMAL(10,3), numberOfVMs BIGINT,
   publisherDN VARCHAR(255))
 BEGIN
     REPLACE INTO CloudSummaries(SiteID, CloudComputeServiceID, Day, Month, Year, GlobalUserNameID, VOID,
         VOGroupID, VORoleID, Status, CloudType, ImageId, EarliestStartTime, LatestStartTime, 
-        WallDuration, CpuDuration, CpuCount, NetworkInbound, NetworkOutbound, Memory, Disk,
+        WallDuration, CpuDuration, CpuCount, NetworkInbound, NetworkOutbound, PublicIPCount, Memory, Disk,
         BenchmarkType, Benchmark, NumberOfVMs,  PublisherDNID)
       VALUES (
         SiteLookup(site), CloudComputeServiceLookup(cloudComputeService), day, month, year,
         DNLookup(globalUserName), VOLookup(vo), VOGroupLookup(voGroup), VORoleLookup(voRole),
         status, cloudType, imageId, earliestStartTime, latestStartTime, wallDuration,
-        cpuDuration, cpuCount, networkInbound, networkOutbound, memory, disk, benchmarkType,
+        cpuDuration, cpuCount, networkInbound, networkOutbound, publicIPCount, memory, disk, benchmarkType,
         benchmark, numberOfVMs, DNLookup(publisherDN)
         );
 END //
