@@ -303,7 +303,7 @@ class CloudRecordSummaryTest(TestCase):
                        'VOGroupID, VORoleID, Status, StartTime, '
                        'SuspendDuration, WallDuration, PublisherDNID, '
                        'CloudType, ImageId, '
-                       'CloudComputeServiceID) '   
+                       'CloudComputeServiceID) '
                        'VALUES '
                        '("TEST-VM", 1, 1, 1, 1, 1, "Running", '
                        '"2016-07-30 00:00:00", 0, 86399, 1, "TEST", "1", '
