@@ -302,20 +302,24 @@ class CloudRecordSummaryTest(TestCase):
                        '(VMUUID, SiteID, GlobalUserNameID, VOID, '
                        'VOGroupID, VORoleID, Status, StartTime, '
                        'SuspendDuration, WallDuration, PublisherDNID, '
-                       'CloudType, ImageId) '
+                       'CloudType, ImageId, '
+                       'CloudComputeServiceID) '
                        'VALUES '
                        '("TEST-VM", 1, 1, 1, 1, 1, "Running", '
-                       '"2016-07-30 00:00:00", 0, 86399, 1, "TEST", "1");')
+                       '"2016-07-30 00:00:00", 0, 86399, 1, "TEST", "1", '
+                       '1);')
 
         # Insert example usage data
         cursor.execute('INSERT INTO CloudRecords '
                        '(VMUUID, SiteID, GlobalUserNameID, VOID, '
                        'VOGroupID, VORoleID, Status, StartTime, '
                        'SuspendDuration, WallDuration, PublisherDNID, '
-                       'CloudType, ImageId) '
+                       'CloudType, ImageId, '
+                       'CloudComputeServiceID) '
                        'VALUES '
                        '("TEST-VM", 1, 1, 1, 1, 1, "Running", '
-                       '"2016-07-30 00:00:00", 0, 129599, 1, "TEST", "1");')
+                       '"2016-07-30 00:00:00", 0, 129599, 1, "TEST", "1", '
+                       '1);')
 
         # These INSERT statements are needed
         # because we query VCloudSummaries
@@ -324,6 +328,7 @@ class CloudRecordSummaryTest(TestCase):
         cursor.execute('INSERT INTO VOGroups VALUES (1, "TestGroup");')
         cursor.execute('INSERT INTO VORoles VALUES (1, "TestRole");')
         cursor.execute('INSERT INTO DNs VALUES (1, "TestDN");')
+        cursor.execute('INSERT INTO CloudComputeServices VALUES (1, "TestService");')
 
         # Summarise example usage data
         cursor.execute('CALL SummariseVMs();')
@@ -352,6 +357,9 @@ class CloudRecordSummaryTest(TestCase):
                        'WHERE id=1;')
 
         cursor.execute('DELETE FROM DNs '
+                       'WHERE id=1;')
+
+        cursor.execute('DELETE FROM CloudComputeServices '
                        'WHERE id=1;')
 
         database.commit()
