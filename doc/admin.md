@@ -79,7 +79,47 @@ You should now have terminal access to the Accounting Server.
 
 `"['XXXXXXXXXXXX','XXXXXXXXXXXXXXXX']".`
 
-## How to update an already deployed service to 1.2.0 (from <1.2.0)
+## How to update an already deployed service to 1.3.0 (from 1.2.1)
+1. Determine the Accounting container ID using `docker ps`. Expected output is below.
+
+```
+CONTAINER ID        IMAGE                                ...
+<container_id>      indigodatacloud/accounting:1.2.1-1   ...
+```   
+
+2. Run `docker exec -it <container_id>` to open an interactive shell from within the docker image.
+
+3. While in the container, download the [update_schema.sql](scripts/update_schema.sql).
+
+4. Run `service httpd stop`
+
+5. Ensure all messages have been loaded. I.e. `tail /var/log/cloud/loader.log` shows "INFO - Found 0 messages" as the last message
+
+6. Run `service apeldbloader-cloud stop`
+
+7. Comment out the summariser cron in `/etc/cron.d/cloudsummariser`
+
+8. Ensure the summariser is not running, by checking `/var/log/cloud/summariser.log`. The last lines in the log should be as below:
+
+```
+2017-03-20 14:00:13,034 - summariser - INFO - Summarising complete.
+2017-03-20 14:00:13,034 - summariser - INFO - ========================================
+```
+
+9. Run `mysql apel_rest < update_schema.sql` to upgrade the schema to support Cloud Usage Record v0.4.
+
+10. Exit the docker container. You can now safely delete the Accounting container via
+
+```
+docker stop <container_id>
+docker rm <container_id>
+```
+
+11. Run `./docker/run_container.sh -d n indigodatacloud/accounting:1.3.0-1`
+
+12. Confirm the new container is up and running by going to `https://\<hostname\>/api/v1/cloud/record/summary/`
+
+## How to update an already deployed service to 1.2.1 (from <1.2.1)
 1. Run `docker exec -it apel_server_container_id bash` to open an interactive shell from within the docker image.
 
 2. Disable the summariser cron job, `/etc/cron.d/cloudsummariser`, and if running, wait for the summariser to stop.
