@@ -20,10 +20,10 @@ It is currently expected that only the QoS/SLA tool will interact with these sum
 - Accept APEL-Cloud v0.2 usage records via POST requests to the REST endpoint `.../api/v1/cloud/record`
 - Provide access to summaries via GET requests to REST endpoint `.../api/v1/cloud/record/summary`
 
-## Running the docker image on Centos 7 and Ubuntu 14.04
+## Running the docker image on Centos 7 and Ubuntu 16.04
 We recommend using the docker image to run the Accounting server and REST interface. As such, having Docker installed is a prerequisite.
 
-See [Ubuntu 14.04 Instructions](https://docs.docker.com/engine/installation/linux/ubuntulinux/) or [Centos 7 Instructions](https://docs.docker.com/engine/installation/linux/centos/) for details of how to install Docker.
+See [Ubuntu 16.04 Instructions](https://docs.docker.com/engine/installation/linux/ubuntulinux/) or [Centos 7 Instructions](https://docs.docker.com/engine/installation/linux/centos/) for details of how to install Docker.
 
 1. Download the run_container.sh script corresponding to the release, see [here](https://github.com/indigo-dc/Accounting/releases) for a list of releases and corresponding docker image tag. This script launches the APEL Server container and can (by default) set up an instance of the database needed to store the accounting data. This database itself is within a Docker container.
 
