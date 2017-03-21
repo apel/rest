@@ -7,7 +7,7 @@ The APEL project provides accounting for the Indigo DataCloud project. It is wri
 ## Overview
 APEL Cloud Accounting can account for the usage of OpenNebula and OpenStack instances. Accounting "collectors" need to be installed on machines with access to the underlying Cloud infrastructure. The collectors can be found [here](https://indigo-dc.gitbooks.io/indigo-datacloud-releases/content/indigo1/accounting1.html).
 
-The collectors produce "Usage Records" in the APEL-Cloud v0.2 message format. Information about this format can be found [here](https://wiki.egi.eu/wiki/Federated_Cloud_Accounting#Cloud_Accounting_Message_Format_for_use_with_SSM_2.0).
+The collectors produce "Usage Records" in the APEL-Cloud v0.2 or v0.4 message format. Information about this format can be found [here](https://wiki.egi.eu/wiki/Federated_Cloud_Accounting#Documentation).
 
 These records need to be sent as POST requests to the REST endpoint `.../api/v1/cloud/record`, where `...` is the machine hosting the docker image. A POST request requires an X.509 certificate to authenticate the request. The hostname, which should be the same as the common name (CN) contained in the X.509 certificate, must be listed as a provider [here](http://indigo.cloud.plgrid.pl/cmdb/service/list) for the request to be authorized.
 
@@ -17,7 +17,7 @@ It is currently expected that only the QoS/SLA tool will interact with these sum
 
 ### Features of Version 1.2.1-1
 
-- Accept APEL-Cloud v0.2 usage records via POST requests to the REST endpoint `.../api/v1/cloud/record`
+- Accept APEL-Cloud v0.2 and v0.4 usage records via POST requests to the REST endpoint `.../api/v1/cloud/record`
 - Provide access to summaries via GET requests to REST endpoint `.../api/v1/cloud/record/summary`
 
 ## Running the docker image on Centos 7 and Ubuntu 16.04
