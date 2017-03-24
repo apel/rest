@@ -85,6 +85,7 @@ You should now have terminal access to the Accounting Server.
 ```
 CONTAINER ID        IMAGE                                ...
 <container_id>      indigodatacloud/accounting:1.2.1-1   ...
+...                 ...                                  ...
 ```   
 
 2. Run `docker exec -it <container_id>` to open an interactive shell from within the docker image.
@@ -102,8 +103,8 @@ CONTAINER ID        IMAGE                                ...
 8. Ensure the summariser is not running, by checking `/var/log/cloud/summariser.log`. The last lines in the log should be as below:
 
 ```
-2017-03-20 14:00:13,034 - summariser - INFO - Summarising complete.
-2017-03-20 14:00:13,034 - summariser - INFO - ========================================
+summariser - INFO - Summarising complete.
+summariser - INFO - ========================================
 ```
 
 9. Run `mysql apel_rest < update_schema.sql` to upgrade the schema to support Cloud Usage Record v0.4.
