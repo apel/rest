@@ -109,7 +109,9 @@ def main():
     -h, --help        show this help message and exit
     -d DESTINATION, --destination DESTINATION
                       The web address of the accounting server you wish to
-                      send to. e.g. accounting.indigio-datacloud.eu
+                      send to. e.g. accounting.indigio-datacloud.eu (note the
+                      lack of 'https://' and endpoint, these are currently
+                      assumed)
     -q QUEUE, --queue QUEUE
                       The directory to read saved accounting messages from.
                       e.g. /var/spool/apel/cloud
