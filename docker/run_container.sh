@@ -112,7 +112,7 @@ then
     # Deploy the databbase
     echo "Deploying MySQL Container"
 
-    docker run -v /var/lib/mysql:/var/lib/mysql --name apel-mysql -p 3306:3306 -e "MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD" -e "MYSQL_DATABASE=apel_rest" -e "MYSQL_USER=apel" -e "MYSQL_PASSWORD=$MYSQL_PASSWORD" -d mysql:5.6
+    docker run -v /var/lib/mysql:/var/lib/mysql --name apel-mysql -p 3306:3306 -v `pwd`/docker/etc/mysql/conf.d:/etc/mysql/conf.d -e "MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD" -e "MYSQL_DATABASE=apel_rest" -e "MYSQL_USER=apel" -e "MYSQL_PASSWORD=$MYSQL_PASSWORD" -d mysql:5.6
 
     #wait for apel-mysql to configure
     sleep 60
