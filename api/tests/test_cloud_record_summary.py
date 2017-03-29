@@ -328,7 +328,8 @@ class CloudRecordSummaryTest(TestCase):
         cursor.execute('INSERT INTO VOGroups VALUES (1, "TestGroup");')
         cursor.execute('INSERT INTO VORoles VALUES (1, "TestRole");')
         cursor.execute('INSERT INTO DNs VALUES (1, "TestDN");')
-        cursor.execute('INSERT INTO CloudComputeServices VALUES (1, "TestService");')
+        cursor.execute('INSERT INTO CloudComputeServices '
+                       'VALUES (1, "TestService");')
 
         # Summarise example usage data
         cursor.execute('CALL SummariseVMs();')
