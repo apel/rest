@@ -1,6 +1,8 @@
 """
 Django settings for apel_rest project.
 
+Any changes will require restarting the httpd server.
+
 For more information on this file, see
 https://docs.djangoproject.com/en/1.6/topics/settings/
 
@@ -94,37 +96,30 @@ LOGGING = {
     'disable_existing_loggers': False,
     'formatters': {
         'verbose': {
-            'format': ("[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s]: "
-                       " %(message)s"),
-            'datefmt': "%d/%b/%Y %H:%M:%S"
+            'format': '%(levelname)s [%(name)s:%(lineno)s]: %(message)s'
         },
         'simple': {
             'format': '%(levelname)s: %(message)s'
         },
     },
     'handlers': {
-        # 'file': {
-        #     'class': 'logging.FileHandler',
-        #     'filename': './apel_rest.log',
-        #     'formatter': 'verbose'
-        # },
         'console': {
             'class': 'logging.StreamHandler',
             'formatter': 'simple'
         },
     },
     'loggers': {
-        'django': {
+        'django': {  # This logger is needed to catch django errors
             'handlers': ['console'],
             'propagate': True,
             'level': 'INFO',
         },
         'api': {
             'handlers': ['console'],
+            'propagate': False,
             'level': 'INFO',
-            # 'level': 'DEBUG',
         },
-    }
+    },
 }
 
 # XML stuff
@@ -159,8 +154,20 @@ RETURN_HEADERS = ["VOGroup",
                   "LatestStartTime",
                   "Day",
                   "Month",
-                  "Year"]
+                  "Year",
+                  "GlobalUserName"]
 
 # this should hide the GET?format button
 # this doesnt do anything, probably because of using older Django
 URL_FORMAT_OVERRIDE = None
+
+# Points to the JSON list of Resource Providers
+PROVIDERS_URL = "http://indigo.cloud.plgrid.pl/cmdb/service/list"
+
+# The introspect URL for the IAM repsonsible for token based authN/authZ
+IAM_URL = "https://iam-test.indigo-datacloud.eu/introspect"
+
+# Use these variables to revoke/grant POST rights.
+# Remember these variables require a web server restart to take effect.
+ALLOWED_TO_POST = []
+BANNED_FROM_POST = []

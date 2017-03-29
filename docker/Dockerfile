@@ -22,23 +22,24 @@ gpgkey=http://repository.egi.eu/sw/production/cas/1/GPG-KEY-EUGridPMA-RPM-3' >> 
 # install cron
 # install at (for scheduling the IGTF update after start up)
 # install IGTF trust bundle
+# install fetch-crl
 # install APEL requirements
-RUN yum -y install wget unzip python-pip python-devel mysql mysql-devel gcc httpd httpd-devel mod_wsgi mod_ssl vixie-cron at ca-policy-egi-core python-iso8601 python-ldap
+RUN yum -y install wget unzip python-pip python-devel mysql mysql-devel gcc httpd httpd-devel mod_wsgi mod_ssl vixie-cron at ca-policy-egi-core python-iso8601 python-ldap fetch-crl
 
 # get APEL codebase
-RUN wget https://github.com/apel/apel/releases/download/1.5.1-1/apel-lib-1.5.1-1.el6.noarch.rpm
-RUN wget https://github.com/apel/apel/releases/download/1.5.1-1/apel-server-1.5.1-1.el6.noarch.rpm
+RUN wget https://github.com/apel/apel/releases/download/1.6.0-1/apel-lib-1.6.0-1.el6.noarch.rpm
+RUN wget https://github.com/apel/apel/releases/download/1.6.0-1/apel-server-1.6.0-1.el6.noarch.rpm
 
 # Install APEL code base
 # use --nodeps because we dont need the ssm
-RUN rpm -i apel-lib-1.5.1-1.el6.noarch.rpm --nodeps
-RUN rpm -i apel-server-1.5.1-1.el6.noarch.rpm --nodeps
+RUN rpm -i apel-lib-1.6.0-1.el6.noarch.rpm --nodeps
+RUN rpm -i apel-server-1.6.0-1.el6.noarch.rpm --nodeps
 
 # get APEL REST interface
-RUN wget https://github.com/indigo-dc/Accounting/archive/1.2.1-1.zip -O apel_rest.zip
+RUN wget https://github.com/indigo-dc/Accounting/archive/1.3.0-0.1.rc1.zip -O apel_rest.zip
 
 # unzip APEL REST interface and mv to apel_rest dir
-RUN unzip apel_rest.zip && mv Accounting-1.2.1-1 apel_rest
+RUN unzip apel_rest.zip && mv Accounting-1.3.0-1 apel_rest
 
 # remove APEL REST zip
 RUN rm apel_rest.zip

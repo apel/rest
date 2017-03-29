@@ -14,7 +14,11 @@ urlpatterns = patterns('',
 
                        url(r'^admin/',
                            include(admin.site.urls)),
+
                        url(r'^api/v1/cloud/record$',
-                           CloudRecordView.as_view()),
+                           CloudRecordView.as_view(),
+                           name='CloudRecordView'),
+
                        url(r'^api/v1/cloud/record/summary$',
-                           CloudRecordSummaryView.as_view()))
+                           CloudRecordSummaryView.as_view(),
+                           name='CloudRecordSummaryView'))

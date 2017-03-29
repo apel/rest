@@ -20,6 +20,11 @@ class CloudRecordView(APIView):
     Will save Cloud Accounting Records for later loading.
     """
 
+    def __init__(self):
+        """Set up class level logging."""
+        self.logger = logging.getLogger(__name__)
+        super(CloudRecordView, self).__init__()
+
     def post(self, request, format=None):
         """
         Submit Cloud Accounting Records.
@@ -28,24 +33,22 @@ class CloudRecordView(APIView):
 
         Will save Cloud Accounting Records for later loading.
         """
-        logger = logging.getLogger(__name__)
-
         try:
             empaid = request.META['HTTP_EMPA_ID']
         except KeyError:
             empaid = 'noid'
 
-        logger.info("Received message. ID = %s", empaid)
+        self.logger.info("Received message. ID = %s", empaid)
 
         try:
             signer = request.META['SSL_CLIENT_S_DN']
         except KeyError:
-            logger.error("No DN supplied in header")
+            self.logger.error("No DN supplied in header")
             return Response(status=401)
 
         # authorise DNs here
         if not self._signer_is_valid(signer):
-            logger.error("%s not a valid provider", signer)
+            self.logger.error("%s not a valid provider", signer)
             return Response(status=403)
 
         if "_content" in request.POST.dict():
@@ -58,10 +61,10 @@ class CloudRecordView(APIView):
             # hence use request.body as message
             body = request.body
 
-        logger.debug("Message body received: %s", body)
+        self.logger.debug("Message body received: %s", body)
 
         for header in request.META:
-            logger.debug("%s: %s", header, request.META[header])
+            self.logger.debug("%s: %s", header, request.META[header])
 
         # taken from ssm2
         QSCHEMA = {'body': 'string',
@@ -76,12 +79,12 @@ class CloudRecordView(APIView):
                             'signer': signer,
                             'empaid': empaid})
         except QueueError as err:
-            logger.error("Could not save %s/%s: %s", inqpath, name, err)
+            self.logger.error("Could not save %s/%s: %s", inqpath, name, err)
 
             response = "Data could not be saved to disk, please try again."
             return Response(response, status=500)
 
-        logger.info("Message saved to in queue as %s/%s", inqpath, name)
+        self.logger.info("Message saved to in queue as %s/%s", inqpath, name)
 
         response = "Data successfully saved for future loading."
         return Response(response, status=202)
@@ -92,32 +95,55 @@ class CloudRecordView(APIView):
 #                                                                             #
 ###############################################################################
 
-    def _signer_is_valid(self, signer_dn):
-        """Return True is signer's host is listed as a Indigo Provider."""
-        logger = logging.getLogger(__name__)
+    def _get_provider_list(self):
+        """Return a list of Resource Providers."""
+        try:
+            provider_list_request = urllib2.Request(settings.PROVIDERS_URL)
+            provider_list_response = urllib2.urlopen(provider_list_request)
+            return json.loads(provider_list_response.read())
 
+        except (ValueError, urllib2.HTTPError) as error:
+            self.logger.error("List of providers could not be retrieved.")
+            self.logger.error("%s: %s", type(error), error)
+            return {}
+
+    def _signer_is_valid(self, signer_dn):
+        """Return True if signer's host is listed as a Resource Provider."""
         # Get the hostname from the DN
         signer_split = signer_dn.split("=")
         signer = signer_split[len(signer_split)-1]
 
-        site_list = urllib2.Request(
-            'http://indigo.cloud.plgrid.pl/cmdb/service/list')
-        site_list = urllib2.urlopen(site_list)
-
-        try:
-            site_json = json.loads(site_list.read())
-        except ValueError:
-            logger.error("List of providers could not be retrieved.")
+        if signer_dn in settings.BANNED_FROM_POST:
+            self.logger.info("Host %s is banned.", signer)
             return False
 
-        for site_num, _ in enumerate(site_json['rows']):
+        providers = self._get_provider_list()
+
+        try:
+            # Extract the site JSON objects from the returned JSON
+            enumerated_providers = enumerate(providers['rows'])
+        except KeyError:
+            # The returned provider JSON is not of expected format.
+            self.logger.error('Could not parse provider JSON.')
+            return False
+
+        for _, site_json in enumerated_providers:
             try:
-                if signer in site_json['rows'][site_num]['value']['hostname']:
+                if signer in site_json['value']['hostname']:
                     return True
             except KeyError:
-                pass
+                # A KeyError is thrown if a hostname is not defined.
+                # Log that a single site could not be parsed
+                self.logger.warning('Could not parse site JSON.')
+                self.logger.debug(site_json)
+                # Continue looping through provider list, looking
+                # for a match in the remaining site JSON
 
-        # If we have not returned while in for loop
+        if signer_dn in settings.ALLOWED_TO_POST:
+            self.logger.info("Host %s has special access.", signer)
+            return True
+
+        # If we have not returned already
         # then site must be invalid
-        logger.info('Site is not found on list of providers')
+        self.logger.info('Site is not found on list of providers')
         return False

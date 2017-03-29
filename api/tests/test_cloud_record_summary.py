@@ -4,6 +4,7 @@ import logging
 import MySQLdb
 
 from api.views.CloudRecordSummaryView import CloudRecordSummaryView
+from django.core.urlresolvers import reverse
 from django.test import Client, TestCase
 from mock import Mock
 from rest_framework.test import APIRequestFactory
@@ -36,10 +37,14 @@ class CloudRecordSummaryTest(TestCase):
                                            "Day",
                                            "Month",
                                            "Year"]):
+
             test_client = Client()
-            response = test_client.get('/api/v1/cloud/record/summary?'
-                                       'group=TestGroup&'
-                                       'from=20000101&to=20191231',
+            url = ''.join((reverse('CloudRecordSummaryView'),
+                           '?group=TestGroup',
+                           '&from=20000101',
+                           '&to=20191231'))
+
+            response = test_client.get(url,
                                        HTTP_AUTHORIZATION="Bearer TestToken")
 
         # Check the expected response code has been received.
@@ -58,8 +63,10 @@ class CloudRecordSummaryTest(TestCase):
                                            "Month",
                                            "Year"]):
             test_client = Client()
-            response = test_client.get('/api/v1/cloud/record/summary?'
-                                       'group=TestGroup',
+            url = ''.join((reverse('CloudRecordSummaryView'),
+                           '?group=TestGroup'))
+
+            response = test_client.get(url,
                                        HTTP_AUTHORIZATION="Bearer TestToken")
 
         # Check the expected response code has been received.
@@ -78,9 +85,12 @@ class CloudRecordSummaryTest(TestCase):
                                            "Month",
                                            "Year"]):
             test_client = Client()
-            response = test_client.get('/api/v1/cloud/record/summary?'
-                                       'group=TestGroup&'
-                                       'from=20000101&to=20191231',
+            url = ''.join((reverse('CloudRecordSummaryView'),
+                           '?group=TestGroup',
+                           '&from=20000101',
+                           '&to=20191231'))
+
+            response = test_client.get(url,
                                        HTTP_AUTHORIZATION="Bearer TestToken")
 
         # Check the expected response code has been received.
@@ -90,17 +100,18 @@ class CloudRecordSummaryTest(TestCase):
         """Test an unauthenticated GET request."""
         test_client = Client()
         # Test without the HTTP_AUTHORIZATION header
-        response = test_client.get('/api/v1/cloud/record/summary?'
-                                   'group=TestGroup&'
-                                   'from=20000101&to=20191231')
+        url = ''.join((reverse('CloudRecordSummaryView'),
+                       '?group=TestGroup',
+                       '&from=20000101',
+                       '&to=20191231'))
+
+        response = test_client.get(url)
 
         # Check the expected response code has been received.
         self.assertEqual(response.status_code, 401)
 
         # Test with a malformed HTTP_AUTHORIZATION header
-        response = test_client.get('/api/v1/cloud/record/summary?'
-                                   'group=TestGroup&'
-                                   'from=20000101&to=20191231',
+        response = test_client.get(url,
                                    HTTP_AUTHORIZATION='TestToken')
 
         # Check the expected response code has been received.
@@ -124,9 +135,12 @@ class CloudRecordSummaryTest(TestCase):
                                            "Month",
                                            "Year"]):
             test_client = Client()
-            response = test_client.get('/api/v1/cloud/record/summary?'
-                                       'group=TestGroup&'
-                                       'from=20000101&to=20191231',
+            url = ''.join((reverse('CloudRecordSummaryView'),
+                           '?group=TestGroup',
+                           '&from=20000101',
+                           '&to=20191231'))
+
+            response = test_client.get(url,
                                        HTTP_AUTHORIZATION="Bearer TestToken")
 
         expected_response = ('{'
@@ -156,23 +170,32 @@ class CloudRecordSummaryTest(TestCase):
 
     def test_parse_query_parameters(self):
         """Test the parsing of query parameters."""
-        # test a get with group, summary, start and end
+        # test a get with group, summary, start, end and user
         test_cloud_view = CloudRecordSummaryView()
         factory = APIRequestFactory()
-        request = factory.get(('/api/v1/cloud/record/summary?'
-                               'group=Group1&'
-                               'service=Service1&'
-                               'from=FromDate&to=ToDate'), {})
+        url = ''.join((reverse('CloudRecordSummaryView'),
+                       '?group=Group1',
+                       '&service=Service1',
+                       '&from=FromDate',
+                       '&to=ToDate',
+                       '&user=UserA'))
+
+        request = factory.get(url)
 
         parsed_responses = test_cloud_view._parse_query_parameters(request)
         self.assertEqual(parsed_responses,
-                         ("Group1", "Service1", "FromDate", "ToDate"))
+                         ("Group1", "Service1", "FromDate",
+                          "ToDate", "UserA"))
 
         # test a get with just an end date
-        request = factory.get('/api/v1/cloud/record/summary?to=ToDate', {})
+        url = ''.join((reverse('CloudRecordSummaryView'),
+                       '?to=ToDate'))
+
+        request = factory.get(url)
         parsed_responses = test_cloud_view._parse_query_parameters(request)
         self.assertEqual(parsed_responses,
-                         (None, None, None, "ToDate"))
+                         (None, None, None,
+                          "ToDate", None))
 
     def test_paginate_result(self):
         """Test an empty result is paginated correctly."""
@@ -190,12 +213,18 @@ class CloudRecordSummaryTest(TestCase):
         factory = APIRequestFactory()
 
         # test when page number is not a number
-        request = factory.get('/api/v1/cloud/record/summary?page=a')
+        url = ''.join((reverse('CloudRecordSummaryView'),
+                       '?page=a'))
+
+        request = factory.get(url)
         content = test_cloud_view._paginate_result(request, [])
         self.assertEqual(content, expected_content)
 
         # test when page number is out of bounds
-        request = factory.get('/api/v1/cloud/record/summary?page=9999')
+        url = ''.join((reverse('CloudRecordSummaryView'),
+                       '?page=9999'))
+
+        request = factory.get(url)
         content = test_cloud_view._paginate_result(request, [])
         self.assertEqual(content, expected_content)
 
@@ -203,8 +232,10 @@ class CloudRecordSummaryTest(TestCase):
         """Test a token can be extracted from request."""
         test_cloud_view = CloudRecordSummaryView()
         factory = APIRequestFactory()
-        request = factory.get('/api/v1/cloud/record/summary?from=FromDate',
-                              HTTP_AUTHORIZATION='Bearer ThisIsAToken')
+        url = ''.join((reverse('CloudRecordSummaryView'),
+                       '?from=FromDate'))
+
+        request = factory.get(url, HTTP_AUTHORIZATION='Bearer ThisIsAToken')
 
         token = test_cloud_view._request_to_token(request)
         self.assertEqual(token, 'ThisIsAToken')
@@ -212,8 +243,11 @@ class CloudRecordSummaryTest(TestCase):
     def test_request_to_token_fail(self):
         """Test the response of a tokenless request."""
         test_client = Client()
-        get_url = '/api/v1/cloud/record/summary?from=FromDate'
-        response = test_client.get(get_url)
+
+        url = ''.join((reverse('CloudRecordSummaryView'),
+                       '?from=FromDate'))
+
+        response = test_client.get(url)
 
         self.assertEqual(response.status_code, 401)
 
@@ -237,24 +271,22 @@ class CloudRecordSummaryTest(TestCase):
         """Test the filtering of a query object based on settings."""
         test_cloud_view = CloudRecordSummaryView()
 
-        # this approximates a cursor object
-        # in future, a cursor dict may be better
-        # to use in _filter_cursor
-        cursor_headers = [['SiteName'], ['Day'], ['Month'], ['Year']]
-        cursor_data = [[['SiteName', 'Test'],
-                        ['Day', 01],
-                        ['Month', 02],
-                        ['Year', 2000]]]
+        # A list of test summaries.
+        test_data = [{'Day': 30,
+                      'Month': 7,
+                      'Year': 2016,
+                      'SiteName': 'TEST'}]
 
         cursor = Mock()
-        cursor.description = cursor_headers
-        cursor.fetchall = Mock(return_value=cursor_data)
+        # Get the mock cursor object return the test_data.
+        cursor.fetchall = Mock(return_value=test_data)
 
         with self.settings(RETURN_HEADERS=['SiteName', 'Day']):
             result = test_cloud_view._filter_cursor(cursor)
 
-        expected_result = [{'SiteName': ['SiteName', 'Test'],
-                            'Day': ['Day', 1]}]
+        expected_result = [{'SiteName': 'TEST',
+                            'Day': 30}]
+
         self.assertEqual(result, expected_result)
 
     def tearDown(self):
@@ -270,20 +302,24 @@ class CloudRecordSummaryTest(TestCase):
                        '(VMUUID, SiteID, GlobalUserNameID, VOID, '
                        'VOGroupID, VORoleID, Status, StartTime, '
                        'SuspendDuration, WallDuration, PublisherDNID, '
-                       'CloudType, ImageId) '
+                       'CloudType, ImageId, '
+                       'CloudComputeServiceID) '
                        'VALUES '
                        '("TEST-VM", 1, 1, 1, 1, 1, "Running", '
-                       '"2016-07-30 00:00:00", 0, 86399, 1, "TEST", "1");')
+                       '"2016-07-30 00:00:00", 0, 86399, 1, "TEST", "1", '
+                       '1);')
 
         # Insert example usage data
         cursor.execute('INSERT INTO CloudRecords '
                        '(VMUUID, SiteID, GlobalUserNameID, VOID, '
                        'VOGroupID, VORoleID, Status, StartTime, '
                        'SuspendDuration, WallDuration, PublisherDNID, '
-                       'CloudType, ImageId) '
+                       'CloudType, ImageId, '
+                       'CloudComputeServiceID) '
                        'VALUES '
                        '("TEST-VM", 1, 1, 1, 1, 1, "Running", '
-                       '"2016-07-30 00:00:00", 0, 129599, 1, "TEST", "1");')
+                       '"2016-07-30 00:00:00", 0, 129599, 1, "TEST", "1", '
+                       '1);')
 
         # These INSERT statements are needed
         # because we query VCloudSummaries
@@ -292,6 +328,8 @@ class CloudRecordSummaryTest(TestCase):
         cursor.execute('INSERT INTO VOGroups VALUES (1, "TestGroup");')
         cursor.execute('INSERT INTO VORoles VALUES (1, "TestRole");')
         cursor.execute('INSERT INTO DNs VALUES (1, "TestDN");')
+        cursor.execute('INSERT INTO CloudComputeServices '
+                       'VALUES (1, "TestService");')
 
         # Summarise example usage data
         cursor.execute('CALL SummariseVMs();')
@@ -320,6 +358,9 @@ class CloudRecordSummaryTest(TestCase):
                        'WHERE id=1;')
 
         cursor.execute('DELETE FROM DNs '
+                       'WHERE id=1;')
+
+        cursor.execute('DELETE FROM CloudComputeServices '
                        'WHERE id=1;')
 
         database.commit()

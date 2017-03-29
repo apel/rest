@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - name: accounting
-        image: indigo-dc/acccounting:1.2.1-1
+        image: indigo-dc/acccounting:1.3.0-1
         ports:
         - containerPort: 80
           hostPort: 80
