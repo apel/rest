@@ -35,7 +35,7 @@ MYSQL_ROOT_PASSWORD=
 
 
 # This script corresponds to the following  version
-VERSION="1.2.1-1"
+VERSION="1.3.0-1"
 
 function usage {
     echo "Version: $VERSION"
@@ -112,7 +112,7 @@ then
     # Deploy the databbase
     echo "Deploying MySQL Container"
 
-    docker run -v /var/lib/mysql --name apel-mysql -p 3306:3306 -e "MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD" -e "MYSQL_DATABASE=apel_rest" -e "MYSQL_USER=apel" -e "MYSQL_PASSWORD=$MYSQL_PASSWORD" -d mysql:5.6
+    docker run -v /var/lib/mysql:/var/lib/mysql --name apel-mysql -p 3306:3306 -v `pwd`/docker/etc/mysql/conf.d:/etc/mysql/conf.d -e "MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD" -e "MYSQL_DATABASE=apel_rest" -e "MYSQL_USER=apel" -e "MYSQL_PASSWORD=$MYSQL_PASSWORD" -d mysql:5.6
 
     #wait for apel-mysql to configure
     sleep 60
@@ -127,7 +127,7 @@ fi
 
 echo "Deploying APEL Server Container"
 
-docker run -d --link apel-mysql:mysql -p 80:80 -p 443:443 -e "MYSQL_PASSWORD=$MYSQL_PASSWORD" -e "ALLOWED_FOR_GET=$ALLOWED_FOR_GET" -e "SERVER_IAM_ID=$SERVER_IAM_ID" -e "SERVER_IAM_SECRET=$SERVER_IAM_SECRET" -e "DJANGO_SECRET_KEY=$DJANGO_SECRET_KEY" $IMAGE_NAME
+docker run -d --link apel-mysql:mysql -p 80:80 -p 443:443 -v /var/spool/apel/cloud:/var/spool/apel/cloud -e "MYSQL_PASSWORD=$MYSQL_PASSWORD" -e "ALLOWED_FOR_GET=$ALLOWED_FOR_GET" -e "SERVER_IAM_ID=$SERVER_IAM_ID" -e "SERVER_IAM_SECRET=$SERVER_IAM_SECRET" -e "DJANGO_SECRET_KEY=$DJANGO_SECRET_KEY" $IMAGE_NAME
 
 
 # this allows the APEL REST interface to configure

@@ -7,7 +7,7 @@ The APEL project provides accounting for the Indigo DataCloud project. It is wri
 ## Overview
 APEL Cloud Accounting can account for the usage of OpenNebula and OpenStack instances. Accounting "collectors" need to be installed on machines with access to the underlying Cloud infrastructure. The collectors can be found [here](https://indigo-dc.gitbooks.io/indigo-datacloud-releases/content/indigo1/accounting1.html).
 
-The collectors produce "Usage Records" in the APEL-Cloud v0.2 message format. Information about this format can be found [here](https://wiki.egi.eu/wiki/Federated_Cloud_Accounting#Cloud_Accounting_Message_Format_for_use_with_SSM_2.0).
+The collectors produce "Usage Records" in the APEL-Cloud v0.2 or v0.4 message formats. Information about these format can be found [here](https://wiki.egi.eu/wiki/Federated_Cloud_Accounting#Documentation).
 
 These records need to be sent as POST requests to the REST endpoint `.../api/v1/cloud/record`, where `...` is the machine hosting the docker image. A POST request requires an X.509 certificate to authenticate the request. The hostname, which should be the same as the common name (CN) contained in the X.509 certificate, must be listed as a provider [here](http://indigo.cloud.plgrid.pl/cmdb/service/list) for the request to be authorized.
 
@@ -15,17 +15,17 @@ Accepted records are summarised twice daily. These summaries can be accessed wit
 
 It is currently expected that only the QoS/SLA tool will interact with these summaries.
 
-### Features of Version 1.2.1-1
+### Features of Version 1.3.0-1
 
-- Accept APEL-Cloud v0.2 usage records via POST requests to the REST endpoint `.../api/v1/cloud/record`
+- Accept APEL-Cloud v0.2 and v0.4 usage records via POST requests to the REST endpoint `.../api/v1/cloud/record`
 - Provide access to summaries via GET requests to REST endpoint `.../api/v1/cloud/record/summary`
 
-## Running the docker image on Centos 7 and Ubuntu 14.04
+## Running the docker image on Centos 7 and Ubuntu 16.04
 We recommend using the docker image to run the Accounting server and REST interface. As such, having Docker installed is a prerequisite.
 
-See [Ubuntu 14.04 Instructions](https://docs.docker.com/engine/installation/linux/ubuntulinux/) or [Centos 7 Instructions](https://docs.docker.com/engine/installation/linux/centos/) for details of how to install Docker.
+See [Ubuntu 16.04 Instructions](https://docs.docker.com/engine/installation/linux/ubuntulinux/) or [Centos 7 Instructions](https://docs.docker.com/engine/installation/linux/centos/) for details of how to install Docker.
 
-1. Download the run_container.sh script corresponding to the release, see [here](https://github.com/indigo-dc/Accounting/releases) for a list of releases and corresponding docker image tag. This script launches the APEL Server container and can (by default) set up an instance of the database needed to store the accounting data. This database itself is within a Docker container.
+1. Download and unzip the zip file of the latest version from [here](https://github.com/indigo-dc/Accounting/releases/latest). 
 
 2. Register the service as a protected resource with the Indigo Identity Access Management (IAM) service. See [here](doc/admin.md#register-the-service-as-a-protected-resource-with-the-indigo-identity-access-management-iam) for instructions.
 
@@ -54,4 +54,4 @@ See [Ubuntu 14.04 Instructions](https://docs.docker.com/engine/installation/linu
 
 5. Before the server will start, a certificate needs to be added to the container. This can be done by either modifying `./docker/run_container.sh` to load the docker image with a certificate mounted into it, or by interacting with the image after start up with `docker exec -it <docker_id> bash`. If choosing the latter, run `service httpd start` before exiting the container.
 
-6. Navigate a web browser to `https://\<hostname\>/index/`
+6. Navigate a web browser to `https://\<hostname\>/api/v1/cloud/record/summary/`

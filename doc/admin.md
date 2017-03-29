@@ -79,7 +79,79 @@ You should now have terminal access to the Accounting Server.
 
 `"['XXXXXXXXXXXX','XXXXXXXXXXXXXXXX']".`
 
-## How to update an already deployed service to 1.2.0 (from <1.2.0)
+## How to update an already deployed service to 1.3.0 (from 1.2.1)
+This section assumes deployment via the `docker/run_container.sh` script.
+
+1. Determine the Accounting container ID using `docker ps`. Expected output is below.
+
+```
+CONTAINER ID             IMAGE                                ...
+<server_container_id>    indigodatacloud/accounting:1.2.1-1   ...
+<database_container_id>  mysql:5.6                            ...
+...                      ...                                  ...
+```   
+
+2. Run `docker exec -it <container_id>` to open an interactive shell from within the docker image.
+
+3. While in the container, download the [update_schema.sql](scripts/update_schema.sql).
+
+4. Run `service httpd stop`
+
+5. Ensure all messages have been loaded. I.e. `tail /var/log/cloud/loader.log` shows "INFO - Found 0 messages" as the last message
+
+6. Run `service apeldbloader-cloud stop`
+
+7. Comment out the summariser cron in `/etc/cron.d/cloudsummariser`
+
+8. Ensure the summariser is not running. I.e. `tail /var/log/cloud/summariser.log`. The last lines in the log should be as below:
+
+```
+summariser - INFO - Summarising complete.
+summariser - INFO - ========================================
+```
+
+9. Exit the container with the `exit` command
+
+10. From the host, make a database dump. This is necessary to preserve data.
+
+```
+mysqldump -h 0.0.0.0 -u root -p apel_rest > apel_rest.sql
+```
+
+11. Stop and Delete all the Server and Database container.
+
+```
+docker stop <server_container_id> <database_container_id>
+docker rm <server_container_id> <database_container_id>
+```
+
+12. Re-launch the database container with
+
+```
+docker run -v /var/lib/mysql:/var/lib/mysql --name apel-mysql -v `pwd`/docker/etc/mysql/conf.d:/etc/mysql/conf.d -p 3306:3306 -e "MYSQL_ROOT_PASSWORD=****" -e "MYSQL_DATABASE=apel_rest" -e "MYSQL_USER=apel" -e "MYSQL_PASSWORD=****" -d mysql:5.6
+```
+
+13. Load the database dump.
+
+```
+mysql -h 0.0.0.0 -u root -p apel_rest < apel_rest.sql
+```
+
+14. Apply the `update_schema.sql` to upgrade the schema to support Cloud Usage Record v0.4. 
+
+```
+mysql -h 0.0.0.0 -u root -p apel_rest < scripts/update_schema.sql
+```
+
+15. Launch tne new version of the APEL REST container. You may wish to edit this command to mount a certificate.
+
+```
+docker run -d --link apel-mysql:mysql -p 80:80 -p 443:443 -v /var/spool/apel/cloud:/var/spool/apel/cloud -e "MYSQL_PASSWORD=****" -e "ALLOWED_FOR_GET=****" -e "SERVER_IAM_ID=****" -e "SERVER_IAM_SECRET=****" -e "DJANGO_SECRET_KEY=****" indigodatacloud/accounting:X.X.X-X
+```
+
+16. Confirm the new container is up and running by going to `https://\<hostname\>/api/v1/cloud/record/summary/`
+
+## How to update an already deployed service to 1.2.1 (from <1.2.1)
 1. Run `docker exec -it apel_server_container_id bash` to open an interactive shell from within the docker image.
 
 2. Disable the summariser cron job, `/etc/cron.d/cloudsummariser`, and if running, wait for the summariser to stop.
