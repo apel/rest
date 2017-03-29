@@ -5,6 +5,8 @@ import unittest
 
 
 class SmallScriptsTest(unittest.TestCase):
+    """This class contains methods to check Django modules are importable."""
+
     def test_admin(self):
         """Check that admin is importable."""
         import api.admin
