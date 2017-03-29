@@ -36,10 +36,10 @@ RUN rpm -i apel-lib-1.6.0-1.el6.noarch.rpm --nodeps
 RUN rpm -i apel-server-1.6.0-1.el6.noarch.rpm --nodeps
 
 # get APEL REST interface
-RUN wget https://github.com/apel/rest/archive/release-1.3.0.zip -O apel_rest.zip
+RUN wget https://github.com/apel/rest/archive/1.3.0-0.1.rc1.zip -O apel_rest.zip
 
 # unzip APEL REST interface and mv to apel_rest dir
-RUN unzip apel_rest.zip && mv rest-release-1.3.0 apel_rest
+RUN unzip apel_rest.zip && mv rest-1.3.0-0.1.rc1 apel_rest
 
 # remove APEL REST zip
 RUN rm apel_rest.zip
