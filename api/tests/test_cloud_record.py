@@ -121,40 +121,13 @@ class CloudRecordTest(TestCase):
 
     def test_cloud_record_post_202(self):
         """Test POST request for content equality and a 202 return code."""
-        with self.settings(QPATH=QPATH_TEST):
-            # Mock the functionality of the provider list
-            # Used in the underlying POST handling method
-            # Allows only allowed_host.test to POST
-            CloudRecordView._get_provider_list = Mock(return_value=PROVIDERS)
-
-            test_client = Client()
-            example_dn = "/C=XX/O=XX/OU=XX/L=XX/CN=allowed_host.test"
-            url = reverse('CloudRecordView')
-
-            response = test_client.post(url,
-                                        MESSAGE,
-                                        content_type="text/plain",
-                                        HTTP_EMPA_ID="Test Process",
-                                        SSL_CLIENT_S_DN=example_dn)
-
-            # check the expected response code has been received
-            self.assertEqual(response.status_code, 202)
-
-            # get save messages under QPATH_TEST
-            messages = self._saved_messages('%s*/*/*/body' % QPATH_TEST)
-
-            # check one and only one message body saved
-            self.assertEqual(len(messages), 1)
-
-            # get message content
-            # can unpack sequence because we have asserted length 1
-            [message] = messages
-            message_file = open(message)
-            message_content = message_file.read()
-            message_file.close()
-
-            # check saved message content
-            self.assertEqual(MESSAGE, message_content)
+        # Mock the functionality of the provider list,
+        # used in the underlying POST handling method so that the
+        # POST request is authorized, as allowed_host.test (the
+        # default dn of _check_record_post) is listed in PROVIDERS
+        CloudRecordView._get_provider_list = Mock(return_value=PROVIDERS)
+        # Make (and check) the POST request
+        self._check_record_post(MESSAGE, 202)
 
     def tearDown(self):
         """Delete any messages under QPATH and re-enable logging.INFO."""
