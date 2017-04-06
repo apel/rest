@@ -170,6 +170,73 @@ class CloudRecordTest(TestCase):
         """Return a list of messages under message_path."""
         return glob.glob(message_path)
 
+    def _check_record_post(self, message, expected_status,
+                          dn='/C=XX/O=XX/OU=XX/L=XX/CN=allowed_host.test',
+                          empaid='Test Process'):
+        """
+        Helper method to make a POST request.
+
+        This method makes a POST request that is authenticated by
+        the supplied dn and identified (in the queue logs) by empaid.
+        It checks the message as receieved is the same as
+        the message saved.
+
+        By default,
+         - dn is /C=XX/O=XX/OU=XX/L=XX/CN=allowed_host.test
+         - empaid is 'Test Process'
+
+        These defaults are set so that the majority of tests can use this
+        method with minimal parameters in the method call, but that edge
+        cases can still be tested using this method.
+
+        i.e. a successful POST need only call
+          self._check_record_post(MESSAGE, 202)
+        """
+        # This avoids the test writing to the QPATH
+        # set in apel_rest/settings.py 
+        with self.settings(QPATH=QPATH_TEST):
+
+            # Make the POST request
+            test_client = Client()
+            url = reverse('CloudRecordView')
+
+            if dn is not None:
+                # Include the in dn SSL_CLIENT_S_DN so the
+                # request is able to be authenticated
+                response = test_client.post(url,
+                                            message,
+                                            content_type="text/plain",
+                                            HTTP_EMPA_ID=empaid,
+                                            SSL_CLIENT_S_DN=dn)
+            else:
+                # Omit the SSL_CLIENT_S_DN header so the request is
+                # made without any certificate (and not authenticated)
+                response = test_client.post(url,
+                                            message,
+                                            content_type="text/plain",
+                                            HTTP_EMPA_ID=empaid)
+
+            # check the expected response code has been received
+            self.assertEqual(response.status_code, expected_status)
+
+            # If the message was expected to be successfull, check for
+            # equality between the sent message and the saved message
+            if expected_status == 202:
+                # get saved messages under QPATH_TEST
+                messages = self._saved_messages('%s*/*/*/body' % QPATH_TEST)
+
+                # check one and only one message body saved
+                self.assertEqual(len(messages), 1)
+
+                # get message content
+                # can unpack sequence because we have asserted length 1
+                [message_path] = messages
+                with file(message_path) as message_file:
+                    message_content = message_file.read()
+
+                # check saved message content
+                self.assertEqual(message, message_content)
+
 PROVIDERS = {'total_rows': 735,
              'offset': 695,
              'rows': [
