@@ -32,39 +32,24 @@ class CloudRecordTest(TestCase):
             # Used in the underlying POST handling method
             CloudRecordView._get_provider_list = Mock(return_value=PROVIDERS)
 
-            test_client = Client()
-            response = test_client.post(reverse('CloudRecordView'),
-                                        MESSAGE,
-                                        content_type="text/plain",
-                                        HTTP_EMPA_ID="Test Process",
-                                        SSL_CLIENT_S_DN=example_dn)
-
-            self.assertEqual(response.status_code, 403)
+            # Make (and check) the POST request
+            self._check_record_post(MESSAGE, 403, dn=example_dn)
 
     def test_cloud_record_post_provider_special(self):
         """
         Test that a provider granted POST rights can, indeed, POST.
 
         Even if they aren't on the provider list.
-        This test DOES NOT check that the saved message is correct.
-        For that, see test_cloud_record_post_202()
         """
         example_dn = "/C=XX/O=XX/OU=XX/L=XX/CN=special_host.test"
-        with self.settings(ALLOWED_TO_POST=[example_dn],
-                           QPATH=QPATH_TEST):
+        with self.settings(ALLOWED_TO_POST=[example_dn]):
 
             # Mock the functionality of the provider list
             # Used in the underlying POST handling method
             CloudRecordView._get_provider_list = Mock(return_value=PROVIDERS)
 
-            test_client = Client()
-            response = test_client.post(reverse('CloudRecordView'),
-                                        MESSAGE,
-                                        content_type="text/plain",
-                                        HTTP_EMPA_ID="Test Process",
-                                        SSL_CLIENT_S_DN=example_dn)
-
-            self.assertEqual(response.status_code, 202)
+            # Make (and check) the POST request
+            self._check_record_post(MESSAGE, 202, dn=example_dn)
 
     def test_cloud_record_post_provider_fail(self):
         """Test what happens if we fail to retrieve the providers."""
@@ -74,15 +59,8 @@ class CloudRecordTest(TestCase):
         # i.e. we have failed to retrieve the providers list
         CloudRecordView._get_provider_list = Mock(return_value={})
 
-        test_client = Client()
-        example_dn = "/C=XX/O=XX/OU=XX/L=XX/CN=allowed_host.test"
-        response = test_client.post(reverse('CloudRecordView'),
-                                    MESSAGE,
-                                    content_type="text/plain",
-                                    HTTP_EMPA_ID="Test Process",
-                                    SSL_CLIENT_S_DN=example_dn)
-
-        self.assertEqual(response.status_code, 403)
+        # Make (and check) the POST request
+        self._check_record_post(MESSAGE, 403)
 
     def test_cloud_record_post_403(self):
         """Test unknown provider POST request returns a 403 code."""
@@ -91,33 +69,15 @@ class CloudRecordTest(TestCase):
         # Allows only allowed_host.test to POST
         CloudRecordView._get_provider_list = Mock(return_value=PROVIDERS)
 
-        test_client = Client()
         example_dn = "/C=XX/O=XX/OU=XX/L=XX/CN=prohibited_host.test"
-        url = reverse('CloudRecordView')
 
-        response = test_client.post(url,
-                                    MESSAGE,
-                                    content_type="text/plain",
-                                    HTTP_EMPA_ID="Test Process",
-                                    SSL_CLIENT_S_DN=example_dn)
-
-        # check the expected response code has been received
-        self.assertEqual(response.status_code, 403)
+        # Make (and check) the POST request
+        self._check_record_post(MESSAGE, 403, dn=example_dn)
 
     def test_cloud_record_post_401(self):
         """Test certificate-less POST request returns a 401 code."""
-        test_client = Client()
-        # No SSL_CLIENT_S_DN in POST to
-        # simulate a certificate-less request
-        url = reverse('CloudRecordView')
-
-        response = test_client.post(url,
-                                    MESSAGE,
-                                    content_type="text/plain",
-                                    HTTP_EMPA_ID="Test Process")
-
-        # check the expected response code has been received
-        self.assertEqual(response.status_code, 401)
+        # Make (and check) the POST request
+        self._check_record_post(MESSAGE, 401, dn=None)
 
     def test_cloud_record_post_202(self):
         """Test POST request for content equality and a 202 return code."""
@@ -166,7 +126,7 @@ class CloudRecordTest(TestCase):
           self._check_record_post(MESSAGE, 202)
         """
         # This avoids the test writing to the QPATH
-        # set in apel_rest/settings.py 
+        # set in apel_rest/settings.py
         with self.settings(QPATH=QPATH_TEST):
 
             # Make the POST request
