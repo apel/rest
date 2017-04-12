@@ -8,7 +8,7 @@ sed -i "s|not_a_secure_secret|$DJANGO_SECRET_KEY|g" /var/www/html/apel_rest/sett
 sed -i "s|provider_url|$PROVIDERS_URL|g" /var/www/html/apel_rest/settings.py
 
 # IAM_URL
-sed -i "s|iam_url|$IAM_URL|g" /var/www/html/apel_rest/settings.py
+sed -i "s|\['allowed_iams'\]|$IAM_URLS|g" /var/www/html/apel_rest/settings.py
 
 # SERVER_IAM_ID
 sed -i "s|server_iam_id|$SERVER_IAM_ID|g" /var/www/html/apel_rest/settings.py
