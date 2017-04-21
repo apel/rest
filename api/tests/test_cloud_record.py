@@ -81,10 +81,10 @@ class CloudRecordTest(TestCase):
 
     def test_cloud_record_post_202(self):
         """Test POST request for content equality and a 202 return code."""
-        # Mock the functionality of the provider list,
-        # used in the underlying POST handling method so that the
-        # POST request is authorized, as allowed_host.test (the
-        # default dn of _check_record_post) is listed in PROVIDERS
+        # Mock the functionality of the provider list.
+        # Used in the underlying POST handling method so that the
+        # default dn used in _check_record_post is authorized
+        # to make POST request.
         CloudRecordView._get_provider_list = Mock(return_value=PROVIDERS)
         # Make (and check) the POST request
         self._check_record_post(MESSAGE, 202)
