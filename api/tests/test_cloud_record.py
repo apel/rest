@@ -104,8 +104,8 @@ class CloudRecordTest(TestCase):
         return glob.glob(message_path)
 
     def _check_record_post(self, message, expected_status,
-                          dn='/C=XX/O=XX/OU=XX/L=XX/CN=allowed_host.test',
-                          empaid='Test Process'):
+                           dn='/C=XX/O=XX/OU=XX/L=XX/CN=allowed_host.test',
+                           empaid='Test Process'):
         """
         Helper method to make a POST request.
 
