@@ -134,7 +134,7 @@ class CloudRecordTest(TestCase):
             url = reverse('CloudRecordView')
 
             if dn is not None:
-                # Include the in dn SSL_CLIENT_S_DN so the
+                # Include the dn in SSL_CLIENT_S_DN so the
                 # request is able to be authenticated
                 response = test_client.post(url,
                                             message,
