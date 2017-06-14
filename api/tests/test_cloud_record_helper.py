@@ -5,6 +5,7 @@ import logging
 from django.test import TestCase
 from mock import Mock
 
+from api.tests import PROVIDERS
 from api.views.CloudRecordView import CloudRecordView
 
 
@@ -67,27 +68,3 @@ class CloudRecordHelperTest(TestCase):
         CloudRecordView._get_provider_list = Mock(return_value={})
         # in which case we should reject all POST requests
         self.assertFalse(test_cloud_view._signer_is_valid(allowed_dn))
-
-PROVIDERS = {'total_rows': 735,
-             'offset': 695,
-             'rows': [
-                 {'id': '1',
-                  'key': ['service'],
-                  'value':{
-                      'sitename': 'TEST2',
-                      'provider_id': 'TEST2',
-                      'type': 'cloud'}},
-                 {'id': '2',
-                  'key': ['service'],
-                  'value':{
-                      'sitename': 'TEST',
-                      'provider_id': 'TEST',
-                      'hostname': 'allowed_host.test',
-                      'type': 'cloud'}},
-                 {'id': '3',
-                  'key': ['service'],
-                  'value':{
-                      'sitename': 'TEST',
-                      'provider_id': 'TEST',
-                      'hostname': 'allowed_host2.test',
-                      'type': 'cloud'}}]}
