@@ -1,11 +1,10 @@
 """This module tests the helper methods of the CloudRecordView class."""
 
 import logging
-import MySQLdb
 
 from api.views.CloudRecordSummaryView import CloudRecordSummaryView
 from django.core.urlresolvers import reverse
-from django.test import Client, TestCase
+from django.test import TestCase
 from mock import Mock
 from rest_framework.test import APIRequestFactory
 
@@ -92,21 +91,22 @@ class CloudRecordSummaryHelperTest(TestCase):
         url = ''.join((reverse('CloudRecordSummaryView'),
                        '?from=FromDate'))
 
+        # Test we can extract the token from a
+        # normaly structured Authorization header
         request = factory.get(url, HTTP_AUTHORIZATION='Bearer ThisIsAToken')
-
         token = test_cloud_view._request_to_token(request)
         self.assertEqual(token, 'ThisIsAToken')
 
-    def test_request_to_token_fail(self):
-        """Test the response of a tokenless request."""
-        test_client = Client()
+        # Test we return None when failing to extract the token
+        # from a malformed Authorization header
+        request = factory.get(url, HTTP_AUTHORIZATION='ThisIsAToken')
+        token = test_cloud_view._request_to_token(request)
+        self.assertEqual(token, None)
 
-        url = ''.join((reverse('CloudRecordSummaryView'),
-                       '?from=FromDate'))
-
-        response = test_client.get(url)
-
-        self.assertEqual(response.status_code, 401)
+        # Test we return None when no token provided
+        request = factory.get(url)
+        token = test_cloud_view._request_to_token(request)
+        self.assertEqual(token, None)
 
     def test_is_client_authorized(self):
         """Test a example client is authorised."""
