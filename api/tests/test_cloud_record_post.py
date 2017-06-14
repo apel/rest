@@ -8,15 +8,13 @@ import shutil
 from django.core.urlresolvers import reverse
 from django.test import Client, TestCase
 from mock import Mock
-from rest_framework.request import Request
-from rest_framework.test import APIRequestFactory
 
 from api.views.CloudRecordView import CloudRecordView
 
 QPATH_TEST = '/tmp/django-test/'
 
 
-class CloudRecordTest(TestCase):
+class CloudRecordPostTest(TestCase):
     """Tests POST requests to the Cloud Record endpoint."""
 
     def setUp(self):
