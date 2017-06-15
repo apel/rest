@@ -36,18 +36,11 @@ class CloudRecordSummaryGetTest(TestCase):
                                            "Day",
                                            "Month",
                                            "Year"]):
-
-            test_client = Client()
-            url = ''.join((reverse('CloudRecordSummaryView'),
-                           '?group=TestGroup',
-                           '&from=20000101',
-                           '&to=20191231'))
-
-            response = test_client.get(url,
-                                       HTTP_AUTHORIZATION="Bearer TestToken")
-
-        # Check the expected response code has been received.
-        self.assertEqual(response.status_code, 401)
+            # Make (and check) the GET request
+            self._check_summary_get(401,
+                                    options=("?group=TestGroup"
+                                             "&from=20000101&to=20191231"),
+                                    authZ_header_cont="Bearer TestToken")
 
     def test_cloud_record_summary_get_400(self):
         """Test a GET request without the from field."""
@@ -61,15 +54,10 @@ class CloudRecordSummaryGetTest(TestCase):
                                            "Day",
                                            "Month",
                                            "Year"]):
-            test_client = Client()
-            url = ''.join((reverse('CloudRecordSummaryView'),
-                           '?group=TestGroup'))
 
-            response = test_client.get(url,
-                                       HTTP_AUTHORIZATION="Bearer TestToken")
-
-        # Check the expected response code has been received.
-        self.assertEqual(response.status_code, 400)
+            # Make (and check) the GET request
+            self._check_summary_get(400, options="?group=TestGroup",
+                                    authZ_header_cont="Bearer TestToken")
 
     def test_cloud_record_summary_get_403(self):
         """Test an unauthorized GET request."""
@@ -83,38 +71,26 @@ class CloudRecordSummaryGetTest(TestCase):
                                            "Day",
                                            "Month",
                                            "Year"]):
-            test_client = Client()
-            url = ''.join((reverse('CloudRecordSummaryView'),
-                           '?group=TestGroup',
-                           '&from=20000101',
-                           '&to=20191231'))
-
-            response = test_client.get(url,
-                                       HTTP_AUTHORIZATION="Bearer TestToken")
-
-        # Check the expected response code has been received.
-        self.assertEqual(response.status_code, 403)
+            # Make (and check) the GET request
+            self._check_summary_get(403,
+                                    options=("?group=TestGroup"
+                                             "&from=20000101&to=20191231"),
+                                    authZ_header_cont="Bearer TestToken")
 
     def test_cloud_record_summary_get_401(self):
         """Test an unauthenticated GET request."""
-        test_client = Client()
         # Test without the HTTP_AUTHORIZATION header
-        url = ''.join((reverse('CloudRecordSummaryView'),
-                       '?group=TestGroup',
-                       '&from=20000101',
-                       '&to=20191231'))
-
-        response = test_client.get(url)
-
-        # Check the expected response code has been received.
-        self.assertEqual(response.status_code, 401)
+        # Make (and check) the GET request
+        self._check_summary_get(401,
+                                options=("?group=TestGroup"
+                                         "&from=20000101&to=20191231"))
 
         # Test with a malformed HTTP_AUTHORIZATION header
-        response = test_client.get(url,
-                                   HTTP_AUTHORIZATION='TestToken')
-
-        # Check the expected response code has been received.
-        self.assertEqual(response.status_code, 401)
+        # Make (and check) the GET request
+        self._check_summary_get(401,
+                                options=("?group=TestGroup"
+                                         "&from=20000101&to=20191231"),
+                                authZ_header_cont="TestToken")
 
     def test_cloud_record_summary_get_200(self):
         """Test a successful GET request."""
@@ -127,20 +103,6 @@ class CloudRecordSummaryGetTest(TestCase):
 
         # Mock the functionality of the IAM
         CloudRecordSummaryView._token_to_id = Mock(return_value="TestService")
-
-        with self.settings(ALLOWED_FOR_GET='TestService',
-                           RETURN_HEADERS=["WallDuration",
-                                           "Day",
-                                           "Month",
-                                           "Year"]):
-            test_client = Client()
-            url = ''.join((reverse('CloudRecordSummaryView'),
-                           '?group=TestGroup',
-                           '&from=20000101',
-                           '&to=20191231'))
-
-            response = test_client.get(url,
-                                       HTTP_AUTHORIZATION="Bearer TestToken")
 
         expected_response = ('{'
                              '"count":2,'
@@ -157,19 +119,48 @@ class CloudRecordSummaryGetTest(TestCase):
                              '"Day":31,'
                              '"Month":7}]}')
 
-        try:
-            # Check the expected response code has been received.
-            self.assertEqual(response.status_code, 200)
-            # Check the response received is as expected.
-            self.assertEqual(response.content, expected_response)
-            # Clean up after test.
-        finally:
-            self._clear_database(database)
-            database.close()
+        with self.settings(ALLOWED_FOR_GET='TestService',
+                           RETURN_HEADERS=["WallDuration",
+                                           "Day",
+                                           "Month",
+                                           "Year"]):
+            try:
+                self._check_summary_get(200,
+                                        expected_response=expected_response,
+                                        options=("?group=TestGroup"
+                                                 "&from=20000101&to=20191231"),
+                                        authZ_header_cont="Bearer TestToken")
+            finally:
+                # Clean up after test.
+                self._clear_database(database)
+                database.close()
 
     def tearDown(self):
         """Delete any messages under QPATH and re-enable logging.INFO."""
         logging.disable(logging.NOTSET)
+
+    def _check_summary_get(self, expected_status, expected_response=None,
+                           options='', authZ_header_cont=None):
+        """Helper method to make a GET request."""
+        test_client = Client()
+        # Form the URL to make the GET request to
+        url = ''.join((reverse('CloudRecordSummaryView'), options))
+
+        # If content for a HTTP_AUTHORIZATION has been provided,
+        # make the GET request with the appropriate header
+        if authZ_header_cont is not None:
+            response = test_client.get(url,
+                                       HTTP_AUTHORIZATION=authZ_header_cont)
+        # Otherise, make a GET request without a HTTP_AUTHORIZATION header
+        else:
+            response = test_client.get(url)
+
+        # Check the expected response code has been received.
+        self.assertEqual(response.status_code, expected_status)
+
+        if expected_response is not None:
+            # Check the response received is as expected.
+            self.assertEqual(response.content, expected_response)
 
     def _populate_database(self, database):
         """Populate the database with example summaries."""
