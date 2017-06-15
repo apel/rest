@@ -31,11 +31,7 @@ class CloudRecordSummaryGetTest(TestCase):
         # Simulates a failure to translate a token to an ID
         CloudRecordSummaryView._token_to_id = Mock(return_value=None)
 
-        with self.settings(ALLOWED_FOR_GET='TestService',
-                           RETURN_HEADERS=["WallDuration",
-                                           "Day",
-                                           "Month",
-                                           "Year"]):
+        with self.settings(ALLOWED_FOR_GET='TestService'):
             # Make (and check) the GET request
             self._check_summary_get(401,
                                     options=("?group=TestGroup"
@@ -49,12 +45,7 @@ class CloudRecordSummaryGetTest(TestCase):
         # Used in the underlying GET method
         CloudRecordSummaryView._token_to_id = Mock(return_value="TestService")
 
-        with self.settings(ALLOWED_FOR_GET='TestService',
-                           RETURN_HEADERS=["WallDuration",
-                                           "Day",
-                                           "Month",
-                                           "Year"]):
-
+        with self.settings(ALLOWED_FOR_GET='TestService'):
             # Make (and check) the GET request
             self._check_summary_get(400, options="?group=TestGroup",
                                     authZ_header_cont="Bearer TestToken")
@@ -66,11 +57,7 @@ class CloudRecordSummaryGetTest(TestCase):
         # Used in the underlying GET method
         CloudRecordSummaryView._token_to_id = Mock(return_value="FakeService")
 
-        with self.settings(ALLOWED_FOR_GET='TestService',
-                           RETURN_HEADERS=["WallDuration",
-                                           "Day",
-                                           "Month",
-                                           "Year"]):
+        with self.settings(ALLOWED_FOR_GET='TestService'):
             # Make (and check) the GET request
             self._check_summary_get(403,
                                     options=("?group=TestGroup"
