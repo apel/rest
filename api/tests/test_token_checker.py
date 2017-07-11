@@ -25,6 +25,84 @@ class TokenCheckerTest(TestCase):
         logging.disable(logging.NOTSET)
 
     @patch.object(TokenChecker, '_get_issuer_public_key')
+    def test_token_cache(self, mock_get_issuer_public_key):
+        """
+        Check a cached token is granted access.
+
+        Method does this by checking a token is valid twice, the first time
+        the token is validate and stored in a cache, the second time access
+        should be granted because the token is in the cache, not because the
+        token is valid.
+        """
+        # Mock the external call to retrieve the IAM public key
+        # used in the _verify_token and is_token_valid call
+        mock_get_issuer_public_key.return_value = PUBLIC_KEY
+
+        payload_list = []
+
+        # This payload will be valid as we will sign it with PRIVATE_KEY
+        payload = {
+            'iss': 'https://iam-test.indigo-datacloud.eu/',
+            'jti': '098cb343-c45e-490d-8aa0-ce1873cdc5f8',
+            'iat': int(time.time()) - 2000000,
+            'sub': 'ac2f23e0-8103-4581-8014-e0e82c486e36',
+            'exp': int(time.time()) + 200000}
+
+        # Add the same token twice, this is what tests the cache functionality
+        payload_list = [payload, payload]
+
+        for payload in payload_list:
+            token = self._create_token(payload, PRIVATE_KEY)
+            with self.settings(IAM_HOSTNAME_LIST='iam-test.indigo-datacloud.eu'):
+                self.assertTrue(
+                    self._token_checker.is_token_valid(token),
+                    "Token with payload %s should not be accepted!" % payload)
+
+    @patch.object(TokenChecker, '_get_issuer_public_key')
+    def test_token_cache_mis_matche(self, mock_get_issuer_public_key):
+        """
+        Check tokens with the same subject are handled correctly.
+
+        Having a token cached for the sub should not be sufficent to grant
+        access, the tokens must match.
+        """
+        # Mock the external call to retrieve the IAM public key
+        # used in the _verify_token and is_token_valid call
+        mock_get_issuer_public_key.return_value = PUBLIC_KEY
+
+        payload_list = []
+
+        # This payload will be valid as we will sign it with PRIVATE_KEY
+        payload1 = {
+            'iss': 'https://iam-test.indigo-datacloud.eu/',
+            'jti': '098cb343-c45e-490d-8aa0-ce1873cdc5f8',
+            'iat': int(time.time()) - 2000000,
+            'sub': 'ac2f23e0-8103-4581-8014-e0e82c486e36',
+            'exp': int(time.time()) + 200000}
+
+        # This payload has a subject that will be in the cache, but this
+        # new token is not. We need to ensure this invalid token does not
+        # get granted rights based only on it's sub being in the cache
+        payload2 = {
+            'iss': 'https://iam-test.indigo-datacloud.eu/',
+            'jti': '098cb343-c45e-490d-8aa0-ce1873cdc5f8',
+            'iat': int(time.time()) - 2000000,
+            'sub': 'ac2f23e0-8103-4581-8014-e0e82c486e36',
+            'exp': int(time.time()) - 200}
+
+        token1 = self._create_token(payload1, PRIVATE_KEY)
+        token2 = self._create_token(payload2, PRIVATE_KEY)
+
+        with self.settings(IAM_HOSTNAME_LIST='iam-test.indigo-datacloud.eu'):
+            self.assertTrue(
+                self._token_checker.is_token_valid(token1),
+                "Token with payload %s should not be accepted!" % payload1)
+
+            self.assertFalse(
+                 self._token_checker.is_token_valid(token2),
+                "Token with payload %s should not be accepted!" % payload2)
+
+    @patch.object(TokenChecker, '_get_issuer_public_key')
     def test_valid_token(self, mock_get_issuer_public_key):
         """Check a valid and properly signed token is accepted."""
         # Mock the external call to retrieve the IAM public key
