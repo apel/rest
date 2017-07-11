@@ -5,6 +5,7 @@ import logging
 import socket
 
 from django.conf import settings
+from django.core.cache import cache
 from jose import jwt
 from jose.exceptions import ExpiredSignatureError, JWTClaimsError, JWTError
 
@@ -24,6 +25,12 @@ class TokenChecker:
         """Introspect a token to determine it's origin."""
         jwt_unverified_json = jwt.get_unverified_claims(token)
 
+        # if token is in the cache, we say it is valid
+        if cache.get(jwt_unverified_json['sub']) == token:
+            self.logger.info("Token is currently in cache. Granting access.")
+            return True
+
+        # otherwise, we need to validate the token
         if not self._is_token_json_temporally_valid(jwt_unverified_json):
             return False
 
@@ -34,6 +41,16 @@ class TokenChecker:
         # statement returns if jwt_unverified_json['iss'] is missing.
         if not self._verify_token(token, jwt_unverified_json['iss']):
             return False
+
+        # if the execution gets here, we can cache the token
+        # cache is a key: value like structure with an optional timeout
+        # as we only need the token stored we use that as the key
+        # and None as the value.
+        # Cache timeout set to 300 seconds to enable quick revocation
+        # but also limit the number of requests to the IAM instance
+        # Caching is also done after token validation to ensure
+        # only valids tokens are cached
+        cache.set(jwt_unverified_json['sub'], token, 300)
 
         return True
 
