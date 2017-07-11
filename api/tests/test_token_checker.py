@@ -25,7 +25,9 @@ class TokenCheckerTest(TestCase):
         logging.disable(logging.NOTSET)
 
     @patch.object(TokenChecker, '_get_issuer_public_key')
-    def test_token_cache(self, mock_get_issuer_public_key):
+    @patch.object(TokenChecker, '_check_token_not_revoked')
+    def test_token_cache(self, mock_check_token_not_revoked,
+                         mock_get_issuer_public_key):
         """
         Check a cached token is granted access.
 
@@ -35,8 +37,11 @@ class TokenCheckerTest(TestCase):
         token is valid.
         """
         # Mock the external call to retrieve the IAM public key
-        # used in the _verify_token and is_token_valid call
+        # used in the _verify_token and valid_token_to_id call
         mock_get_issuer_public_key.return_value = PUBLIC_KEY
+        # Mock the external call to check the token has not been rejected
+        # used in the valid_token_to_id call
+        mock_check_token_not_revoked.return_value = CLIENT_ID
 
         payload_list = []
 
@@ -45,7 +50,7 @@ class TokenCheckerTest(TestCase):
             'iss': 'https://iam-test.idc.eu/',
             'jti': '098cb343-c45e-490d-8aa0-ce1873cdc5f8',
             'iat': int(time.time()) - 2000000,
-            'sub': 'ac2f23e0-8103-4581-8014-e0e82c486e36',
+            'sub': CLIENT_ID,
             'exp': int(time.time()) + 200000}
 
         # Add the same token twice, this is what tests the cache functionality
@@ -54,12 +59,14 @@ class TokenCheckerTest(TestCase):
         for payload in payload_list:
             token = self._create_token(payload, PRIVATE_KEY)
             with self.settings(IAM_HOSTNAME_LIST='iam-test.idc.eu'):
-                self.assertTrue(
-                    self._token_checker.is_token_valid(token),
+                self.assertEqual(
+                    self._token_checker.valid_token_to_id(token), CLIENT_ID,
                     "Token with payload %s should not be accepted!" % payload)
 
     @patch.object(TokenChecker, '_get_issuer_public_key')
-    def test_token_cache_mis_matche(self, mock_get_issuer_public_key):
+    @patch.object(TokenChecker, '_check_token_not_revoked')
+    def test_token_cache_mis_match(self, mock_check_token_not_revoked,
+                                   mock_get_issuer_public_key):
         """
         Check tokens with the same subject are handled correctly.
 
@@ -67,17 +74,18 @@ class TokenCheckerTest(TestCase):
         access, the tokens must match.
         """
         # Mock the external call to retrieve the IAM public key
-        # used in the _verify_token and is_token_valid call
+        # used in the _verify_token and valid_token_to_id call
         mock_get_issuer_public_key.return_value = PUBLIC_KEY
-
-        payload_list = []
+        # Mock the external call to check the token has not been rejected
+        # used in the valid_token_to_id call
+        mock_check_token_not_revoked.return_value = CLIENT_ID
 
         # This payload will be valid as we will sign it with PRIVATE_KEY
         payload1 = {
             'iss': 'https://iam-test.idc.eu/',
             'jti': '098cb343-c45e-490d-8aa0-ce1873cdc5f8',
             'iat': int(time.time()) - 2000000,
-            'sub': 'ac2f23e0-8103-4581-8014-e0e82c486e36',
+            'sub': CLIENT_ID,
             'exp': int(time.time()) + 200000}
 
         # This payload has a subject that will be in the cache, but this
@@ -87,43 +95,47 @@ class TokenCheckerTest(TestCase):
             'iss': 'https://iam-test.idc.eu/',
             'jti': '098cb343-c45e-490d-8aa0-ce1873cdc5f8',
             'iat': int(time.time()) - 2000000,
-            'sub': 'ac2f23e0-8103-4581-8014-e0e82c486e36',
+            'sub': CLIENT_ID,
             'exp': int(time.time()) - 200}
 
         token1 = self._create_token(payload1, PRIVATE_KEY)
         token2 = self._create_token(payload2, PRIVATE_KEY)
 
         with self.settings(IAM_HOSTNAME_LIST='iam-test.idc.eu'):
-            self.assertTrue(
-                self._token_checker.is_token_valid(token1),
+            self.assertEqual(
+                self._token_checker.valid_token_to_id(token1), CLIENT_ID,
                 "Token with payload %s should not be accepted!" % payload1)
 
-            self.assertFalse(
-                 self._token_checker.is_token_valid(token2),
-                 "Token with payload %s should not be accepted!" % payload2)
+            self.assertEqual(
+                self._token_checker.valid_token_to_id(token2), None,
+                "Token with payload %s should not be accepted!" % payload2)
 
     @patch.object(TokenChecker, '_get_issuer_public_key')
-    def test_valid_token(self, mock_get_issuer_public_key):
+    @patch.object(TokenChecker, '_check_token_not_revoked')
+    def test_valid_token(self, mock_check_token_not_revoked,
+                         mock_get_issuer_public_key):
         """Check a valid and properly signed token is accepted."""
         # Mock the external call to retrieve the IAM public key
-        # used in the _verify_token and is_token_valid call
+        # used in the _verify_token and valid_token_to_id call
         mock_get_issuer_public_key.return_value = PUBLIC_KEY
-
-        payload_list = []
+        # Mock the external call to check the token has not been rejected
+        # used in the valid_token_to_id call
+        mock_check_token_not_revoked.return_value = CLIENT_ID
 
         # This payload will be valid as we will sign it with PRIVATE_KEY
         payload = {
             'iss': 'https://iam-test.idc.eu/',
             'jti': '098cb343-c45e-490d-8aa0-ce1873cdc5f8',
             'iat': int(time.time()) - 2000000,
-            'sub': 'ac2f23e0-8103-4581-8014-e0e82c486e36',
+            'sub': CLIENT_ID,
             'exp': int(time.time()) + 200000}
 
         token = self._create_token(payload, PRIVATE_KEY)
 
         with self.settings(IAM_HOSTNAME_LIST='iam-test.idc.eu'):
-            self.assertTrue(
-                self._token_checker.is_token_valid(token),
+            client_id = payload['sub']
+            self.assertEqual(
+                self._token_checker.valid_token_to_id(token), client_id,
                 "Token with payload %s should be accepted!" % payload)
 
     @patch.object(TokenChecker, '_get_issuer_public_key')
@@ -133,13 +145,13 @@ class TokenCheckerTest(TestCase):
 
         Both by:
          - _verify_token
-         - is_token_valid
+         - valid_token_to_id
 
         The first method checks wether the key is properly signed
         The second method detemines wether the token is invalid
         """
         # Mock the external call to retrieve the IAM public key
-        # used in the _verify_token and is_token_valid call
+        # used in the _verify_token and valid_token_to_id call
         mock_get_issuer_public_key.return_value = PUBLIC_KEY
 
         payload_list = []
@@ -150,7 +162,7 @@ class TokenCheckerTest(TestCase):
             'iss': 'https://iam-test.idc.eu/',
             'jti': '098cb343-c45e-490d-8aa0-ce1873cdc5f8',
             'iat': int(time.time()) - 2000000,
-            'sub': 'ac2f23e0-8103-4581-8014-e0e82c486e36',
+            'sub': CLIENT_ID,
             'exp': int(time.time()) + 200000})
 
         for payload in payload_list:
@@ -160,8 +172,8 @@ class TokenCheckerTest(TestCase):
                     self._token_checker._verify_token(token, payload['iss']),
                     "Payload %s should not be accepted!" % payload)
 
-                self.assertFalse(
-                    self._token_checker.is_token_valid(token),
+                self.assertEqual(
+                    self._token_checker.valid_token_to_id(token), None,
                     "Token with payload %s should not be accepted!" % payload)
 
     def test_is_token_issuer_trusted(self):
@@ -170,7 +182,7 @@ class TokenCheckerTest(TestCase):
 
         Both by:
          - _is_token_issuer_trusted
-         - is_token_valid
+         - valid_token_to_id
 
         The first method checks wether the issuer is
         in settings.IAM_HOSTNAME_LIST
@@ -184,7 +196,7 @@ class TokenCheckerTest(TestCase):
         payload_list.append({
             'jti': '098cb343-c45e-490d-8aa0-ce1873cdc5f8',
             'iat': int(time.time()) - 2000000,
-            'sub': 'ac2f23e0-8103-4581-8014-e0e82c486e36',
+            'sub': CLIENT_ID,
             'exp': int(time.time()) + 200000})
 
         # Add a payload with a malicious 'iss' field.
@@ -194,7 +206,7 @@ class TokenCheckerTest(TestCase):
             'iss': 'https://malicious-iam.idc.biz/',
             'jti': '098cb343-c45e-490d-8aa0-ce1873cdc5f8',
             'iat': int(time.time()) - 2000000,
-            'sub': 'ac2f23e0-8103-4581-8014-e0e82c486e36',
+            'sub': CLIENT_ID,
             'exp': int(time.time()) + 200000})
 
         for payload in payload_list:
@@ -205,8 +217,8 @@ class TokenCheckerTest(TestCase):
                     self._token_checker._is_token_issuer_trusted(payload),
                     "Payload %s should not be accepted!" % payload)
 
-                self.assertFalse(
-                    self._token_checker.is_token_valid(token),
+                self.assertEqual(
+                    self._token_checker.valid_token_to_id(token), None,
                     "Token with payload %s should not be accepted!" % payload)
 
     def test_is_token_json_temporally_valid(self):
@@ -215,7 +227,7 @@ class TokenCheckerTest(TestCase):
 
         Both by:
          - _is_token_json_temporally_valid
-         - is_token_valid
+         - valid_token_to_id
 
         The first method checks the temporal validity of the payload
         The second method detemines wether the token is invalid
@@ -225,7 +237,7 @@ class TokenCheckerTest(TestCase):
         # Add a payload wihtout 'iat' or 'exp' to the payload list
         # to test we reject these (as we are choosing to)
         payload_list.append({
-            'sub': 'ac2f23e0-8103-4581-8014-e0e82c486e36',
+            'sub': CLIENT_ID,
             'iss': 'https://iam-test.indigo-datacloud.eu/',
             'jti': '714892f5-014f-43ad-bea0-fa47579db222'})
 
@@ -235,14 +247,14 @@ class TokenCheckerTest(TestCase):
             'iss': 'https://iam-test.indigo-datacloud.eu/',
             'jti': '098cb343-c45e-490d-8aa0-ce1873cdc5f8',
             'iat': int(time.time()) - 2000000,
-            'sub': 'ac2f23e0-8103-4581-8014-e0e82c486e36'})
+            'sub': CLIENT_ID})
 
         # Add a payload without 'iat'
         # to test we reject these (as we are choosing to)
         payload_list.append({
             'iss': 'https://iam-test.indigo-datacloud.eu/',
             'jti': '098cb343-c45e-490d-8aa0-ce1873cdc5f8',
-            'sub': 'ac2f23e0-8103-4581-8014-e0e82c486e36',
+            'sub': CLIENT_ID,
             'exp': int(time.time()) + 200000})
 
         # Add a payload with an 'iat' and 'exp' in the past
@@ -252,7 +264,7 @@ class TokenCheckerTest(TestCase):
             'iss': 'https://iam-test.indigo-datacloud.eu/',
             'jti': '098cb343-c45e-490d-8aa0-ce1873cdc5f8',
             'iat': int(time.time()) - 2000000,
-            'sub': 'ac2f23e0-8103-4581-8014-e0e82c486e36',
+            'sub': CLIENT_ID,
             'exp': int(time.time()) - 200000})
 
         # Add a payload with an 'iat' and 'exp' in the future
@@ -262,7 +274,7 @@ class TokenCheckerTest(TestCase):
             'iss': 'https://iam-test.indigo-datacloud.eu/',
             'jti': '098cb343-c45e-490d-8aa0-ce1873cdc5f8',
             'iat': int(time.time()) + 200000,
-            'sub': 'ac2f23e0-8103-4581-8014-e0e82c486e36',
+            'sub': CLIENT_ID,
             'exp': int(time.time()) + 2000000})
 
         for payload in payload_list:
@@ -273,16 +285,19 @@ class TokenCheckerTest(TestCase):
                 self._token_checker._is_token_json_temporally_valid(payload),
                 "Payload %s should not be accepted!" % payload)
 
-            # Assert the wrapper method is_token_valid reutrns
-            # False when passed temporally invalid tokens
+            # Assert the wrapper method valid_token_to_id reutrns
+            # None when passed temporally invalid tokens
             token = self._create_token(payload, PRIVATE_KEY)
-            self.assertFalse(
-                self._token_checker.is_token_valid(token),
+            self.assertEqual(
+                self._token_checker.valid_token_to_id(token), None,
                 "Token with payload %s should not be accepted!" % payload)
 
     def _create_token(self, payload, key):
         """Return a token, signed by key, correspond to the payload."""
         return jwt.encode(payload, key, algorithm='RS256')
+
+# Use this Client ID in tokens
+CLIENT_ID = 'ac2f23e0-8103-4581-8014-e0e82c486e36'
 
 # Used to sign tokens
 PRIVATE_KEY = """-----BEGIN RSA PRIVATE KEY-----
