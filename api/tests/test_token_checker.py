@@ -42,7 +42,7 @@ class TokenCheckerTest(TestCase):
 
         # This payload will be valid as we will sign it with PRIVATE_KEY
         payload = {
-            'iss': 'https://iam-test.indigo-datacloud.eu/',
+            'iss': 'https://iam-test.idc.eu/',
             'jti': '098cb343-c45e-490d-8aa0-ce1873cdc5f8',
             'iat': int(time.time()) - 2000000,
             'sub': 'ac2f23e0-8103-4581-8014-e0e82c486e36',
@@ -53,7 +53,7 @@ class TokenCheckerTest(TestCase):
 
         for payload in payload_list:
             token = self._create_token(payload, PRIVATE_KEY)
-            with self.settings(IAM_HOSTNAME_LIST='iam-test.indigo-datacloud.eu'):
+            with self.settings(IAM_HOSTNAME_LIST='iam-test.idc.eu'):
                 self.assertTrue(
                     self._token_checker.is_token_valid(token),
                     "Token with payload %s should not be accepted!" % payload)
@@ -74,7 +74,7 @@ class TokenCheckerTest(TestCase):
 
         # This payload will be valid as we will sign it with PRIVATE_KEY
         payload1 = {
-            'iss': 'https://iam-test.indigo-datacloud.eu/',
+            'iss': 'https://iam-test.idc.eu/',
             'jti': '098cb343-c45e-490d-8aa0-ce1873cdc5f8',
             'iat': int(time.time()) - 2000000,
             'sub': 'ac2f23e0-8103-4581-8014-e0e82c486e36',
@@ -84,7 +84,7 @@ class TokenCheckerTest(TestCase):
         # new token is not. We need to ensure this invalid token does not
         # get granted rights based only on it's sub being in the cache
         payload2 = {
-            'iss': 'https://iam-test.indigo-datacloud.eu/',
+            'iss': 'https://iam-test.idc.eu/',
             'jti': '098cb343-c45e-490d-8aa0-ce1873cdc5f8',
             'iat': int(time.time()) - 2000000,
             'sub': 'ac2f23e0-8103-4581-8014-e0e82c486e36',
@@ -93,14 +93,14 @@ class TokenCheckerTest(TestCase):
         token1 = self._create_token(payload1, PRIVATE_KEY)
         token2 = self._create_token(payload2, PRIVATE_KEY)
 
-        with self.settings(IAM_HOSTNAME_LIST='iam-test.indigo-datacloud.eu'):
+        with self.settings(IAM_HOSTNAME_LIST='iam-test.idc.eu'):
             self.assertTrue(
                 self._token_checker.is_token_valid(token1),
                 "Token with payload %s should not be accepted!" % payload1)
 
             self.assertFalse(
                  self._token_checker.is_token_valid(token2),
-                "Token with payload %s should not be accepted!" % payload2)
+                 "Token with payload %s should not be accepted!" % payload2)
 
     @patch.object(TokenChecker, '_get_issuer_public_key')
     def test_valid_token(self, mock_get_issuer_public_key):
@@ -113,7 +113,7 @@ class TokenCheckerTest(TestCase):
 
         # This payload will be valid as we will sign it with PRIVATE_KEY
         payload = {
-            'iss': 'https://iam-test.indigo-datacloud.eu/',
+            'iss': 'https://iam-test.idc.eu/',
             'jti': '098cb343-c45e-490d-8aa0-ce1873cdc5f8',
             'iat': int(time.time()) - 2000000,
             'sub': 'ac2f23e0-8103-4581-8014-e0e82c486e36',
@@ -121,7 +121,7 @@ class TokenCheckerTest(TestCase):
 
         token = self._create_token(payload, PRIVATE_KEY)
 
-        with self.settings(IAM_HOSTNAME_LIST='iam-test.indigo-datacloud.eu'):
+        with self.settings(IAM_HOSTNAME_LIST='iam-test.idc.eu'):
             self.assertTrue(
                 self._token_checker.is_token_valid(token),
                 "Token with payload %s should be accepted!" % payload)
@@ -147,7 +147,7 @@ class TokenCheckerTest(TestCase):
         # This payload would be valid if properly signed, but we are going to
         # sign it with FORGED_PRIVATE_KEY which will not match the PUBLIC_KEY
         payload_list.append({
-            'iss': 'https://iam-test.indigo-datacloud.eu/',
+            'iss': 'https://iam-test.idc.eu/',
             'jti': '098cb343-c45e-490d-8aa0-ce1873cdc5f8',
             'iat': int(time.time()) - 2000000,
             'sub': 'ac2f23e0-8103-4581-8014-e0e82c486e36',
@@ -155,7 +155,7 @@ class TokenCheckerTest(TestCase):
 
         for payload in payload_list:
             token = self._create_token(payload, FORGED_PRIVATE_KEY)
-            with self.settings(IAM_HOSTNAME_LIST='iam-test.indigo-datacloud.eu'):
+            with self.settings(IAM_HOSTNAME_LIST='iam-test.idc.eu'):
                 self.assertFalse(
                     self._token_checker._verify_token(token, payload['iss']),
                     "Payload %s should not be accepted!" % payload)
@@ -191,7 +191,7 @@ class TokenCheckerTest(TestCase):
         # to test we reject these as we do not wantt
         # to attempt to verify it
         payload_list.append({
-            'iss': 'https://malicious-iam.indigo-datacloud.biz/',
+            'iss': 'https://malicious-iam.idc.biz/',
             'jti': '098cb343-c45e-490d-8aa0-ce1873cdc5f8',
             'iat': int(time.time()) - 2000000,
             'sub': 'ac2f23e0-8103-4581-8014-e0e82c486e36',
@@ -200,7 +200,7 @@ class TokenCheckerTest(TestCase):
         for payload in payload_list:
             token = self._create_token(payload, PRIVATE_KEY)
 
-            with self.settings(IAM_HOSTNAME_LIST='iam-test.indigo-datacloud.eu'):
+            with self.settings(IAM_HOSTNAME_LIST='iam-test.idc.eu'):
                 self.assertFalse(
                     self._token_checker._is_token_issuer_trusted(payload),
                     "Payload %s should not be accepted!" % payload)
