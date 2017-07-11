@@ -1,8 +1,11 @@
 """This module contains the TokenChecker class."""
+import base64
 import datetime
 import httplib
+import json
 import logging
 import socket
+import urllib2
 
 from django.conf import settings
 from django.core.cache import cache
@@ -21,26 +24,37 @@ class TokenChecker:
         self._cert = cert
         self._key = key
 
-    def is_token_valid(self, token):
+    def valid_token_to_id(self, token):
         """Introspect a token to determine it's origin."""
         jwt_unverified_json = jwt.get_unverified_claims(token)
 
+        unverified_token_id = jwt_unverified_json['sub']
         # if token is in the cache, we say it is valid
-        if cache.get(jwt_unverified_json['sub']) == token:
-            self.logger.info("Token is currently in cache. Granting access.")
-            return True
+        if cache.get(unverified_token_id) == token:
+            self.logger.info("Token for user %s is in cache." %
+                             unverified_token_id)
+
+            return jwt_unverified_json['sub']
 
         # otherwise, we need to validate the token
         if not self._is_token_json_temporally_valid(jwt_unverified_json):
-            return False
+            return None
 
         if not self._is_token_issuer_trusted(jwt_unverified_json):
-            return False
+            return None
 
-        # we can pass jwt_unverified_json['iss'] because the previous 'if'
-        # statement returns if jwt_unverified_json['iss'] is missing.
-        if not self._verify_token(token, jwt_unverified_json['iss']):
-            return False
+        issuer = jwt_unverified_json['iss']
+        # we can pass issuer because the previous 'if' statement
+        #  returns if jwt_unverified_json['iss'] is missing.
+        issuer = jwt_unverified_json['iss']
+        if not self._verify_token(token, issuer):
+            return None
+
+        # check the token has not been revoked
+        verifed_token_id = self._check_token_not_revoked(token, issuer)
+        # if the IAM disagrees with the token sub, reject ir
+        if verifed_token_id != jwt_unverified_json['sub']:
+            return None
 
         # if the execution gets here, we can cache the token
         # cache is a key: value like structure with an optional timeout
@@ -52,7 +66,40 @@ class TokenChecker:
         # only valids tokens are cached
         cache.set(jwt_unverified_json['sub'], token, 300)
 
-        return True
+        return jwt_unverified_json['sub']
+
+    def _check_token_not_revoked(self, token, issuer):
+        """Contact issuer to check if the token has been revoked or not."""
+        if "https://" not in issuer:
+            self.logger.info('Issuer not https! Ending revokation check!')
+            return None
+
+        try:
+            auth_request = urllib2.Request('%s/introspect' % issuer,
+                                           data='token=%s' % token)
+
+            server_id = settings.SERVER_IAM_ID
+            server_secret = settings.SERVER_IAM_SECRET
+
+            encode_string = '%s:%s' % (server_id, server_secret)
+
+            base64string = base64.encodestring(encode_string).replace('\n', '')
+
+            auth_request.add_header("Authorization", "Basic %s" % base64string)
+            auth_result = urllib2.urlopen(auth_request)
+
+            auth_json = json.loads(auth_result.read())
+            client_id = auth_json['client_id']
+
+        except (urllib2.HTTPError,
+                urllib2.URLError,
+                httplib.HTTPException,
+                KeyError) as error:
+            self.logger.error("%s: %s", type(error), str(error))
+            return None
+
+        self.logger.info("Token identifed as belonging to %s", client_id)
+        return client_id
 
     def _verify_token(self, token, issuer):
         """Fetch IAM public key and veifry token against it."""
@@ -113,11 +160,11 @@ class TokenChecker:
         hostname = issuer.replace("https://", "").replace("/", "")
 
         if hostname in settings.IAM_HOSTNAME_LIST:
-            self.logger.info("Token 'iss' from approved IAM")
+            self.logger.info("Token 'iss' is an approved IAM")
             self.logger.debug(token_json)
             return True
         else:
-            self.logger.info("Token 'iss' not from approved IAM")
+            self.logger.info("Token 'iss' is not an approved IAM")
             self.logger.debug(token_json)
             return False
 
