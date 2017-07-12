@@ -1,7 +1,6 @@
 """This module tests the JSON Web Token validation."""
 
 import logging
-import unittest
 import time
 
 from jose import jwt
@@ -17,7 +16,7 @@ class TokenCheckerTest(TestCase):
 
     def setUp(self):
         """Create a new TokenChecker and disable logging."""
-        self._token_checker = TokenChecker(None, None)
+        self._token_checker = TokenChecker()
         logging.disable(logging.CRITICAL)
 
     def tearDown(self):

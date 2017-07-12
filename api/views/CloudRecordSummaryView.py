@@ -1,13 +1,9 @@
 """This file contains the CloudRecordSummaryView class."""
 
-import base64
 import ConfigParser
 import datetime
-import httplib
-import json
 import logging
 import MySQLdb
-import urllib2
 
 from rest_framework.pagination import PaginationSerializer
 from django.conf import settings
@@ -48,8 +44,7 @@ class CloudRecordSummaryView(APIView):
     def __init__(self):
         """Set up class level logging."""
         self.logger = logging.getLogger(__name__)
-        self._token_checker = TokenChecker('/etc/httpd/ssl/apache.crt',
-                                           '/etc/httpd/ssl/apache.key')
+        self._token_checker = TokenChecker()
         super(CloudRecordSummaryView, self).__init__()
 
     def get(self, request, format=None):
