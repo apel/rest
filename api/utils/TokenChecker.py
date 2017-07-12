@@ -26,7 +26,12 @@ class TokenChecker:
 
     def valid_token_to_id(self, token):
         """Introspect a token to determine it's origin."""
-        jwt_unverified_json = jwt.get_unverified_claims(token)
+        try:
+            jwt_unverified_json = jwt.get_unverified_claims(token)
+        except JWTError:
+            self.logger.error('Token cannot be decoded.')
+            self.logger.debug('Full token: %s' %token)
+            return None
 
         unverified_token_id = jwt_unverified_json['sub']
         self.logger.info('Token claims to be from %s' % unverified_token_id)
