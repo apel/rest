@@ -29,10 +29,11 @@ class TokenChecker:
         jwt_unverified_json = jwt.get_unverified_claims(token)
 
         unverified_token_id = jwt_unverified_json['sub']
+        self.logger.info('Token claims to be from %s' % unverified_token_id)
+
         # if token is in the cache, we say it is valid
         if cache.get(unverified_token_id) == token:
-            self.logger.info("Token for user %s is in cache." %
-                             unverified_token_id)
+            self.logger.info("Token is in cache.")
 
             return jwt_unverified_json['sub']
 
@@ -56,6 +57,7 @@ class TokenChecker:
         if verifed_token_id != jwt_unverified_json['sub']:
             return None
 
+        self.logger.info('Token validated')
         # if the execution gets here, we can cache the token
         # cache is a key: value like structure with an optional timeout
         # as we only need the token stored we use that as the key
@@ -98,7 +100,6 @@ class TokenChecker:
             self.logger.error("%s: %s", type(error), str(error))
             return None
 
-        self.logger.info("Token identifed as belonging to %s", client_id)
         return client_id
 
     def _verify_token(self, token, issuer):
@@ -160,7 +161,7 @@ class TokenChecker:
         hostname = issuer.replace("https://", "").replace("/", "")
 
         if hostname in settings.IAM_HOSTNAME_LIST:
-            self.logger.info("Token 'iss' is an approved IAM")
+            self.logger.info("Token 'iss' %s is an approved IAM" % hostname)
             self.logger.debug(token_json)
             return True
         else:
