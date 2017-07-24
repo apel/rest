@@ -18,7 +18,7 @@ services:
   apel_server:
     links:
       - apel_mysql
-    image: gregcorbett/apel:docker_image
+    image: indigodatacloud/apel:1.6.0-1
     volumes:
       - /var/spool/apel/cloud:/var/spool/apel/cloud
       - ../docker/etc/mysql:/etc/mysql

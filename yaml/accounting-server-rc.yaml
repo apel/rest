@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - name: accounting
-        image: gregcorbett/apel:1.6.0-1
+        image: indigodatacloud/apel:1.6.0-1
         imagePullPolicy: Always
         env:
           - name: DATA_DB
