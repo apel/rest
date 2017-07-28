@@ -6,14 +6,14 @@ If you would like to contribute to the APEL REST interface.
 * Create a feature branch off of `dev`
 * When ready, submit a pull request.
 
-You should be able to run the Docker Images locally using the docker/run_container.sh script
+See [here](README.md#running-the-docker-image-on-centos-7-and-ubuntu-1604) for instructions to run the Docker Images locally using docker-compose
 
 # Setup from source (on Centos 6)
 We recommend this for development work ONLY.
 
 1. Install python, pip, mysql, apache, apache modules, trust bundle and other required RPMS for development.
     ```
-    yum -y install wget unzip python-pip python-devel mysql mysql-devel gcc httpd httpd-devel mod_wsgi mod_ssl vixie-cron at ca-policy-egi-core python-iso8601 python-ldap git bash-completion tree
+    yum -y install python-pip python-devel mysql mysql-devel gcc httpd httpd-devel mod_wsgi mod_ssl cronie at ca-policy-egi-core fetch-crl python-iso8601 python-ldap git bash-completion tree
     ```
     
 2. Upgrade pip and setuptools
@@ -61,12 +61,12 @@ We recommend this for development work ONLY.
     ```
 
 9. Create log, run and spool directories
-     ```
-     mkdir /var/log/cloud
-     mkdir /var/run/cloud
-     mkdir -p /var/spool/apel/cloud/
-     chown apache -R /var/spool/apel/cloud/
-     ```
+   ```
+   mkdir /var/log/cloud
+   mkdir /var/run/cloud
+   mkdir -p /var/spool/apel/cloud/
+   chown apache -R /var/spool/apel/cloud/
+   ```
 
 10. To allow successful GET requests, you will need to register your APEL REST instance with the Indigo DataCloud IAM and add IAM variables in `/var/www/html/apel_rest/settings.py`. You will also need to register a second service (the querying test service), and authorise it by adding it's ID to `ALLOWED_FOR_GET`
     ```

@@ -1,7 +1,6 @@
 django==1.6.3
 djangorestframework==3.0.5
 dirq
-python-daemon
 # Dependencies for CI testing
 MySQL-python
 coveralls

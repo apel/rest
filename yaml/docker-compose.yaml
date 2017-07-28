@@ -1,0 +1,37 @@
+version: '3'
+services: 
+  apel_rest_interface: 
+    links:
+      - apel_mysql
+    image: gregcorbett/rest:rest_only_docker_image
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/spool/apel/cloud:/var/spool/apel/cloud
+      - /etc/httpd/ssl:/etc/httpd/ssl
+      - ../docker/etc/mysql:/etc/mysql
+      - ../docker/etc/apel:/etc/apel
+    env_file:
+      - apel_rest_interface.env
+
+  apel_server:
+    links:
+      - apel_mysql
+    image: indigodatacloud/apel:1.6.0-1
+    volumes:
+      - /var/spool/apel/cloud:/var/spool/apel/cloud
+      - ../docker/etc/mysql:/etc/mysql
+      - ../docker/etc/apel:/etc/apel
+      - ../docker/etc/cron.d/:/etc/cron.d
+
+  apel_mysql:
+    image: mysql:5.6
+    expose: 
+      - 3306
+    volumes:
+      - /var/lib/mysql:/var/lib/mysql
+      - ../docker/etc/mysql/conf.d:/etc/mysql/conf.d
+      - ../schemas:/docker-entrypoint-initdb.d
+    env_file:
+      - mysql.env
