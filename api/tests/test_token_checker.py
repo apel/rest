@@ -291,6 +291,23 @@ class TokenCheckerTest(TestCase):
                 self._token_checker.valid_token_to_id(token), None,
                 "Token with payload %s should not be accepted!" % payload)
 
+    def test_garbage_token(self):
+        """Test a garbage token is rejected."""
+        token = 'ffnnsdifsdjofjfosdjfodsjfosdjofj'
+        result = self._token_checker.valid_token_to_id(token)
+        self.assertEqual(result, None)
+
+    def test_http_issuer_ban(self):
+        """Test a a HTTP issuer is rejected."""
+        self.assertEqual(
+            self._token_checker._check_token_not_revoked(None,
+                                                         'http://idc.org'),
+            None)
+
+        self.assertFalse(
+            self._token_checker._verify_token(None,
+                                              'http://idc.org'))
+
     def _create_token(self, payload, key):
         """Return a token, signed by key, correspond to the payload."""
         return jwt.encode(payload, key, algorithm='RS256')
