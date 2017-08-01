@@ -4,7 +4,6 @@ import datetime
 import httplib
 import json
 import logging
-import socket
 import urllib2
 
 from django.conf import settings
@@ -133,20 +132,20 @@ class TokenChecker:
 
         return True
 
-    def _get_issuer_public_key(self, hostname):
+    def _get_issuer_public_key(self, issuer):
         """Return the public key of an IAM Hostname."""
         try:
-            conn = httplib.HTTPSConnection(hostname,
-                                           cert_file=self._cert,
-                                           key_file=self._key)
+            key_request = urllib2.Request('%s/jwk' % issuer)
+            key_result = urllib2.urlopen(key_request)
 
-            conn.request('GET', '/jwk', {}, {})
-            return conn.getresponse().read()
+            key_json = json.loads(key_result.read())
+            return key_json
 
-        except socket.gaierror as e:
-            slef.logger.info('socket.gaierror: %s, %s',
-                             e.errno, e.strerror)
-
+        except (urllib2.HTTPError,
+                urllib2.URLError,
+                httplib.HTTPException,
+                KeyError) as error:
+            self.logger.error("%s: %s", type(error), str(error))
             return None
 
     def _is_token_issuer_trusted(self, token_json):
