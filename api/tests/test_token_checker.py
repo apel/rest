@@ -293,7 +293,8 @@ class TokenCheckerTest(TestCase):
         return jwt.encode(payload, key, algorithm='RS256')
 
     def _standard_token(self):
-        return  {
+        """Return a token that will ve valid if properly signed."""
+        return {
             'iss': 'https://iam-test.idc.eu/',
             'jti': '098cb343-c45e-490d-8aa0-ce1873cdc5f8',
             'iat': int(time.time()) - 2000000,
