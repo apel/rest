@@ -15,13 +15,9 @@ from jose.exceptions import ExpiredSignatureError, JWTClaimsError, JWTError
 class TokenChecker:
     """This class contains methods to check a JWT token for validity."""
 
-    def __init__(self, cert, key):
+    def __init__(self):
         """Initialize a new TokenChecker."""
         self.logger = logging.getLogger(__name__)
-        # cache is used to maintain an dicitonary of issuer/cache cut off pairs
-        self.cache = {}
-        self._cert = cert
-        self._key = key
 
     def valid_token_to_id(self, token):
         """Introspect a token to determine it's origin."""
