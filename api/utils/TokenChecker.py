@@ -108,11 +108,8 @@ class TokenChecker:
             self.logger.info('Issuer not https! Will not verify token!')
             return False
 
-        # extract the IAM hostname from the issuer
-        hostname = issuer.replace("https://", "").replace("/", "")
-
         # get the IAM's public key
-        key_json = self._get_issuer_public_key(hostname)
+        key_json = self._get_issuer_public_key(issuer)
 
         # if we couldn't get the IAM public key, we cannot verify the token.
         if key_json is None:
