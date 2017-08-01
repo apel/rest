@@ -25,11 +25,11 @@ class TokenChecker:
             jwt_unverified_json = jwt.get_unverified_claims(token)
         except JWTError:
             self.logger.error('Token cannot be decoded.')
-            self.logger.debug('Full token: %s' %token)
+            self.logger.debug('Full token: %s', token)
             return None
 
         unverified_token_id = jwt_unverified_json['sub']
-        self.logger.info('Token claims to be from %s' % unverified_token_id)
+        self.logger.info('Token claims to be from %s', unverified_token_id)
 
         # if token is in the cache, we say it is valid
         if cache.get(unverified_token_id) == token:
@@ -161,7 +161,7 @@ class TokenChecker:
         hostname = issuer.replace("https://", "").replace("/", "")
 
         if hostname in settings.IAM_HOSTNAME_LIST:
-            self.logger.info("Token 'iss' %s is an approved IAM" % hostname)
+            self.logger.info("Token 'iss' %s is an approved IAM", hostname)
             self.logger.debug(token_json)
             return True
         else:
