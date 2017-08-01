@@ -81,7 +81,7 @@ class TokenChecker:
 
     def _is_token_issuer_trusted(self, token_json):
         """
-        Return True if the payload 'issuer' is in settings.IAM_HOSTNAME_LIST.
+        Return True if the 'issuer' hostname is in settings.IAM_HOSTNAME_LIST.
 
         Otherwise (or if 'iss' missng) return False.
         """
@@ -92,7 +92,10 @@ class TokenChecker:
             self.logger.debug(token_json)
             return False
 
-        if issuer in settings.IAM_HOSTNAME_LIST:
+        # extract the IAM hostname from the issuer
+        hostname = issuer.replace("https://", "").replace("/", "")
+
+        if hostname in settings.IAM_HOSTNAME_LIST:
             self.logger.info("Token 'iss' from approved IAM")
             self.logger.debug(token_json)
             return True
