@@ -38,7 +38,7 @@ class TokenChecker:
         return True
 
     def _verify_token(self, token, issuer):
-        """."""
+        """Fetch IAM public key and veifry token against it."""
         if "https://" not in issuer:
             self.logger.info('Issuer not https! Will not verify token!')
             return False
