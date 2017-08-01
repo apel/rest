@@ -45,12 +45,7 @@ class TokenCheckerTest(TestCase):
         payload_list = []
 
         # This payload will be valid as we will sign it with PRIVATE_KEY
-        payload = {
-            'iss': 'https://iam-test.idc.eu/',
-            'jti': '098cb343-c45e-490d-8aa0-ce1873cdc5f8',
-            'iat': int(time.time()) - 2000000,
-            'sub': CLIENT_ID,
-            'exp': int(time.time()) + 200000}
+        payload = self._standard_token()
 
         # Add the same token twice, this is what tests the cache functionality
         payload_list = [payload, payload]
@@ -80,12 +75,7 @@ class TokenCheckerTest(TestCase):
         mock_check_token_not_revoked.return_value = CLIENT_ID
 
         # This payload will be valid as we will sign it with PRIVATE_KEY
-        payload1 = {
-            'iss': 'https://iam-test.idc.eu/',
-            'jti': '098cb343-c45e-490d-8aa0-ce1873cdc5f8',
-            'iat': int(time.time()) - 2000000,
-            'sub': CLIENT_ID,
-            'exp': int(time.time()) + 200000}
+        payload1 = self._standard_token()
 
         # This payload has a subject that will be in the cache, but this
         # new token is not. We need to ensure this invalid token does not
@@ -122,12 +112,7 @@ class TokenCheckerTest(TestCase):
         mock_check_token_not_revoked.return_value = CLIENT_ID
 
         # This payload will be valid as we will sign it with PRIVATE_KEY
-        payload = {
-            'iss': 'https://iam-test.idc.eu/',
-            'jti': '098cb343-c45e-490d-8aa0-ce1873cdc5f8',
-            'iat': int(time.time()) - 2000000,
-            'sub': CLIENT_ID,
-            'exp': int(time.time()) + 200000}
+        payload = self._standard_token()
 
         token = self._create_token(payload, PRIVATE_KEY)
 
@@ -157,12 +142,7 @@ class TokenCheckerTest(TestCase):
 
         # This payload would be valid if properly signed, but we are going to
         # sign it with FORGED_PRIVATE_KEY which will not match the PUBLIC_KEY
-        payload_list.append({
-            'iss': 'https://iam-test.idc.eu/',
-            'jti': '098cb343-c45e-490d-8aa0-ce1873cdc5f8',
-            'iat': int(time.time()) - 2000000,
-            'sub': CLIENT_ID,
-            'exp': int(time.time()) + 200000})
+        payload_list.append(self._standard_token())
 
         for payload in payload_list:
             token = self._create_token(payload, FORGED_PRIVATE_KEY)
@@ -311,6 +291,15 @@ class TokenCheckerTest(TestCase):
     def _create_token(self, payload, key):
         """Return a token, signed by key, correspond to the payload."""
         return jwt.encode(payload, key, algorithm='RS256')
+
+    def _standard_token(self):
+        return  {
+            'iss': 'https://iam-test.idc.eu/',
+            'jti': '098cb343-c45e-490d-8aa0-ce1873cdc5f8',
+            'iat': int(time.time()) - 2000000,
+            'sub': CLIENT_ID,
+            'exp': int(time.time()) + 200000}
+
 
 # Use this Client ID in tokens
 CLIENT_ID = 'ac2f23e0-8103-4581-8014-e0e82c486e36'
