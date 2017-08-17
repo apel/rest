@@ -57,10 +57,6 @@ The instructions below are for both Docker Compose and Ansibe.
    BANNED_FROM_POST: A (Python) list of X.509 HostDNs banned from submitting POST requests,
                     even if they are listed by the PROVIDERS_URL.
                     (e.g. ['/C=XX/O=XX/OU=XX/L=XX/CN=banned_host.test'])
-
-   SERVER_IAM_ID: An IAM ID corresponding to this instance, used to validate tokens.
-
-   SERVER_IAM_SECRET: An IAM secret corresponding to this instance, used to validate tokens.
    ```
 
 4. Populate the following variables in `yaml/mysql.env`
