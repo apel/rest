@@ -78,9 +78,9 @@ The instructions below are for both Docker Compose and Ansibe.
 
 6. Before the REST interface will start, a certificate needs to be added to the container. This can be done by placing a certificate (`apache.crt`) and key (`apache.key`) under `/etc/httpd/ssl/`. This directory will be mounted into the container by docker-compose.
 
-7. Make `docker/etc/cron.d` owned by `root`. This is required because this directory gets mounted into the container and it needs to be owned by root for cron jobs in the container to run.
+7. If you are running Docker as a non-root user, you will need to make `docker/etc/cron.d` owned by `root`. This is because this directory gets mounted into the container and it needs to be owned by `root` for cron jobs in the container to run.
    ```
-   chown -R root docker/etc/cron.d
+   sudo chown -R root docker/etc/cron.d
    ```
 
 8. Launch the containers.
