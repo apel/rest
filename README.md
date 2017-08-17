@@ -37,7 +37,10 @@ The instructions below are for both Docker Compose and Ansibe.
 
 3. Populate the following variables in `yaml/apel_rest_interface.env`
    ```
-   DJANGO_SECRET_KEY: The Django server requires its own "secret".
+   DJANGO_SECRET_KEY: The Django server requires its own "secret". A typical secret key
+                      will be a 50 character long random sequence of alphanumeric
+                      and special characters. This secret will be used for JSON object
+                      signing and other cryptographic functions like creating CSRF keys.
 
    PROVIDERS_URL: Points to the JSON list of Resource Providers
 
