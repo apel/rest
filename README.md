@@ -33,7 +33,7 @@ The instructions below are for both Docker Compose and Ansibe.
 
 1. Download the compressed source code from [here](https://github.com/indigo-dc/Accounting/releases/latest), it does not matter where the source code is downloaded to. As the source code contains schemas and yaml files needed for deploying via docker-compose or ansible, you will need to unzip the source code and then `cd` into the inflated directory.
 
-2. Register the service as a protected resource with the Indigo Identity Access Management (IAM) service. See [here](doc/admin.md#register-the-service-as-a-protected-resource-with-the-indigo-identity-access-management-iam) for instructions.
+2. Register the service as a protected resource with the Indigo Identity Access Management (IAM) service. See [Register the service as a protected resource with the Indigo Identity Access Management (IAM)](doc/admin.md#register-the-service-as-a-protected-resource-with-the-indigo-identity-access-management-iam) for instructions.
 
 3. Populate the following variables in `yaml/apel_rest_interface.env`
    ```
