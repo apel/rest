@@ -23,7 +23,7 @@ It is currently expected that only the QoS/SLA tool will interact with these sum
 ## Running the Docker image on Centos 7 and Ubuntu 16.04
 We recommend using the Docker image to run the Accounting server and REST interface. As such, having Docker installed is a prerequisite.
 
-See [Ubuntu 16.04 Instructions](https://docs.docker.com/engine/installation/linux/docker-ce/ubuntu/) or [Centos 7 Instructions](https://docs.docker.com/engine/installation/linux/centos/) for details of how to install Docker.
+See [Ubuntu 16.04 Instructions](https://docs.docker.com/engine/installation/linux/docker-ce/ubuntu/) or [Centos 7 Instructions](https://docs.docker.com/engine/installation/linux/docker-ce/centos/) for details of how to install Docker.
 
 We also reccomend using Docker Compose or Anisble to deploy the containers.
 * See [Install Docker Compose](https://docs.docker.com/compose/install/) for details of how to install Docker Compose.
