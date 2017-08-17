@@ -71,7 +71,7 @@ You should now have terminal access to the Accounting Server.
 
 ## Register the service as a protected resource with the Indigo Identity Access Management (IAM)
 
-1. On the [IAM homepage](https://iam-test.indigo-datacloud.eu/login), click "Self Service Protected Resource Registration".
+1. On the [IAM homepage](https://iam-test.indigo-datacloud.eu/dashboard#/home), click "MitreID Dashboard" and then click "Self Service Protected Resource Registration".
 
 2. On the "Main" tab, give this resource an appropriate Client Name.
 
