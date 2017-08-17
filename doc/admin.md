@@ -77,7 +77,7 @@ You should now have terminal access to the Accounting Server.
 
 3. Click Save.
 
-4. Store the ClientID, Client Secret, and Registration Access Token; as the ID and Secret will need to be put in `yaml/accounting-rest-interface-rc.yaml`, and the token will be needed to make further modifications to this registration.
+4. Store the ClientID, Client Secret, and Registration Access Token; as the ID and Secret will need to be put into the appropriate yaml file later, and the token will be needed to make further modifications to this registration.
 
 ## Authorize new PaaS (Platform as a Service) Platform components to view Summaries
 
