@@ -20,12 +20,16 @@ It is currently expected that only the QoS/SLA tool will interact with these sum
 - Accept APEL-Cloud v0.2 and v0.4 usage records via POST requests to the REST endpoint `.../api/v1/cloud/record`
 - Provide access to summaries via GET requests to REST endpoint `.../api/v1/cloud/record/summary`
 
-## Running the docker image on Centos 7 and Ubuntu 16.04
-We recommend using the docker image to run the Accounting server and REST interface. As such, having Docker and docker-compose installed is a prerequisite.
+## Running the Docker image on Centos 7 and Ubuntu 16.04
+We recommend using the Docker image to run the Accounting server and REST interface. As such, having Docker installed is a prerequisite.
 
 See [Ubuntu 16.04 Instructions](https://docs.docker.com/engine/installation/linux/ubuntulinux/) or [Centos 7 Instructions](https://docs.docker.com/engine/installation/linux/centos/) for details of how to install Docker.
 
-See [Install Docker Compose](https://docs.docker.com/compose/install/) for details of how to install docker-compose
+We also reccomend using Docker Compose or Anisble to deploy the containers.
+* See [Install Docker Compose](https://docs.docker.com/compose/install/) for details of how to install Docker Compose.
+* See [Install Ansible ](http://docs.ansible.com/ansible/latest/intro_installation.html#installation) for details of how to install Ansible.
+
+The instructions below are for both Docker Compose and Ansibe.
 
 1. Download the source code for the version you wish to deploy, see [here](https://github.com/indigo-dc/Accounting/releases) for a list of releases and corresponding docker image tag. The source code contains schemas and yaml files needed for deploying via docker.
 
@@ -79,11 +83,23 @@ See [Install Docker Compose](https://docs.docker.com/compose/install/) for detai
    chown -R root docker/etc/cron.d
    ```
 
-8. Launch the containers. It is recommeded to wait 1 minute in order for each container to configure fully before launching the next
+8. Launch the containers.
+
+- With Docker Compose:
+
+   It is recommeded to wait 1 minute in order for each container to configure fully before launching the next
    ```
    docker-compose -f yaml/docker-compose.yaml up -d --force-recreate apel_mysql
+   # Wait 1 minute
    docker-compose -f yaml/docker-compose.yaml up -d --force-recreate apel_server
+   # Wait 1 minute
    docker-compose -f yaml/docker-compose.yaml up -d --force-recreate apel_rest_interface
+   ```
+
+- With Ansible:
+
+   ```
+   ansible-playbook yaml/ansible.yml
    ```
 
 9. Navigate a web browser to `https://<hostname>/api/v1/cloud/record/summary`
