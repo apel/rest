@@ -49,10 +49,7 @@ The instructions below are for both Docker Compose and Ansibe.
    SERVER_IAM_ID: An IAM ID corresponding to this instance, used to validate tokens.
 
    SERVER_IAM_SECRET: An IAM secret corresponding to this instance, used to validate tokens.
-
-   ALLOWED_FOR_GET: A (Python) list of IAM service IDs allowed to submit GET requests.
-                    (e.g. ['ac2f23e0-8103-4581-8014-e0e82c486e36'])
-
+   
    ALLOWED_TO_POST: A (Python) list of X.509 HostDNs allowed to submit POST requests,
                     in addition to those listed by the PROVIDERS_URL.
                     (e.g. ['/C=XX/O=XX/OU=XX/L=XX/CN=special_host.test'])
@@ -60,6 +57,9 @@ The instructions below are for both Docker Compose and Ansibe.
    BANNED_FROM_POST: A (Python) list of X.509 HostDNs banned from submitting POST requests,
                     even if they are listed by the PROVIDERS_URL.
                     (e.g. ['/C=XX/O=XX/OU=XX/L=XX/CN=banned_host.test'])
+   
+   ALLOWED_FOR_GET: A (Python) list of IAM service IDs allowed to submit GET requests.
+                    (e.g. ['ac2f23e0-8103-4581-8014-e0e82c486e36'])
    ```
 
 4. Populate the following variables in `yaml/mysql.env`
