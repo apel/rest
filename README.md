@@ -75,7 +75,7 @@ The instructions below are for both Docker Compose and Ansibe.
 
 5. `MYSQL_PASSWORD` will also need to be added to the password field `docker/etc/apel/clouddb.cfg` and `docker/etc/mysql/my.cnf`
 
-6. Before the REST interface will start, a certificate needs to be added to the container. This can be done by placing a certificate (`apache.crt`) and key (`apache.key`) under `/etc/httpd/ssl/` on the host machine. This directory will be mounted into the container by docker-compose. Note: You may need to create the `/etc/httpd/ssl/` directory.
+6. Before the REST interface will start, a certificate needs to be added to the container. This can be done by placing a certificate (`apache.crt`) and key (`apache.key`) under `/etc/httpd/ssl/` on the host machine (be careful to preserve correct `.crt`/`.key` file permissions). `/etc/httpd/ssl/` will be mounted into the container by docker-compose. Note: You may need to create the `/etc/httpd/ssl/` directory.
 
 7. If you are running Docker as a non-root user, you will need to make `docker/etc/cron.d` owned by `root`. This is because this directory gets mounted into the container and it needs to be owned by `root` for cron jobs in the container to run.
    ```
