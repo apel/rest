@@ -159,7 +159,7 @@ RETURN_HEADERS = ["VOGroup",
 URL_FORMAT_OVERRIDE = None
 
 # These variables replaced on entry into the docker container
-SECRET_KEY='not_a_secure_secret'
+SECRET_KEY = 'not_a_secure_secret'
 
 PROVIDERS_URL = 'provider_url'
 
