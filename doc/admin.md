@@ -85,7 +85,45 @@ You should now have terminal access to the Accounting Server.
 
 `"['XXXXXXXXXXXX','XXXXXXXXXXXXXXXX']".`
 
-## How to update an already deployed service to 1.3.0 (from 1.2.1)
+## How to update an already deployed service to 1.4.0 (from 1.3.2)
+This section assumes previous deployment via the `docker/run_container.sh` script.
+
+1. Determine the Accounting container ID using `docker ps`. Expected output is below.
+
+```
+CONTAINER ID             IMAGE                                ...
+<server_container_id>    indigodatacloud/accounting:1.3.2-1   ...
+<database_container_id>  mysql:5.6                            ...
+...                      ...                                  ...
+```   
+
+2. Run `docker exec -it <container_id>` to open an interactive shell from within the docker image.
+
+3. Run `service httpd stop`
+
+4. Ensure all messages have been loaded. I.e. `tail /var/log/cloud/loader.log` shows "INFO - Found 0 messages" as the last message
+
+5. Run `service apeldbloader-cloud stop`
+
+6. Comment out the summariser cron in `/etc/cron.d/cloudsummariser`
+
+7. Ensure the summariser is not running. I.e. `tail /var/log/cloud/summariser.log`. The last lines in the log should be as below:
+```
+summariser - INFO - Summarising complete.
+summariser - INFO - ========================================
+```
+
+8. Exit the container with the `exit` command
+
+9. Stop and delete the Server and Database container.
+```
+docker stop <server_container_id> <database_container_id>
+docker rm <server_container_id> <database_container_id>
+```
+
+10. Follow [README.md](../README.md#running-the-docker-image-on-centos-7-and-ubuntu-1604) to deploy version 1.4.0. You will need to use the same mysql passwords as in the previous deployment.
+
+## How to update an already deployed service to 1.3.2 (from 1.2.1)
 This section assumes deployment via the `docker/run_container.sh` script.
 
 1. Determine the Accounting container ID using `docker ps`. Expected output is below.
