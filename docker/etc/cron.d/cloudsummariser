@@ -1,0 +1,1 @@
+10 2,14 * * * root /usr/bin/run_cloud_summariser.sh

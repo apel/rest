@@ -76,7 +76,7 @@ class Sender(object):
                                                key_file=self._key,
                                                strict=False)
 
-                conn.request(verb, path, json.dumps(data), headers)
+                conn.request(verb, path, data, headers)
 
                 response = conn.getresponse()
 

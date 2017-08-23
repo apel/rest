@@ -1,43 +1,30 @@
 #!/bin/bash
 
-if [ -z "$MYSQL_PORT_3306_TCP_ADDR" ]
-then
-    MYSQL_PORT_3306_TCP_ADDR=$MYSQL_HOST
-fi
+# Replace locally configured variables in apel_rest
+#SECRET_KEY
+sed -i "s|not_a_secure_secret|$DJANGO_SECRET_KEY|g" /var/www/html/apel_rest/settings.py
 
-echo "[client]
-user=apel
-password=$MYSQL_PASSWORD
-host=$MYSQL_PORT_3306_TCP_ADDR" >> /etc/my.cnf
+#PROVIDERS_URL
+sed -i "s|provider_url|$PROVIDERS_URL|g" /var/www/html/apel_rest/settings.py
 
-# add clouddb.cfg, so that the default user of mysql is APEL
-echo "[db]
-# type of database
-backend = mysql
-# host with database
-hostname = $MYSQL_PORT_3306_TCP_ADDR
-# port to connect to
-port = 3306
-# database name
-name = apel_rest
-# database user
-username = apel
-# password for database
-password = $MYSQL_PASSWORD
-# how many records should be put/fetched to/from database
-# in single query
-records = 1000
-# option for summariser so that SummariseVMs is called
-type = cloud" >> /etc/apel/clouddb.cfg
+# IAM_URL
+sed -i "s|iam_url|$IAM_URL|g" /var/www/html/apel_rest/settings.py
 
-echo "
-ALLOWED_FOR_GET=$ALLOWED_FOR_GET
-SERVER_IAM_ID=\"$SERVER_IAM_ID\"
-SERVER_IAM_SECRET=\"$SERVER_IAM_SECRET\"
+# SERVER_IAM_ID
+sed -i "s|server_iam_id|$SERVER_IAM_ID|g" /var/www/html/apel_rest/settings.py
 
-" >> /var/www/html/apel_rest/settings.py
+# SERVER_IAM_SECRET
+sed -i "s|server_iam_secret|$SERVER_IAM_SECRET|g" /var/www/html/apel_rest/settings.py
 
-sed -i "s/Put a secret here/$DJANGO_SECRET_KEY/g" /var/www/html/apel_rest/settings.py
+# ALLOWED_TO_POST
+sed -i "s|\['allowed_to_post'\]|$ALLOWED_TO_POST|g" /var/www/html/apel_rest/settings.py
+
+# BANNED_FROM_POST
+sed -i "s|\['banned_from_post'\]|$BANNED_FROM_POST|g" /var/www/html/apel_rest/settings.py
+
+# ALLOWED_FOR_GET
+sed -i "s|\['allowed_for_get'\]|$ALLOWED_FOR_GET|g" /var/www/html/apel_rest/settings.py
+
 
 # fetch the crl first
 fetch-crl
@@ -52,12 +39,6 @@ service crond start
 
 # start at
 service atd start
-
-# start the loader service
-service apeldbloader-cloud start
-
-# Make cloud spool dir owned by apache
-chown apache -R /var/spool/apel/cloud/
 
 # install IGTF trust bundle 10 minutes after start up
 echo "yum -y update ca-policy-egi-core >> /var/log/IGTF-startup-update.log" | at now + 10 min
