@@ -133,13 +133,13 @@ class CloudRecordSummaryGetTest(TestCase):
         # Form the URL to make the GET request to
         url = ''.join((reverse('CloudRecordSummaryView'), options))
 
-        # If content for a HTTP_AUTHORIZATION has been provided,
-        # make the GET request with the appropriate header
         if authZ_header_cont is not None:
+            # If content for a HTTP_AUTHORIZATION has been provided,
+            # make the GET request with the appropriate header
             response = test_client.get(url,
                                        HTTP_AUTHORIZATION=authZ_header_cont)
-        # Otherise, make a GET request without a HTTP_AUTHORIZATION header
         else:
+            # Otherise, make a GET request without a HTTP_AUTHORIZATION header
             response = test_client.get(url)
 
         # Check the expected response code has been received.
