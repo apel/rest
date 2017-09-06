@@ -28,6 +28,8 @@ before_script:
   # create an empty mysql database
   - mysql -u root -e "create database apel_rest"
   - mysql -u root apel_rest < schemas/10-cloud.sql
+  # partition the database, at least to make sure the syntax is correct
+  - mysql -u root apel_rest < schemas/20-cloud-extra.sql
   - export PYTHONPATH=$PYTHONPATH:`pwd -P`
 
 # Command to run tests
