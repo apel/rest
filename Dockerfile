@@ -1,9 +1,9 @@
-FROM centos:6
+FROM centos:7
 
 MAINTAINER APEL Administrator <apel-admins@stfc.ac.uk>
 
 # Add EPEL repo so we can get pip
-RUN rpm -ivh http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+RUN rpm -ivh http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-10.noarch.rpm
 
 # Add IGTF trust repo, so it can be installed
 RUN touch /etc/yum.repos.d/EGI-trustanchors.repo
