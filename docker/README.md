@@ -1,4 +1,4 @@
 # Using the Docker containers
-Run the `run_container.sh` script.
+This directory contains files necessary for Docker based deployment.
 
-This will get the Docker image for the APEL REST API (including the server) and configure the persistant database container and launch an instance of the APEL Rest interface.
+To find out how to run the 'APEL for Indigo DataCloud' containers, please refer to these [instructions](../README.md#running-the-docker-image-on-centos-7-and-ubuntu-1604).
