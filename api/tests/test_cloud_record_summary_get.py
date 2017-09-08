@@ -3,10 +3,10 @@
 import logging
 import MySQLdb
 
-from api.views.CloudRecordSummaryView import CloudRecordSummaryView
+from api.utils.TokenChecker import TokenChecker
 from django.core.urlresolvers import reverse
 from django.test import Client, TestCase
-from mock import Mock
+from mock import patch
 
 QPATH_TEST = '/tmp/django-test/'
 
@@ -18,7 +18,8 @@ class CloudRecordSummaryGetTest(TestCase):
         """Prevent logging from appearing in test output."""
         logging.disable(logging.CRITICAL)
 
-    def test_cloud_record_summary_get_IAM_fail(self):
+    @patch.object(TokenChecker, 'valid_token_to_id')
+    def test_cloud_record_summary_get_IAM_fail(self, mock_valid_token_to_id):
         """
         Test what happens if we fail to contact the IAM.
 
@@ -29,7 +30,7 @@ class CloudRecordSummaryGetTest(TestCase):
         # Mock the functionality of the IAM
         # Used in the underlying GET method
         # Simulates a failure to translate a token to an ID
-        CloudRecordSummaryView._token_to_id = Mock(return_value=None)
+        mock_valid_token_to_id.return_value = None
 
         with self.settings(ALLOWED_FOR_GET='TestService'):
             # Make (and check) the GET request
@@ -38,24 +39,26 @@ class CloudRecordSummaryGetTest(TestCase):
                                              "&from=20000101&to=20191231"),
                                     authZ_header_cont="Bearer TestToken")
 
-    def test_cloud_record_summary_get_400(self):
+    @patch.object(TokenChecker, 'valid_token_to_id')
+    def test_cloud_record_summary_get_400(self, mock_valid_token_to_id):
         """Test a GET request without the from field."""
         # Mock the functionality of the IAM
         # Simulates the translation of a token to an ID
         # Used in the underlying GET method
-        CloudRecordSummaryView._token_to_id = Mock(return_value="TestService")
+        mock_valid_token_to_id.return_value = 'TestService'
 
         with self.settings(ALLOWED_FOR_GET='TestService'):
             # Make (and check) the GET request
             self._check_summary_get(400, options="?group=TestGroup",
                                     authZ_header_cont="Bearer TestToken")
 
-    def test_cloud_record_summary_get_403(self):
-        """Test an unauthorized GET request."""
+    @patch.object(TokenChecker, 'valid_token_to_id')
+    def test_cloud_record_summary_get_403(self, mock_valid_token_to_id):
+        """Test an unauthorized service cannot make a GET request."""
         # Mock the functionality of the IAM
         # Simulates the translation of a token to an unauthorized ID
         # Used in the underlying GET method
-        CloudRecordSummaryView._token_to_id = Mock(return_value="FakeService")
+        mock_valid_token_to_id.return_value = 'FakeService'
 
         with self.settings(ALLOWED_FOR_GET='TestService'):
             # Make (and check) the GET request
@@ -79,7 +82,8 @@ class CloudRecordSummaryGetTest(TestCase):
                                          "&from=20000101&to=20191231"),
                                 authZ_header_cont="TestToken")
 
-    def test_cloud_record_summary_get_200(self):
+    @patch.object(TokenChecker, 'valid_token_to_id')
+    def test_cloud_record_summary_get_200(self, mock_valid_token_to_id):
         """Test a successful GET request."""
         # Connect to database
         database = self._connect_to_database()
@@ -89,7 +93,7 @@ class CloudRecordSummaryGetTest(TestCase):
         self._populate_database(database)
 
         # Mock the functionality of the IAM
-        CloudRecordSummaryView._token_to_id = Mock(return_value="TestService")
+        mock_valid_token_to_id.return_value = 'TestService'
 
         expected_response = ('{'
                              '"count":2,'
