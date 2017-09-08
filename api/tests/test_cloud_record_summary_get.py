@@ -54,6 +54,7 @@ class CloudRecordSummaryGetTest(TestCase):
 
     @patch.object(TokenChecker, 'valid_token_to_id')
     def test_cloud_record_summary_get_403(self, mock_valid_token_to_id):
+        """Test an unauthorized service cannot make a GET request."""
         # Mock the functionality of the IAM
         # Simulates the translation of a token to an unauthorized ID
         # Used in the underlying GET method
