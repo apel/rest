@@ -10,7 +10,6 @@ from mock import patch
 from api.utils.TokenChecker import TokenChecker
 
 
-# Using unittest and not django.test as no need for overhead of database
 class TokenCheckerTest(TestCase):
     """Tests the JSON Web Token validation."""
 
