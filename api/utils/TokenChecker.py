@@ -12,7 +12,7 @@ from jose import jwt
 from jose.exceptions import ExpiredSignatureError, JWTClaimsError, JWTError
 
 
-class TokenChecker:
+class TokenChecker(object):
     """This class contains methods to check a JWT token for validity."""
 
     def __init__(self):
