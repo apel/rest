@@ -20,7 +20,7 @@ class TokenChecker(object):
         self.logger = logging.getLogger(__name__)
 
     def valid_token_to_id(self, token):
-        """Introspect a token to determine it's origin."""
+        """Introspect a token to determine its origin."""
         try:
             jwt_unverified_json = jwt.get_unverified_claims(token)
         except JWTError:
@@ -46,7 +46,7 @@ class TokenChecker(object):
 
         issuer = jwt_unverified_json['iss']
         # we can pass issuer because the previous 'if' statement
-        #  returns if jwt_unverified_json['iss'] is missing.
+        # returns if jwt_unverified_json['iss'] is missing.
         issuer = jwt_unverified_json['iss']
         if not self._verify_token(token, issuer):
             return None
@@ -58,10 +58,10 @@ class TokenChecker(object):
             return None
 
         self.logger.info('Token validated')
-        # if the execution gets here, we can cache the token
-        # cache is a key: value like structure with an optional timeout
-        # as we only need the token stored we use that as the key
-        # and None as the value.
+        # If the execution gets here, we can cache the token.
+        # The cache variable is a key: value like structure
+        # with an optional timeout, we use the token subject
+        # as the key and the token as the value.
         # Cache timeout set to 300 seconds to enable quick revocation
         # but also limit the number of requests to the IAM instance
         # Caching is also done after token validation to ensure

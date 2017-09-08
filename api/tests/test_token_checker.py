@@ -30,7 +30,7 @@ class TokenCheckerTest(TestCase):
         Check a cached token is granted access.
 
         Method does this by checking a token is valid twice, the first time
-        the token is validate and stored in a cache, the second time access
+        the token is validated and stored in a cache, the second time access
         should be granted because the token is in the cache, not because the
         token is valid.
         """
@@ -63,7 +63,7 @@ class TokenCheckerTest(TestCase):
         """
         Check tokens with the same subject are handled correctly.
 
-        Having a token cached for the sub should not be sufficent to grant
+        Having a token cached for the subject should not be sufficent to grant
         access, the tokens must match.
         """
         # Mock the external call to retrieve the IAM public key
@@ -78,7 +78,7 @@ class TokenCheckerTest(TestCase):
 
         # This payload has a subject that will be in the cache, but this
         # new token is not. We need to ensure this invalid token does not
-        # get granted rights based only on it's sub being in the cache
+        # get granted rights based only on it's subject being in the cache
         payload2 = {
             'iss': 'https://iam-test.idc.eu/',
             'jti': '098cb343-c45e-490d-8aa0-ce1873cdc5f8',
@@ -168,18 +168,16 @@ class TokenCheckerTest(TestCase):
         """
         payload_list = []
 
-        # Add a payload without 'iss' field.
-        # to test we reject these as we cannot
-        # tell where it came from (so can't verify it)
+        # Test we reject a payload without 'iss' field
+        # as we cannot tell where it came from (so can't verify it)
         payload_list.append({
             'jti': '098cb343-c45e-490d-8aa0-ce1873cdc5f8',
             'iat': int(time.time()) - 2000000,
             'sub': CLIENT_ID,
             'exp': int(time.time()) + 200000})
 
-        # Add a payload with a malicious 'iss' field.
-        # to test we reject these as we do not wantt
-        # to attempt to verify it
+        # Test we reject a payload with a malicious 'iss' field
+        # as we do not want to attempt to verify it
         payload_list.append({
             'iss': 'https://malicious-iam.idc.biz/',
             'jti': '098cb343-c45e-490d-8aa0-ce1873cdc5f8',
@@ -212,32 +210,31 @@ class TokenCheckerTest(TestCase):
         """
         payload_list = []
 
-        # Add a payload wihtout 'iat' or 'exp' to the payload list
-        # to test we reject these (as we are choosing to)
+        # Test that we reject a payload without 'iat' or 'exp'
+        # as the tokens should have a lifetime
         payload_list.append({
             'sub': CLIENT_ID,
             'iss': 'https://iam-test.indigo-datacloud.eu/',
             'jti': '714892f5-014f-43ad-bea0-fa47579db222'})
 
-        # Add a payload without 'exp' to the payload_list
-        # to test we reject these (as we are choosing to)
+        # Test that we reject a payload without 'exp'
+        # as such a token would never expire
         payload_list.append({
             'iss': 'https://iam-test.indigo-datacloud.eu/',
             'jti': '098cb343-c45e-490d-8aa0-ce1873cdc5f8',
             'iat': int(time.time()) - 2000000,
             'sub': CLIENT_ID})
 
-        # Add a payload without 'iat'
-        # to test we reject these (as we are choosing to)
+        # Test that we reject a payload without 'iat'
+        # as all tokens should indicate when they were issued
         payload_list.append({
             'iss': 'https://iam-test.indigo-datacloud.eu/',
             'jti': '098cb343-c45e-490d-8aa0-ce1873cdc5f8',
             'sub': CLIENT_ID,
             'exp': int(time.time()) + 200000})
 
-        # Add a payload with an 'iat' and 'exp' in the past
-        # (e.g. they have expired) to test we are
-        # rejecting these
+        # Test that we reject a payload with an 'iat' and 'exp'
+        # in the past (e.g. they have expired)
         payload_list.append({
             'iss': 'https://iam-test.indigo-datacloud.eu/',
             'jti': '098cb343-c45e-490d-8aa0-ce1873cdc5f8',
@@ -245,9 +242,8 @@ class TokenCheckerTest(TestCase):
             'sub': CLIENT_ID,
             'exp': int(time.time()) - 200000})
 
-        # Add a payload with an 'iat' and 'exp' in the future
-        # to test we are rejecting these (as we should as they
-        # are not yet valid)
+        # Test that we reject a payload with an 'iat' and 'exp'
+        # in the future (as we should as they are not yet valid)
         payload_list.append({
             'iss': 'https://iam-test.indigo-datacloud.eu/',
             'jti': '098cb343-c45e-490d-8aa0-ce1873cdc5f8',
@@ -263,7 +259,7 @@ class TokenCheckerTest(TestCase):
                 self._token_checker._is_token_json_temporally_valid(payload),
                 "Payload %s should not be accepted!" % payload)
 
-            # Assert the wrapper method valid_token_to_id reutrns
+            # Assert the wrapper method valid_token_to_id returns
             # None when passed temporally invalid tokens
             token = self._create_token(payload, PRIVATE_KEY)
             self.assertEqual(
@@ -277,7 +273,7 @@ class TokenCheckerTest(TestCase):
         self.assertEqual(result, None)
 
     def test_http_issuer_ban(self):
-        """Test a a HTTP issuer is rejected."""
+        """Test a HTTP issuer is rejected."""
         self.assertEqual(
             self._token_checker._check_token_not_revoked(None,
                                                          'http://idc.org'),
@@ -292,7 +288,7 @@ class TokenCheckerTest(TestCase):
         return jwt.encode(payload, key, algorithm='RS256')
 
     def _standard_token(self):
-        """Return a token that will ve valid if properly signed."""
+        """Return a token that will be valid if properly signed."""
         return {
             'iss': 'https://iam-test.idc.eu/',
             'jti': '098cb343-c45e-490d-8aa0-ce1873cdc5f8',
