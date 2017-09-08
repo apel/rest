@@ -51,7 +51,7 @@ class TokenCheckerTest(TestCase):
 
         for payload in payload_list:
             token = self._create_token(payload, PRIVATE_KEY)
-            with self.settings(IAM_HOSTNAME_LIST='iam-test.idc.eu'):
+            with self.settings(IAM_HOSTNAME_LIST=['iam-test.idc.eu']):
                 self.assertEqual(
                     self._token_checker.valid_token_to_id(token), CLIENT_ID,
                     "Token with payload %s should not be accepted!" % payload
@@ -91,7 +91,7 @@ class TokenCheckerTest(TestCase):
         token1 = self._create_token(payload1, PRIVATE_KEY)
         token2 = self._create_token(payload2, PRIVATE_KEY)
 
-        with self.settings(IAM_HOSTNAME_LIST='iam-test.idc.eu'):
+        with self.settings(IAM_HOSTNAME_LIST=['iam-test.idc.eu']):
             self.assertEqual(
                 self._token_checker.valid_token_to_id(token1), CLIENT_ID,
                 "Token with payload %s should not be accepted!" % payload1
@@ -119,7 +119,7 @@ class TokenCheckerTest(TestCase):
 
         token = self._create_token(payload, PRIVATE_KEY)
 
-        with self.settings(IAM_HOSTNAME_LIST='iam-test.idc.eu'):
+        with self.settings(IAM_HOSTNAME_LIST=['iam-test.idc.eu']):
             client_id = payload['sub']
             self.assertEqual(
                 self._token_checker.valid_token_to_id(token), client_id,
@@ -150,7 +150,7 @@ class TokenCheckerTest(TestCase):
 
         for payload in payload_list:
             token = self._create_token(payload, FORGED_PRIVATE_KEY)
-            with self.settings(IAM_HOSTNAME_LIST='iam-test.idc.eu'):
+            with self.settings(IAM_HOSTNAME_LIST=['iam-test.idc.eu']):
                 self.assertFalse(
                     self._token_checker._verify_token(token, payload['iss']),
                     "Payload %s should not be accepted!" % payload
@@ -197,7 +197,7 @@ class TokenCheckerTest(TestCase):
         for payload in payload_list:
             token = self._create_token(payload, PRIVATE_KEY)
 
-            with self.settings(IAM_HOSTNAME_LIST='iam-test.idc.eu'):
+            with self.settings(IAM_HOSTNAME_LIST=['iam-test.idc.eu']):
                 self.assertFalse(
                     self._token_checker._is_token_issuer_trusted(payload),
                     "Payload %s should not be accepted!" % payload
