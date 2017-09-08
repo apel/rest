@@ -54,7 +54,8 @@ class TokenCheckerTest(TestCase):
             with self.settings(IAM_HOSTNAME_LIST='iam-test.idc.eu'):
                 self.assertEqual(
                     self._token_checker.valid_token_to_id(token), CLIENT_ID,
-                    "Token with payload %s should not be accepted!" % payload)
+                    "Token with payload %s should not be accepted!" % payload
+                )
 
     @patch.object(TokenChecker, '_get_issuer_public_key')
     @patch.object(TokenChecker, '_check_token_not_revoked')
@@ -84,7 +85,8 @@ class TokenCheckerTest(TestCase):
             'jti': '098cb343-c45e-490d-8aa0-ce1873cdc5f8',
             'iat': int(time.time()) - 2000000,
             'sub': CLIENT_ID,
-            'exp': int(time.time()) - 200}
+            'exp': int(time.time()) - 200
+        }
 
         token1 = self._create_token(payload1, PRIVATE_KEY)
         token2 = self._create_token(payload2, PRIVATE_KEY)
@@ -92,11 +94,13 @@ class TokenCheckerTest(TestCase):
         with self.settings(IAM_HOSTNAME_LIST='iam-test.idc.eu'):
             self.assertEqual(
                 self._token_checker.valid_token_to_id(token1), CLIENT_ID,
-                "Token with payload %s should not be accepted!" % payload1)
+                "Token with payload %s should not be accepted!" % payload1
+            )
 
             self.assertEqual(
                 self._token_checker.valid_token_to_id(token2), None,
-                "Token with payload %s should not be accepted!" % payload2)
+                "Token with payload %s should not be accepted!" % payload2
+            )
 
     @patch.object(TokenChecker, '_get_issuer_public_key')
     @patch.object(TokenChecker, '_check_token_not_revoked')
@@ -119,7 +123,8 @@ class TokenCheckerTest(TestCase):
             client_id = payload['sub']
             self.assertEqual(
                 self._token_checker.valid_token_to_id(token), client_id,
-                "Token with payload %s should be accepted!" % payload)
+                "Token with payload %s should be accepted!" % payload
+            )
 
     @patch.object(TokenChecker, '_get_issuer_public_key')
     def test_verify_token(self, mock_get_issuer_public_key):
@@ -148,11 +153,13 @@ class TokenCheckerTest(TestCase):
             with self.settings(IAM_HOSTNAME_LIST='iam-test.idc.eu'):
                 self.assertFalse(
                     self._token_checker._verify_token(token, payload['iss']),
-                    "Payload %s should not be accepted!" % payload)
+                    "Payload %s should not be accepted!" % payload
+                )
 
                 self.assertEqual(
                     self._token_checker.valid_token_to_id(token), None,
-                    "Token with payload %s should not be accepted!" % payload)
+                    "Token with payload %s should not be accepted!" % payload
+                )
 
     def test_is_token_issuer_trusted(self):
         """
@@ -174,7 +181,8 @@ class TokenCheckerTest(TestCase):
             'jti': '098cb343-c45e-490d-8aa0-ce1873cdc5f8',
             'iat': int(time.time()) - 2000000,
             'sub': CLIENT_ID,
-            'exp': int(time.time()) + 200000})
+            'exp': int(time.time()) + 200000
+        })
 
         # Test we reject a payload with a malicious 'iss' field
         # as we do not want to attempt to verify it
@@ -183,7 +191,8 @@ class TokenCheckerTest(TestCase):
             'jti': '098cb343-c45e-490d-8aa0-ce1873cdc5f8',
             'iat': int(time.time()) - 2000000,
             'sub': CLIENT_ID,
-            'exp': int(time.time()) + 200000})
+            'exp': int(time.time()) + 200000
+        })
 
         for payload in payload_list:
             token = self._create_token(payload, PRIVATE_KEY)
@@ -191,11 +200,13 @@ class TokenCheckerTest(TestCase):
             with self.settings(IAM_HOSTNAME_LIST='iam-test.idc.eu'):
                 self.assertFalse(
                     self._token_checker._is_token_issuer_trusted(payload),
-                    "Payload %s should not be accepted!" % payload)
+                    "Payload %s should not be accepted!" % payload
+                )
 
                 self.assertEqual(
                     self._token_checker.valid_token_to_id(token), None,
-                    "Token with payload %s should not be accepted!" % payload)
+                    "Token with payload %s should not be accepted!" % payload
+                )
 
     def test_is_token_json_temporally_valid(self):
         """
@@ -215,7 +226,8 @@ class TokenCheckerTest(TestCase):
         payload_list.append({
             'sub': CLIENT_ID,
             'iss': 'https://iam-test.indigo-datacloud.eu/',
-            'jti': '714892f5-014f-43ad-bea0-fa47579db222'})
+            'jti': '714892f5-014f-43ad-bea0-fa47579db222'
+        })
 
         # Test that we reject a payload without 'exp'
         # as such a token would never expire
@@ -223,7 +235,8 @@ class TokenCheckerTest(TestCase):
             'iss': 'https://iam-test.indigo-datacloud.eu/',
             'jti': '098cb343-c45e-490d-8aa0-ce1873cdc5f8',
             'iat': int(time.time()) - 2000000,
-            'sub': CLIENT_ID})
+            'sub': CLIENT_ID
+        })
 
         # Test that we reject a payload without 'iat'
         # as all tokens should indicate when they were issued
@@ -231,7 +244,8 @@ class TokenCheckerTest(TestCase):
             'iss': 'https://iam-test.indigo-datacloud.eu/',
             'jti': '098cb343-c45e-490d-8aa0-ce1873cdc5f8',
             'sub': CLIENT_ID,
-            'exp': int(time.time()) + 200000})
+            'exp': int(time.time()) + 200000
+        })
 
         # Test that we reject a payload with an 'iat' and 'exp'
         # in the past (e.g. they have expired)
@@ -240,7 +254,8 @@ class TokenCheckerTest(TestCase):
             'jti': '098cb343-c45e-490d-8aa0-ce1873cdc5f8',
             'iat': int(time.time()) - 2000000,
             'sub': CLIENT_ID,
-            'exp': int(time.time()) - 200000})
+            'exp': int(time.time()) - 200000
+        })
 
         # Test that we reject a payload with an 'iat' and 'exp'
         # in the future (as we should as they are not yet valid)
@@ -249,7 +264,8 @@ class TokenCheckerTest(TestCase):
             'jti': '098cb343-c45e-490d-8aa0-ce1873cdc5f8',
             'iat': int(time.time()) + 200000,
             'sub': CLIENT_ID,
-            'exp': int(time.time()) + 2000000})
+            'exp': int(time.time()) + 2000000
+        })
 
         for payload in payload_list:
             # Assert the underlying helper method reponsible for
@@ -257,14 +273,16 @@ class TokenCheckerTest(TestCase):
             # temporally invalid payloads
             self.assertFalse(
                 self._token_checker._is_token_json_temporally_valid(payload),
-                "Payload %s should not be accepted!" % payload)
+                "Payload %s should not be accepted!" % payload
+            )
 
             # Assert the wrapper method valid_token_to_id returns
             # None when passed temporally invalid tokens
             token = self._create_token(payload, PRIVATE_KEY)
             self.assertEqual(
                 self._token_checker.valid_token_to_id(token), None,
-                "Token with payload %s should not be accepted!" % payload)
+                "Token with payload %s should not be accepted!" % payload
+            )
 
     def test_garbage_token(self):
         """Test a garbage token is rejected."""
@@ -277,11 +295,13 @@ class TokenCheckerTest(TestCase):
         self.assertEqual(
             self._token_checker._check_token_not_revoked(None,
                                                          'http://idc.org'),
-            None)
+            None
+        )
 
         self.assertFalse(
             self._token_checker._verify_token(None,
-                                              'http://idc.org'))
+                                              'http://idc.org')
+        )
 
     def _create_token(self, payload, key):
         """Return a token, signed by key, correspond to the payload."""
@@ -294,7 +314,8 @@ class TokenCheckerTest(TestCase):
             'jti': '098cb343-c45e-490d-8aa0-ce1873cdc5f8',
             'iat': int(time.time()) - 2000000,
             'sub': CLIENT_ID,
-            'exp': int(time.time()) + 200000}
+            'exp': int(time.time()) + 200000
+        }
 
 
 # Use this Client ID in tokens
