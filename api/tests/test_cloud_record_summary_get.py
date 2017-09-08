@@ -3,11 +3,10 @@
 import logging
 import MySQLdb
 
-from api.views.CloudRecordSummaryView import CloudRecordSummaryView
 from api.utils.TokenChecker import TokenChecker
 from django.core.urlresolvers import reverse
 from django.test import Client, TestCase
-from mock import Mock, patch
+from mock import patch
 
 QPATH_TEST = '/tmp/django-test/'
 
