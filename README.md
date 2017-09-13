@@ -97,7 +97,7 @@ The instructions below are for both Docker Compose and Ansibe.
 
 - With Ansible:
 
-   First, replace `<working directory>` in `yaml/ansible.yaml` with the absolute file path of the inflated source code, then run the command below.
+   First, replace `<working directory>` in `yaml/ansible.yaml` with the absolute file path of the decompressed source code, then run the command below.
    ```
    ansible-playbook yaml/ansible.yml
    ```
