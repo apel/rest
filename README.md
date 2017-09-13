@@ -31,7 +31,7 @@ We also reccomend using Docker Compose or Anisble to deploy the containers.
 
 The instructions below are for both Docker Compose and Ansibe.
 
-1. Download the source code for the version you wish to deploy, see [here](https://github.com/indigo-dc/Accounting/releases) for a list of releases and corresponding docker image tag. The source code contains schemas and yaml files needed for deploying via docker.
+1. Download the source code for the version you wish to deploy, see [here](https://github.com/indigo-dc/Accounting/releases) for a list of releases and corresponding docker image tag. The source code contains schemas and yaml files needed for deploying via docker-compose or ansible.
 
 2. Register the service as a protected resource with the Indigo Identity Access Management (IAM) service. See [here](doc/admin.md#register-the-service-as-a-protected-resource-with-the-indigo-identity-access-management-iam) for instructions.
 
