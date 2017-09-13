@@ -87,12 +87,11 @@ The instructions below are for both Docker Compose and Ansibe.
 
 - With Docker Compose:
 
-   It is recommeded to wait 1 minute in order for each container to configure fully before launching the next
+   It is recommeded to wait 1 minute after launching the database in order for it to configure fully before launching the APEL containers
    ```
    docker-compose -f yaml/docker-compose.yaml up -d --force-recreate apel_mysql
    # Wait 1 minute
    docker-compose -f yaml/docker-compose.yaml up -d --force-recreate apel_server
-   # Wait 1 minute
    docker-compose -f yaml/docker-compose.yaml up -d --force-recreate apel_rest_interface
    ```
 

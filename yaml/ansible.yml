@@ -32,12 +32,6 @@
           - <working directory>/docker/etc/apel:/etc/apel
           - <working directory>/docker/etc/cron.d/:/etc/cron.d
 
-    # wait for the Server to have finished configuring before
-    # passing it messages
-    - pause:
-        prompt: 'Configuring Server, please wait.'
-        minutes: 1
-
     # tasks file for ansible-dockerized-apel-rest-interface
     - name: Launch APEL REST Interface Container
       docker_container:
