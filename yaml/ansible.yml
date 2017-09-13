@@ -2,7 +2,7 @@
 - name: APEL for Indigo
   hosts: localhost
   tasks:
-    # tasks file for ansible-dockerized-apel-db
+    # tasks for ansible-dockerized-apel-db
     - name: Launch APEL database
       docker_container:
         image: mysql:5.6
@@ -20,7 +20,7 @@
         prompt: 'Configuring Database, please wait.'
         minutes: 1
 
-    # tasks file for ansible-dockerized-apel-server
+    # tasks for ansible-dockerized-apel-server
     - name: Launch APEL Server container
       docker_container: 
         image: indigodatacloud/apel:1.6.0-1
@@ -32,7 +32,7 @@
           - <working directory>/docker/etc/apel:/etc/apel
           - <working directory>/docker/etc/cron.d/:/etc/cron.d
 
-    # tasks file for ansible-dockerized-apel-rest-interface
+    # tasks for ansible-dockerized-apel-rest-interface
     - name: Launch APEL REST Interface Container
       docker_container:
         image: indigodatacloud/accounting:1.4.0-1
