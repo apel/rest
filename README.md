@@ -25,9 +25,9 @@ We recommend using the Docker image to run the Accounting server and REST interf
 
 See [Ubuntu 16.04 Instructions](https://docs.docker.com/engine/installation/linux/docker-ce/ubuntu/) or [Centos 7 Instructions](https://docs.docker.com/engine/installation/linux/docker-ce/centos/) for details of how to install Docker. There is no requirement to undertake the 'Post-installation steps for Linux'.
 
-We also reccomend using Docker Compose or Anisble to deploy the containers.
-* See [Install Docker Compose](https://docs.docker.com/compose/install/) for details of how to install Docker Compose.
-* See [Install Ansible ](http://docs.ansible.com/ansible/latest/intro_installation.html#installation) for details of how to install Ansible.
+We also recommend using Docker Compose or Anisble to deploy the containers.
+* See [the offical Docker Compose documentation](https://docs.docker.com/compose/install/) for details of how to install docker-compose.
+* See [the offical Ansible documentation](http://docs.ansible.com/ansible/latest/intro_installation.html#installation) for details of how to install Ansible.
 
 The instructions below are for both Docker Compose and Ansibe.
 
