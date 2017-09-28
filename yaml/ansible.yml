@@ -35,7 +35,7 @@
     # task for ansible-dockerized-apel-rest-interface
     - name: Launch APEL REST Interface Container
       docker_container:
-        image: indigodatacloud/accounting:1.4.0-1
+        image: indigodatacloud/accounting:1.5.0-1
         name: apel_rest_interface
         links: apel_mysql
         ports:
