@@ -35,8 +35,8 @@ spec:
             value:
           - name: PROVIDERS_URL
             value: "http://indigo.cloud.plgrid.pl/cmdb/service/list"
-          - name: IAM_URL
-            value: "https://iam-test.indigo-datacloud.eu/introspect"
+          - name: IAM_URLS
+            value: "[iam-test.indigo-datacloud.eu]"
           - name: ALLOWED_TO_POST
             value: "[]"
           - name: BANNED_FROM_POST
