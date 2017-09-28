@@ -71,19 +71,53 @@ You should now have terminal access to the Accounting Server.
 
 ## Register the service as a protected resource with the Indigo Identity Access Management (IAM)
 
-1. On the [IAM homepage](https://iam-test.indigo-datacloud.eu/login), click "Self Service Protected Resource Registration".
+1. On the [IAM homepage](https://iam-test.indigo-datacloud.eu/dashboard#/home):
+   * click "MitreID Dashboard"
+   * click "Self Service Protected Resource Registration"
+   * click "New Resource".
 
 2. On the "Main" tab, give this resource an appropriate Client Name.
 
 3. Click Save.
 
-4. Store the ClientID, Client Secret, and Registration Access Token; as the ID and Secret will need to be put in `yaml/accounting-rest-interface-rc.yaml`, and the token will be needed to make further modifications to this registration.
+4. Store the ClientID, Client Secret, and Registration Access Token; as the ID and Secret will need to be put into the appropriate yaml file later, and the token will be needed to make further modifications to this registration.
 
 ## Authorize new PaaS (Platform as a Service) Platform components to view Summaries
 
 * In `yaml/accounting-rest-interface-rc.yaml`, add the IAM registered ID corresponding to the service in the env variable `ALLOWED_FOR_GET`. It should be of form below, quotes included. Python needs to be able to interpret this variable as a list of strings, the outer quotes prevent kubernetes interpreting it as something meaningful in YAML. The accounting-rest-interface-rc on kubernetes will have to be restarted for that to take effect. This can be done by deleting the accounting-rest-interface-service pod.
 
 `"['XXXXXXXXXXXX','XXXXXXXXXXXXXXXX']".`
+
+## How to update an already deployed service to 1.5.0 (from 1.4.0)
+These instructions assume the containers were previously deployed with docker-compose and they use docker-compose to upgrade to the new version
+
+1. Stop the APEL REST Interface container
+```
+docker-compose -f yaml/docker-compose.yaml stop apel_rest_interface
+```
+
+2. In `yaml/apel_rest_interface.env`, change
+```
+IAM_URL=https://example-iam.example.url.eu/introspect
+```
+to
+```
+IAM_URLS=[\'example-iam.example.url.eu\']
+```
+
+3. In `yaml/docker-compose.yaml`, change
+```
+indigodatacloud/accounting:1.4.0-1
+```
+to 
+```
+indigodatacloud/accounting:1.5.0-1
+```
+
+4. Now, start the APEL Rest Interface Container
+```
+docker-compose -f yaml/docker-compose.yaml up -d apel_rest_interface
+```
 
 ## How to update an already deployed service to 1.4.0 (from 1.3.2)
 This section assumes previous deployment via the `docker/run_container.sh` script.

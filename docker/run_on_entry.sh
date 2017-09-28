@@ -8,7 +8,7 @@ sed -i "s|not_a_secure_secret|$DJANGO_SECRET_KEY|g" /var/www/html/apel_rest/sett
 sed -i "s|provider_url|$PROVIDERS_URL|g" /var/www/html/apel_rest/settings.py
 
 # IAM_URL
-sed -i "s|iam_url|$IAM_URL|g" /var/www/html/apel_rest/settings.py
+sed -i "s|\['allowed_iams'\]|$IAM_URLS|g" /var/www/html/apel_rest/settings.py
 
 # SERVER_IAM_ID
 sed -i "s|server_iam_id|$SERVER_IAM_ID|g" /var/www/html/apel_rest/settings.py
@@ -28,17 +28,21 @@ sed -i "s|\['allowed_for_get'\]|$ALLOWED_FOR_GET|g" /var/www/html/apel_rest/sett
 
 # fetch the crl first
 fetch-crl
-# then start the periodic fetch-url
-service fetch-crl-cron start
+
+# alter the fetch-crl cron to run regardless of any services
+echo "# Cron job running by default every 6 hours, at 45 minutes past the hour
+# with  +/- 3 minutes sleep.
+
+45 */6 * * * root /usr/sbin/fetch-crl -q -r 360" >  /etc/cron.d/fetch-crl
 
 # start apache
-service httpd start
+/usr/sbin/httpd
 
 # start cron
-service crond start
+/usr/sbin/crond
 
 # start at
-service atd start
+/usr/sbin/atd
 
 # install IGTF trust bundle 10 minutes after start up
 echo "yum -y update ca-policy-egi-core >> /var/log/IGTF-startup-update.log" | at now + 10 min

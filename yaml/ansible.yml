@@ -1,0 +1,49 @@
+---
+- name: APEL for Indigo
+  hosts: localhost
+  tasks:
+    # task for ansible-dockerized-apel-db
+    - name: Launch APEL database
+      docker_container:
+        image: mysql:5.6
+        name: apel_mysql
+        expose: 3306
+        volumes:
+          - /var/lib/mysql:/var/lib/mysql
+          - <working directory>/docker/etc/mysql/conf.d:/etc/mysql/conf.d
+          - <working directory>/schemas:/docker-entrypoint-initdb.d
+        env_file: <working directory>/yaml/mysql.env
+
+    # wait for the database to have finished configuring to allow the
+    # Server loader to start properly
+    - pause:
+        prompt: 'Configuring Database, please wait.'
+        minutes: 1
+
+    # task for ansible-dockerized-apel-server
+    - name: Launch APEL Server container
+      docker_container: 
+        image: indigodatacloud/apel:1.6.0-1
+        name: apel_server
+        links: apel_mysql
+        volumes:
+          - /var/spool/apel/cloud:/var/spool/apel/cloud
+          - <working directory>/docker/etc/mysql:/etc/mysql
+          - <working directory>/docker/etc/apel:/etc/apel
+          - <working directory>/docker/etc/cron.d/:/etc/cron.d
+
+    # task for ansible-dockerized-apel-rest-interface
+    - name: Launch APEL REST Interface Container
+      docker_container:
+        image: indigodatacloud/accounting:1.5.0-1
+        name: apel_rest_interface
+        links: apel_mysql
+        ports:
+          - "80:80"
+          - "443:443"
+        volumes:
+          - /var/spool/apel/cloud:/var/spool/apel/cloud
+          - /etc/httpd/ssl:/etc/httpd/ssl
+          - <working directory>/docker/etc/mysql:/etc/mysql
+          - <working directory>/docker/etc/apel:/etc/apel
+        env_file: <working directory>/yaml/apel_rest_interface.env

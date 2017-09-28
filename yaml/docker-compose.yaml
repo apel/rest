@@ -3,7 +3,7 @@ services:
   apel_rest_interface: 
     links:
       - apel_mysql
-    image: indigodatacloud/accounting:1.4.0-1
+    image: indigodatacloud/accounting:1.5.0-1
     ports:
       - "80:80"
       - "443:443"

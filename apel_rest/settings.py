@@ -163,7 +163,8 @@ SECRET_KEY = 'not_a_secure_secret'
 
 PROVIDERS_URL = 'provider_url'
 
-IAM_URL = 'iam_url'
+# List of hostnames of IAMs that can issue access tokens for the REST interface
+IAM_HOSTNAME_LIST = ['allowed_iams']
 SERVER_IAM_ID = 'server_iam_id'
 SERVER_IAM_SECRET = 'server_iam_secret'
 

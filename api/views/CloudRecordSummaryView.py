@@ -1,19 +1,17 @@
 """This file contains the CloudRecordSummaryView class."""
 
-import base64
 import ConfigParser
 import datetime
-import httplib
-import json
 import logging
 import MySQLdb
-import urllib2
 
 from rest_framework.pagination import PaginationSerializer
 from django.conf import settings
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+from api.utils.TokenChecker import TokenChecker
 
 
 class CloudRecordSummaryView(APIView):
@@ -46,6 +44,7 @@ class CloudRecordSummaryView(APIView):
     def __init__(self):
         """Set up class level logging."""
         self.logger = logging.getLogger(__name__)
+        self._token_checker = TokenChecker()
         super(CloudRecordSummaryView, self).__init__()
 
     def get(self, request, format=None):
@@ -76,7 +75,10 @@ class CloudRecordSummaryView(APIView):
         if client_token is None:
             return Response(status=401)
 
-        client_id = self._token_to_id(client_token)
+        # The token checker will introspect the token,
+        # i.e. check it's in-date, correctly signed etc
+        # and return the client_id of the token
+        client_id = self._token_checker.valid_token_to_id(client_token)
         if client_id is None:
             return Response(status=401)
 
@@ -272,37 +274,9 @@ class CloudRecordSummaryView(APIView):
                               "but not of expected form.")
             self.logger.error(request.META['HTTP_AUTHORIZATION'])
             return None
-        self.logger.info("Authenticated: %s...", token[:15])
-        self.logger.debug("Full token: %s", token)
+        self.logger.info("Successfully extracted Token")
+        self.logger.debug("Full Token: %s", token)
         return token
-
-    def _token_to_id(self, token):
-        """Convert a token to a IAM ID (external dependency)."""
-        try:
-            auth_request = urllib2.Request(settings.IAM_URL,
-                                           data='token=%s' % token)
-
-            server_id = settings.SERVER_IAM_ID
-            server_secret = settings.SERVER_IAM_SECRET
-
-            encode_string = '%s:%s' % (server_id, server_secret)
-
-            base64string = base64.encodestring(encode_string).replace('\n', '')
-
-            auth_request.add_header("Authorization", "Basic %s" % base64string)
-            auth_result = urllib2.urlopen(auth_request)
-
-            auth_json = json.loads(auth_result.read())
-            client_id = auth_json['client_id']
-        except (urllib2.HTTPError,
-                urllib2.URLError,
-                httplib.HTTPException,
-                KeyError) as error:
-            self.logger.error("%s: %s", type(error), str(error))
-            return None
-        self.logger.info("Token identifed as %s...", client_id[:15])
-        self.logger.debug("Full CLIENT_ID: %s", client_id)
-        return client_id
 
     def _is_client_authorized(self, client_id):
         """
@@ -314,5 +288,5 @@ class CloudRecordSummaryView(APIView):
             self.logger.error("%s does not have permission to view summaries",
                               client_id)
             return False
-        self.logger.info("Authorizing %s...", client_id[:15])
+        self.logger.info("Authorizing user request")
         return True
