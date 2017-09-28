@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - name: accounting
-        image: indigodatacloud/accounting:1.4.0-1
+        image: indigodatacloud/accounting:1.5.0-1
         ports:
         - containerPort: 80
           hostPort: 80
