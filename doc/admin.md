@@ -88,6 +88,37 @@ You should now have terminal access to the Accounting Server.
 
 `"['XXXXXXXXXXXX','XXXXXXXXXXXXXXXX']".`
 
+## How to update an already deployed service to 1.5.0 (from 1.4.0)
+These instructions assume the containers were previously deployed with docker-compose and they use docker-compose to upgrade to the new version
+
+1. Stop the APEL REST Interface container
+```
+docker-compose -f yaml/docker-compose.yaml stop apel_rest_interface
+```
+
+2. In `yaml/apel_rest_interface.env`, change
+```
+IAM_URL=https://example-iam.example.url.eu/introspect
+```
+to
+```
+IAM_URLS=[\'example-iam.example.url.eu\']
+```
+
+3. In `yaml/docker-compose.yaml`, change
+```
+indigodatacloud/accounting:1.4.0-1
+```
+to 
+```
+indigodatacloud/accounting:1.5.0-1
+```
+
+4. Now, start the APEL Rest Interface Container
+```
+docker-compose -f yaml/docker-compose.yaml up -d apel_rest_interface
+```
+
 ## How to update an already deployed service to 1.4.0 (from 1.3.2)
 This section assumes previous deployment via the `docker/run_container.sh` script.
 
