@@ -125,7 +125,10 @@ class CloudRecordView(APIView):
         except KeyError:
             # The returned provider JSON is not of expected format.
             self.logger.error('Could not parse provider JSON.')
-            return False
+            # Set enumerated_providers to the empty list and
+            # allow the method to continue incase the
+            # signer_dn has special access.
+            enumerated_providers = []
 
         for _, site_json in enumerated_providers:
             try:
