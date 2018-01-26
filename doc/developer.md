@@ -22,14 +22,14 @@ We recommend this for development work ONLY.
     pip install setuptools --upgrade
     ```
     
-3. Install requirements.txt
-    ```
-    pip install -r requirements.txt
-    ```
-
-4. Clone the repo to `/var/www/html`
+3. Clone the repo to `/var/www/html
     ```
     git clone https://github.com/apel/rest.git /var/www/html
+    ```
+
+4. Install requirements.txt
+    ```
+    pip install -r requirements.txt
     ```
 
 5. Create the database
