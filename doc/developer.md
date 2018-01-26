@@ -29,7 +29,7 @@ We recommend this for development work ONLY.
 
 4. Install requirements.txt
     ```
-    pip install -r requirements.txt
+    pip install -r /var/www/html/requirements.txt
     ```
 
 5. Create the database
