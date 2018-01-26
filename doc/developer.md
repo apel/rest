@@ -45,12 +45,12 @@ We recommend this for development work ONLY.
     openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/httpd/ssl/apache.key -out /etc/httpd/ssl/apache.crt
     ```
 
-7. Copy the configuration files
+7. Symlink the local config files into the `/etc` directory. Note: these commands will override any existing configurations in those locations.
     ```
-    cp /var/www/html/conf/apel_rest_api.conf /etc/httpd/conf.d/apel_rest_api.conf
-    cp /var/www/html/conf/ssl.conf /etc/httpd/conf.d/ssl.conf
-    cp /var/www/html/conf/cloudloader.cfg /etc/apel/cloudloader.cfg
-    cp /var/www/html/conf/cloudsummariser.cfg /etc/apel/cloudsummariser.cfg
+    ln -sf /var/www/html/conf/apel_rest_api.conf /etc/httpd/conf.d/apel_rest_api.conf
+    ln -sf /var/www/html/conf/ssl.conf /etc/httpd/conf.d/ssl.conf
+    ln -sf /var/www/html/conf/cloudloader.cfg /etc/apel/cloudloader.cfg
+    ln -sf /var/www/html/conf/cloudsummariser.cfg /etc/apel/cloudsummariser.cfg
     ```
 
 8. Copy the script files
