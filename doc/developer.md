@@ -8,7 +8,7 @@ If you would like to contribute to the APEL REST interface.
 
 See [here](README.md#running-the-docker-image-on-centos-7-and-ubuntu-1604) for instructions to run the Docker Images locally using docker-compose
 
-# Setup from source (on Centos 6)
+# Setup from source (on CentOS 7)
 We recommend this for development work ONLY.
 
 1. Install python, pip, mysql, apache, apache modules, trust bundle and other required RPMS for development.
