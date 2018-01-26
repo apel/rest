@@ -68,7 +68,7 @@ We recommend this for development work ONLY.
     ALLOWED_FOR_GET=
     ```
 
-10. Run `python manage.py collectstatic`
+10. Run `python /var/www/html/manage.py collectstatic`
 
 11. Start Apache with `service httpd start`
 
