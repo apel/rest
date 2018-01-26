@@ -58,28 +58,17 @@ We recommend this for development work ONLY.
     ```
     ln -sf /var/www/html/conf/apel_rest_api.conf /etc/httpd/conf.d/apel_rest_api.conf
     ln -sf /var/www/html/conf/ssl.conf /etc/httpd/conf.d/ssl.conf
-    ln -sf /var/www/html/conf/cloudloader.cfg /etc/apel/cloudloader.cfg
-    ln -sf /var/www/html/conf/cloudsummariser.cfg /etc/apel/cloudsummariser.cfg
     ```
 
-9. Symlink the local script files into the appropriate places.  Note: these commands will override any existing scripts in those locations.
-    ```
-    ln -sf /var/www/html/scripts/cloudsummariser /etc/cron.d/cloudsummariser
-    ln -sf /var/www/html/scripts/run_cloud_summariser.sh /usr/bin/run_cloud_summariser.sh
-    ln -sf /var/www/html/scripts/apeldbloader-cloud /etc/init.d/apeldbloader-cloud
-    ```
-
-10. To allow successful GET requests, you will need to register your APEL REST instance with the Indigo DataCloud IAM and add IAM variables in `/var/www/html/apel_rest/settings.py`. You will also need to register a second service (the querying test service), and authorise it by adding it's ID to `ALLOWED_FOR_GET`
+9. To allow successful GET requests, you will need to register your APEL REST instance with the Indigo DataCloud IAM and add IAM variables in `/var/www/html/apel_rest/settings.py`. You will also need to register a second service (the querying test service), and authorise it by adding it's ID to `ALLOWED_FOR_GET`
     ```
     SERVER_IAM_ID=
     SERVER_IAM_SECRET=
     ALLOWED_FOR_GET=
     ```
 
-11. Run `python manage.py collectstatic`
+10. Run `python manage.py collectstatic`
 
-12. Start Apache with `service httpd start`
+11. Start Apache with `service httpd start`
 
-13. Start the loader with `service apeldbloader-cloud start`
-
-14. Navigate a web browser to "https://<hostname>/api/v1/cloud/record/summary/"
+12. Navigate a web browser to "https://<hostname>/api/v1/cloud/record/summary/"
