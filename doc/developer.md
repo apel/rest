@@ -62,6 +62,7 @@ We recommend this for development work ONLY.
 
 9. To allow successful GET requests, you will need to register your APEL REST instance with the Indigo DataCloud IAM and add IAM variables in `/var/www/html/apel_rest/settings.py`. You will also need to register a second service (the querying test service), and authorise it by adding it's ID to `ALLOWED_FOR_GET`
     ```
+    IAM_HOSTNAME_LIST=
     SERVER_IAM_ID=
     SERVER_IAM_SECRET=
     ALLOWED_FOR_GET=
