@@ -35,8 +35,8 @@ We recommend this for development work ONLY.
 5. Create the database
     ```
     mysql -u root -e "create database apel_rest"
-    mysql -u root apel_rest < /var/www/html/schemas/cloud.sql
-    mysql -u root apel_rest < /var/www/html/schemas/cloud-extra.sql
+    mysql -u root apel_rest < /var/www/html/schemas/10-cloud.sql
+    mysql -u root apel_rest < /var/www/html/schemas/20-cloud-extra.sql
     ```
 
 6. Create a new, self signed, certificate
