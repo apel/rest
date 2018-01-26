@@ -62,11 +62,11 @@ We recommend this for development work ONLY.
     ln -sf /var/www/html/conf/cloudsummariser.cfg /etc/apel/cloudsummariser.cfg
     ```
 
-9. Copy the script files
+9. Symlink the local script files into the appropriate places.  Note: these commands will override any existing scripts in those locations.
     ```
-    cp /var/www/html/scripts/cloudsummariser /etc/cron.d/cloudsummariser
-    cp /var/www/html/scripts/run_cloud_summariser.sh /usr/bin/run_cloud_summariser.sh
-    cp /var/www/html/scripts/apeldbloader-cloud /etc/init.d/apeldbloader-cloud
+    ln -sf /var/www/html/scripts/cloudsummariser /etc/cron.d/cloudsummariser
+    ln -sf /var/www/html/scripts/run_cloud_summariser.sh /usr/bin/run_cloud_summariser.sh
+    ln -sf /var/www/html/scripts/apeldbloader-cloud /etc/init.d/apeldbloader-cloud
     ```
 
 
