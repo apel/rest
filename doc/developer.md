@@ -72,4 +72,4 @@ We recommend this for development work ONLY.
 
 11. Start Apache with `service httpd start`
 
-12. Navigate a web browser to "https://<hostname>/api/v1/cloud/record/summary/"
+12. Navigate a web browser to "https://<hostname>/api/v1/cloud/record/summary"
