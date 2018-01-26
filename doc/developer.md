@@ -13,7 +13,7 @@ We recommend this for development work ONLY.
 
 1. Install python, pip, mysql, apache, apache modules, trust bundle and other required RPMS for development.
     ```
-    yum -y install python-pip python-devel mysql mysql-devel gcc httpd httpd-devel mod_wsgi mod_ssl cronie at ca-policy-egi-core fetch-crl python-iso8601 python-ldap git bash-completion tree
+    yum -y install python-pip python-devel mysql-server mysql mysql-devel gcc httpd httpd-devel mod_wsgi mod_ssl cronie at ca-policy-egi-core fetch-crl python-iso8601 python-ldap git bash-completion tree
     ```
     
 2. Upgrade pip and setuptools
