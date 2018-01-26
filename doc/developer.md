@@ -45,7 +45,16 @@ We recommend this for development work ONLY.
     openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/httpd/ssl/apache.key -out /etc/httpd/ssl/apache.crt
     ```
 
-7. Symlink the local config files into the `/etc` directory. Note: these commands will override any existing configurations in those locations.
+7. Create etc, log, run and spool directories
+   ```
+   mkdir /etc/apel
+   mkdir /var/log/cloud
+   mkdir /var/run/cloud
+   mkdir -p /var/spool/apel/cloud/
+   chown apache -R /var/spool/apel/cloud/
+   ```
+
+8. Symlink the local config files into the `/etc` directory. Note: these commands will override any existing configurations in those locations.
     ```
     ln -sf /var/www/html/conf/apel_rest_api.conf /etc/httpd/conf.d/apel_rest_api.conf
     ln -sf /var/www/html/conf/ssl.conf /etc/httpd/conf.d/ssl.conf
@@ -53,20 +62,13 @@ We recommend this for development work ONLY.
     ln -sf /var/www/html/conf/cloudsummariser.cfg /etc/apel/cloudsummariser.cfg
     ```
 
-8. Copy the script files
+9. Copy the script files
     ```
     cp /var/www/html/scripts/cloudsummariser /etc/cron.d/cloudsummariser
     cp /var/www/html/scripts/run_cloud_summariser.sh /usr/bin/run_cloud_summariser.sh
     cp /var/www/html/scripts/apeldbloader-cloud /etc/init.d/apeldbloader-cloud
     ```
 
-9. Create log, run and spool directories
-   ```
-   mkdir /var/log/cloud
-   mkdir /var/run/cloud
-   mkdir -p /var/spool/apel/cloud/
-   chown apache -R /var/spool/apel/cloud/
-   ```
 
 10. To allow successful GET requests, you will need to register your APEL REST instance with the Indigo DataCloud IAM and add IAM variables in `/var/www/html/apel_rest/settings.py`. You will also need to register a second service (the querying test service), and authorise it by adding it's ID to `ALLOWED_FOR_GET`
     ```
