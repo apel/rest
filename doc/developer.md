@@ -69,7 +69,6 @@ We recommend this for development work ONLY.
     ln -sf /var/www/html/scripts/apeldbloader-cloud /etc/init.d/apeldbloader-cloud
     ```
 
-
 10. To allow successful GET requests, you will need to register your APEL REST instance with the Indigo DataCloud IAM and add IAM variables in `/var/www/html/apel_rest/settings.py`. You will also need to register a second service (the querying test service), and authorise it by adding it's ID to `ALLOWED_FOR_GET`
     ```
     SERVER_IAM_ID=
