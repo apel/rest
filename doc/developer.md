@@ -73,3 +73,20 @@ We recommend this for development work ONLY.
 11. Start Apache with `service httpd start`
 
 12. Navigate a web browser to `https://<hostname>/api/v1/cloud/record/summary`
+
+## Optional: Set up a Docker-ized version of the APEL Server
+
+Deploying an APEL Server along with the REST interface and database is not necessary, but is useful for allowing data to flow from input via the REST interface to summarised output via the REST interface. For the purposes of developing the APEL Rest interface we treat the APEL Server as a 'black box', so we recommend deploying it as a Docker image.
+
+You will need to install Docker and Docker Compose first, see the [README.md](../README.md) for a link to the instructions.
+
+Then:
+
+1. Follow step 7 in the [README.md](../README.md#running-the-docker-image-on-centos-7-and-ubuntu-1604).
+
+2. Modify `docker/etc/apel/clouddb.cfg` so that the host with the database is `localhost`.
+
+3. Run `docker-compose -f yaml/docker-compose.yaml run -v /var/lib/mysql:/var/lib/mysql -d --no-deps apel_server`
+
+You should now have a running instance of the Docker-ized APEL Server, capable of talking to your development REST interface and database.
+
