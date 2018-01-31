@@ -34,9 +34,12 @@ We recommend this for development work ONLY.
 
 5. Create the database
     ```
-    mysql -u root -e "create database apel_rest"
-    mysql -u root apel_rest < /var/www/html/schemas/10-cloud.sql
-    mysql -u root apel_rest < /var/www/html/schemas/20-cloud-extra.sql
+    mysql -u root -e "create user 'apel'@'localhost';"
+    mysql -u root -e "GRANT ALL PRIVILEGES ON apel_rest.* TO 'apel'@'localhost';"
+    mysql -u root -e "FLUSH PRIVILEGES;"
+    mysql -u apel -e "create database apel_rest"
+    mysql -u apel apel_rest < /var/www/html/schemas/10-cloud.sql
+    mysql -u apel apel_rest < /var/www/html/schemas/20-cloud-extra.sql
     ```
 
 6. Create a new, self signed, certificate
@@ -78,7 +81,7 @@ We recommend this for development work ONLY.
 
 Deploying an APEL Server along with the REST interface and database is not necessary, but is useful for allowing data to flow from input via the REST interface to summarised output via the REST interface. For the purposes of developing the APEL Rest interface we treat the APEL Server as a 'black box', so we recommend deploying it as a Docker image.
 
-You will need to install Docker and Docker Compose first, see the [README.md](../README.md) for a link to the instructions.
+You will need to install Docker and Docker Compose first, see the [README.md](../README.md#running-the-docker-image-on-centos-7-and-ubuntu-1604) for a link to the instructions.
 
 Then:
 
