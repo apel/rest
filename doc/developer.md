@@ -85,11 +85,13 @@ You will need to install Docker and Docker Compose first, see the [README.md](..
 
 Then:
 
-1. Follow step 7 in the [README.md](../README.md#running-the-docker-image-on-centos-7-and-ubuntu-1604).
+1. cd into `/var/www/html`
 
-2. Modify `docker/etc/apel/clouddb.cfg` so that the host with the database is `localhost`.
+2. Follow step 7 in the [README.md](../README.md#running-the-docker-image-on-centos-7-and-ubuntu-1604).
 
-3. Run `docker-compose -f yaml/docker-compose.yaml run -v /var/lib/mysql:/var/lib/mysql -d --no-deps apel_server`
+3. Modify `docker/etc/apel/clouddb.cfg` so that the host with the database is `localhost`.
+
+4. Run `docker-compose -f yaml/docker-compose.yaml run -v /var/lib/mysql:/var/lib/mysql -d --no-deps apel_server`
 
 You should now have a running instance of the Docker-ized APEL Server, capable of talking to your development REST interface and database.
 
