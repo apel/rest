@@ -158,16 +158,34 @@ RETURN_HEADERS = ["VOGroup",
 # this doesnt do anything, probably because of using older Django
 URL_FORMAT_OVERRIDE = None
 
-# These variables replaced on entry into the docker container
+# ==== These variables need changing before deploying the REST interface ====
+
+# To change these variables when deploying the REST interface as a container,
+# modify the yaml/apel_rest_interface.env rather than the values here.
+# This file contains placeholder data that gets replaced by the values
+# in yaml/apel_rest_interface.env on start up of the container.
+
+# If you are not deploying the REST interface as a container,
+# you will need to change these variables here, in this file.
+
+# SECURITY WARNING: keep the secret key used in production secret!
+# 'not_a_secure_secret' is a place holder value to allow the docker
+# container to replace it on start up.
 SECRET_KEY = 'not_a_secure_secret'
 
+# The (Indigo) CMDB endpoint where the list of providers can be retrieved.
 PROVIDERS_URL = 'provider_url'
 
-# List of hostnames of IAMs that can issue access tokens for the REST interface
+# List of IAM hostnames that can issue access tokens for the REST interface.
 IAM_HOSTNAME_LIST = ['allowed_iams']
+# The IAM credentials (ID and secret) used to connect to the IAM where
+# this service is registered.
 SERVER_IAM_ID = 'server_iam_id'
 SERVER_IAM_SECRET = 'server_iam_secret'
 
+# Add users/services here to grant them special access to make POST requests.
 ALLOWED_TO_POST = ['allowed_to_post']
+# Add users/services to ban them from making POST requests.
 BANNED_FROM_POST = ['banned_from_post']
+# Add users/services here to grant them special access to make GET requests.
 ALLOWED_FOR_GET = ['allowed_for_get']
