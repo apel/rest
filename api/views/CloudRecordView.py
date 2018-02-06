@@ -107,6 +107,34 @@ class CloudRecordView(APIView):
             self.logger.error("%s: %s", type(error), error)
             return {}
 
+    def _parse_hostnames_indigo_cmdb(self, provider_json):
+        """Parse INDIGO CMDB provider JSON into a list of hostnames."""
+        try:
+            # Extract the site JSON objects from the returned JSON
+            enumerated_providers = enumerate(provider_json['rows'])
+        except KeyError:
+            # The returned provider JSON is not of the expected format.
+            self.logger.error('Could not parse provider JSON.')
+            # Hence we can't extract any hostnames, so return an empty list.
+            return []
+
+        # The list used to store the extracted hostnames.
+        provider_hostnames = []
+        # Attempt to extract hostnames from the site JSON objects.
+        for _, site_json in enumerated_providers:
+            try:
+                provider_hostnames.append(site_json['value']['hostname'])
+            except KeyError:
+                # A KeyError is thrown if a hostname is not defined.
+                # Log that a single site could not be parsed
+                self.logger.warning('Could not parse site JSON.')
+                self.logger.debug(site_json)
+                # Continue looping through provider list, looking
+                # for a match in the remaining site JSON
+
+        # Return the hostnames we were able to extract.
+        return provider_hostnames
+
     def _signer_is_valid(self, signer_dn):
         """Return True if signer's host is listed as a Resource Provider."""
         # Get the hostname from the DN
@@ -117,30 +145,10 @@ class CloudRecordView(APIView):
             self.logger.info("Host %s is banned.", signer)
             return False
 
-        providers = self._get_provider_json_indigo_cmdb()
-
-        try:
-            # Extract the site JSON objects from the returned JSON
-            enumerated_providers = enumerate(providers['rows'])
-        except KeyError:
-            # The returned provider JSON is not of expected format.
-            self.logger.error('Could not parse provider JSON.')
-            # Set enumerated_providers to the empty list and
-            # allow the method to continue incase the
-            # signer_dn has special access.
-            enumerated_providers = []
-
-        for _, site_json in enumerated_providers:
-            try:
-                if signer in site_json['value']['hostname']:
-                    return True
-            except KeyError:
-                # A KeyError is thrown if a hostname is not defined.
-                # Log that a single site could not be parsed
-                self.logger.warning('Could not parse site JSON.')
-                self.logger.debug(site_json)
-                # Continue looping through provider list, looking
-                # for a match in the remaining site JSON
+        provider_json = self._get_provider_json_indigo_cmdb()
+        provider_hosts = self._parse_hostnames_indigo_cmdb(provider_json)
+        if signer in provider_hosts:
+            return True
 
         if signer_dn in settings.ALLOWED_TO_POST:
             self.logger.info("Host %s has special access.", signer)
