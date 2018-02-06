@@ -56,7 +56,7 @@ class CloudRecordPostTest(TestCase):
         # Used in the underlying POST handling method
         # Shouldn't allow any POSTs,
         # i.e. we have failed to retrieve the providers list
-        CloudRecordView._get_provider_list = Mock(return_value={})
+        CloudRecordView._get_provider_json_indigo_cmdb = Mock(return_value={})
 
         # Make (and check) the POST request
         self._check_record_post(MESSAGE, 403)
@@ -66,7 +66,8 @@ class CloudRecordPostTest(TestCase):
         # Mock the functionality of the provider list
         # Used in the underlying POST handling method
         # Allows only allowed_host.test to POST
-        CloudRecordView._get_provider_list = Mock(return_value=PROVIDERS)
+        mock_providers = Mock(return_value=PROVIDERS)
+        CloudRecordView._get_provider_json_indigo_cmdb = mock_providers
 
         example_dn = "/C=XX/O=XX/OU=XX/L=XX/CN=prohibited_host.test"
 
@@ -84,7 +85,8 @@ class CloudRecordPostTest(TestCase):
         # Used in the underlying POST handling method so that the
         # default dn used in _check_record_post is authorized
         # to make POST request.
-        CloudRecordView._get_provider_list = Mock(return_value=PROVIDERS)
+        mock_providers = Mock(return_value=PROVIDERS)
+        CloudRecordView._get_provider_json_indigo_cmdb = mock_providers
         # Make (and check) the POST request
         self._check_record_post(MESSAGE, 202)
 

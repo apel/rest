@@ -95,12 +95,12 @@ class CloudRecordView(APIView):
 #                                                                             #
 ###############################################################################
 
-    def _get_provider_list(self):
-        """Return a list of Resource Providers."""
+    def _get_provider_json_indigo_cmdb(self):
+        """Fetch the INDIGO CMDB Resource Provider JSON."""
         try:
-            provider_list_request = urllib2.Request(settings.PROVIDERS_URL)
-            provider_list_response = urllib2.urlopen(provider_list_request)
-            return json.loads(provider_list_response.read())
+            provider_json_request = urllib2.Request(settings.PROVIDERS_URL)
+            provider_json_response = urllib2.urlopen(provider_json_request)
+            return json.loads(provider_json_response.read())
 
         except (ValueError, urllib2.HTTPError) as error:
             self.logger.error("List of providers could not be retrieved.")
@@ -117,7 +117,7 @@ class CloudRecordView(APIView):
             self.logger.info("Host %s is banned.", signer)
             return False
 
-        providers = self._get_provider_list()
+        providers = self._get_provider_json_indigo_cmdb()
 
         try:
             # Extract the site JSON objects from the returned JSON

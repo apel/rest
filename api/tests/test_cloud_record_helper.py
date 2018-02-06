@@ -24,7 +24,8 @@ class CloudRecordHelperTest(TestCase):
         """
         # mock the external call to the CMDB to retrieve the providers
         # used in the _signer_is_valid method we are testing
-        CloudRecordView._get_provider_list = Mock(return_value=PROVIDERS)
+        mock_providers = Mock(return_value=PROVIDERS)
+        CloudRecordView._get_provider_json_indigo_cmdb = mock_providers
         test_cloud_view = CloudRecordView()
 
         # The DN corresponds to a host listed as a provider
@@ -65,6 +66,6 @@ class CloudRecordHelperTest(TestCase):
         # mock the external call to the CMDB to retrieve the providers
         # used in the _signer_is_valid method we are testing
         # now we are mocking a failure of the CMDB to respond as expected
-        CloudRecordView._get_provider_list = Mock(return_value={})
+        CloudRecordView._get_provider_json_indigo_cmdb = Mock(return_value={})
         # in which case we should reject all POST requests
         self.assertFalse(test_cloud_view._signer_is_valid(allowed_dn))
