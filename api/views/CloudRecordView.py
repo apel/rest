@@ -135,6 +135,13 @@ class CloudRecordView(APIView):
         # Return the hostnames we were able to extract.
         return provider_hostnames
 
+    def _get_indigo_providers(self):
+        """Return a list of registered INDIGO Resource Provider hostnames."""
+        # Get the JSON from the CMDB.
+        provider_json = self._get_provider_json_indigo_cmdb()
+        # Return any hostnames we can parse from the provider JSON.
+        return self._parse_hostnames_indigo_cmdb(provider_json)
+
     def _signer_is_valid(self, signer_dn):
         """Return True if signer's host is listed as a Resource Provider."""
         # Get the hostname from the DN
@@ -145,9 +152,7 @@ class CloudRecordView(APIView):
             self.logger.info("Host %s is banned.", signer)
             return False
 
-        provider_json = self._get_provider_json_indigo_cmdb()
-        provider_hosts = self._parse_hostnames_indigo_cmdb(provider_json)
-        if signer in provider_hosts:
+        if signer in self._get_indigo_providers():
             return True
 
         if signer_dn in settings.ALLOWED_TO_POST:
