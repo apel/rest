@@ -71,11 +71,13 @@ We recommend this for development work ONLY.
     ALLOWED_FOR_GET=
     ```
 
-10. Run `python /var/www/html/manage.py collectstatic`
+10. To allow successful POST requests, you will need to add the DN of a CA-Signed certificate that you have access to (either a personal certificate or a host certificate) to `ALLOWED_FOR_POST` in `/var/www/html/apel_rest/settings.py`
 
-11. Start Apache with `service httpd start`
+11. Run `python /var/www/html/manage.py collectstatic`
 
-12. Navigate a web browser to `https://<hostname>/api/v1/cloud/record/summary`
+12. Start Apache with `service httpd start`
+
+13. Navigate a web browser to `https://<hostname>/api/v1/cloud/record/summary`
 
 ## Optional: Set up a Docker-ized version of the APEL Server
 
