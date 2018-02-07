@@ -25,10 +25,10 @@ gpgkey=http://repository.egi.eu/sw/production/cas/1/GPG-KEY-EUGridPMA-RPM-3' >> 
 RUN yum -y install python-pip python-devel mysql mysql-devel gcc httpd httpd-devel mod_wsgi mod_ssl cronie at ca-policy-egi-core fetch-crl
 
 # Copy APEL REST files to apache root
-COPY . /var/www/html/
+COPY . /home/apel_rest_interface
 
-# Set the work diirectory to /var/www/html
-WORKDIR /var/www/html
+# Set the work diirectory to /home/apel_rest_interface
+WORKDIR /home/apel_rest_interface
 
 # Install APEL REST requirements
 RUN pip install -r requirements.txt
