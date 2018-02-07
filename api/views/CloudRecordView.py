@@ -153,6 +153,8 @@ class CloudRecordView(APIView):
             return False
 
         if signer in self._get_indigo_providers():
+            self.logger.info("Host %s is listed as an INDIGO provider.",
+                             signer)
             return True
 
         if signer_dn in settings.ALLOWED_TO_POST:
