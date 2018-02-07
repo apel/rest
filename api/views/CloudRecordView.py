@@ -152,13 +152,13 @@ class CloudRecordView(APIView):
             self.logger.info("Host %s is banned.", signer)
             return False
 
+        if signer_dn in settings.ALLOWED_TO_POST:
+            self.logger.info("Host %s has special access.", signer)
+            return True
+
         if signer in self._get_indigo_providers():
             self.logger.info("Host %s is listed as an INDIGO provider.",
                              signer)
-            return True
-
-        if signer_dn in settings.ALLOWED_TO_POST:
-            self.logger.info("Host %s has special access.", signer)
             return True
 
         # If we have not returned already
