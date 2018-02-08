@@ -95,17 +95,52 @@ class CloudRecordView(APIView):
 #                                                                             #
 ###############################################################################
 
-    def _get_provider_list(self):
-        """Return a list of Resource Providers."""
+    def _get_provider_json_indigo_cmdb(self):
+        """Fetch the INDIGO CMDB Resource Provider JSON."""
         try:
-            provider_list_request = urllib2.Request(settings.PROVIDERS_URL)
-            provider_list_response = urllib2.urlopen(provider_list_request)
-            return json.loads(provider_list_response.read())
+            provider_json_request = urllib2.Request(settings.PROVIDERS_URL)
+            provider_json_response = urllib2.urlopen(provider_json_request)
+            return json.loads(provider_json_response.read())
 
         except (ValueError, urllib2.HTTPError) as error:
             self.logger.error("List of providers could not be retrieved.")
             self.logger.error("%s: %s", type(error), error)
             return {}
+
+    def _parse_hostnames_indigo_cmdb(self, provider_json):
+        """Parse INDIGO CMDB provider JSON into a list of hostnames."""
+        try:
+            # Extract the site JSON objects from the returned JSON
+            enumerated_providers = enumerate(provider_json['rows'])
+        except KeyError:
+            # The returned provider JSON is not of the expected format.
+            self.logger.error('Could not parse provider JSON.')
+            # Hence we can't extract any hostnames, so return an empty list.
+            return []
+
+        # The list used to store the extracted hostnames.
+        provider_hostnames = []
+        # Attempt to extract hostnames from the site JSON objects.
+        for _, site_json in enumerated_providers:
+            try:
+                provider_hostnames.append(site_json['value']['hostname'])
+            except KeyError:
+                # A KeyError is thrown if a hostname is not defined.
+                # Log that a single site could not be parsed
+                self.logger.warning('Could not parse site JSON.')
+                self.logger.debug(site_json)
+                # Continue looping through provider list, looking
+                # for a match in the remaining site JSON
+
+        # Return the hostnames we were able to extract.
+        return provider_hostnames
+
+    def _get_indigo_providers(self):
+        """Return a list of registered INDIGO Resource Provider hostnames."""
+        # Get the JSON from the CMDB.
+        provider_json = self._get_provider_json_indigo_cmdb()
+        # Return any hostnames we can parse from the provider JSON.
+        return self._parse_hostnames_indigo_cmdb(provider_json)
 
     def _signer_is_valid(self, signer_dn):
         """Return True if signer's host is listed as a Resource Provider."""
@@ -117,30 +152,13 @@ class CloudRecordView(APIView):
             self.logger.info("Host %s is banned.", signer)
             return False
 
-        providers = self._get_provider_list()
-
-        try:
-            # Extract the site JSON objects from the returned JSON
-            enumerated_providers = enumerate(providers['rows'])
-        except KeyError:
-            # The returned provider JSON is not of expected format.
-            self.logger.error('Could not parse provider JSON.')
-            return False
-
-        for _, site_json in enumerated_providers:
-            try:
-                if signer in site_json['value']['hostname']:
-                    return True
-            except KeyError:
-                # A KeyError is thrown if a hostname is not defined.
-                # Log that a single site could not be parsed
-                self.logger.warning('Could not parse site JSON.')
-                self.logger.debug(site_json)
-                # Continue looping through provider list, looking
-                # for a match in the remaining site JSON
-
         if signer_dn in settings.ALLOWED_TO_POST:
             self.logger.info("Host %s has special access.", signer)
+            return True
+
+        if signer in self._get_indigo_providers():
+            self.logger.info("Host %s is listed as an INDIGO provider.",
+                             signer)
             return True
 
         # If we have not returned already
