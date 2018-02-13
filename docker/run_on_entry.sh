@@ -2,28 +2,28 @@
 
 # Replace locally configured variables in apel_rest
 #SECRET_KEY
-sed -i "s|not_a_secure_secret|$DJANGO_SECRET_KEY|g" /var/www/html/apel_rest/settings.py
+sed -i "s|not_a_secure_secret|$DJANGO_SECRET_KEY|g" /home/apel_rest_interface/apel_rest/settings.py
 
 #PROVIDERS_URL
-sed -i "s|provider_url|$PROVIDERS_URL|g" /var/www/html/apel_rest/settings.py
+sed -i "s|provider_url|$PROVIDERS_URL|g" /home/apel_rest_interface/apel_rest/settings.py
 
 # IAM_URL
-sed -i "s|\['allowed_iams'\]|$IAM_URLS|g" /var/www/html/apel_rest/settings.py
+sed -i "s|\['allowed_iams'\]|$IAM_URLS|g" /home/apel_rest_interface/apel_rest/settings.py
 
 # SERVER_IAM_ID
-sed -i "s|server_iam_id|$SERVER_IAM_ID|g" /var/www/html/apel_rest/settings.py
+sed -i "s|server_iam_id|$SERVER_IAM_ID|g" /home/apel_rest_interface/apel_rest/settings.py
 
 # SERVER_IAM_SECRET
-sed -i "s|server_iam_secret|$SERVER_IAM_SECRET|g" /var/www/html/apel_rest/settings.py
+sed -i "s|server_iam_secret|$SERVER_IAM_SECRET|g" /home/apel_rest_interface/apel_rest/settings.py
 
 # ALLOWED_TO_POST
-sed -i "s|\['allowed_to_post'\]|$ALLOWED_TO_POST|g" /var/www/html/apel_rest/settings.py
+sed -i "s|\['allowed_to_post'\]|$ALLOWED_TO_POST|g" /home/apel_rest_interface/apel_rest/settings.py
 
 # BANNED_FROM_POST
-sed -i "s|\['banned_from_post'\]|$BANNED_FROM_POST|g" /var/www/html/apel_rest/settings.py
+sed -i "s|\['banned_from_post'\]|$BANNED_FROM_POST|g" /home/apel_rest_interface/apel_rest/settings.py
 
 # ALLOWED_FOR_GET
-sed -i "s|\['allowed_for_get'\]|$ALLOWED_FOR_GET|g" /var/www/html/apel_rest/settings.py
+sed -i "s|\['allowed_for_get'\]|$ALLOWED_FOR_GET|g" /home/apel_rest_interface/apel_rest/settings.py
 
 
 # fetch the crl first
