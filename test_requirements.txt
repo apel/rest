@@ -1,3 +1,6 @@
+# Constraints on the requirements below
+-c constraints.txt
+
 # Dependencies for CI testing
 
 # Coveralls only supports Python 2.6 up to 1.2
