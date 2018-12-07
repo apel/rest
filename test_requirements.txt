@@ -1,2 +1,4 @@
 # Dependencies for CI testing
-coveralls
+
+# Coveralls only supports Python 2.6 up to 1.2
+coveralls<=1.2.0
