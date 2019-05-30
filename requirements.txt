@@ -1,5 +1,5 @@
 dirq
 django==1.11.20
-djangorestframework==3.0.5
+djangorestframework==3.9.4
 python-jose<3.0.0
 MySQL-python
