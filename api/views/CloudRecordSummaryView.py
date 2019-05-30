@@ -1,6 +1,9 @@
 """This file contains the CloudRecordSummaryView class."""
 
-import ConfigParser
+try:
+    import ConfigParser
+except ImportError:
+    import configparser as ConfigParser
 import datetime
 import logging
 import MySQLdb
